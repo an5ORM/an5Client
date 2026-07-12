@@ -1,0 +1,14 @@
+// This file is auto-generated. Do not edit directly.
+using System;
+using System.Collections.Generic;
+
+namespace MssqlOrm.Entities
+{
+    public class Order
+    {
+        public string Id { get; set; }
+        public string UserId { get; set; }
+        public int Total { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+}

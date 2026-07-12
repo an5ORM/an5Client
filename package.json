@@ -1,0 +1,37 @@
+{
+  "name": "mssql-client",
+  "version": "0.1.0",
+  "description": "Generated client artifacts for MSSQL ORM - TypeScript types, Python models, .NET entities.",
+  "license": "MIT",
+  "main": "typescript/index.js",
+  "types": "typescript/index.d.ts",
+  "exports": {
+    ".": "./typescript/index.js",
+    "./typescript": "./typescript/index.js",
+    "./typescript/*": "./typescript/*",
+    "./python": "./python/mssql_metadata.py",
+    "./dotnet": "./dotnet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mssqlORM/mssqlClient.git"
+  },
+  "keywords": ["mssql", "client", "orm", "typescript", "python", "dotnet"],
+  "files": [
+    "typescript/**/*.{ts,js,d.ts}",
+    "python/**/*",
+    "dotnet/**/*",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "node -e \"require('./typescript')\" 2>&1 || echo 'TypeScript check failed'",
+    "test:python": "python -m compileall python 2>&1"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

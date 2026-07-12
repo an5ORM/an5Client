@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./typescript",
+    "rootDir": "./typescript",
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["typescript/**/*.ts"],
+  "exclude": ["node_modules", "dist", "python", "dotnet"]
+}
