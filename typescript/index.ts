@@ -2,23 +2,23 @@ export * from './base';
 export * from './User';
 export * from './Order';
 
-import { Mssql as BaseMssql } from './base';
+import { An5 as BaseAn5 } from './base';
 import * as UserTypes from './User';
 import * as OrderTypes from './Order';
 
-export namespace Mssql {
-  export type SortOrder = BaseMssql.SortOrder;
-  export type StringFilter = BaseMssql.StringFilter;
-  export type StringNullableFilter = BaseMssql.StringNullableFilter;
-  export type NumberFilter = BaseMssql.NumberFilter;
-  export type NumberNullableFilter = BaseMssql.NumberNullableFilter;
-  export type BooleanFilter = BaseMssql.BooleanFilter;
-  export type BooleanNullableFilter = BaseMssql.BooleanNullableFilter;
-  export type DateTimeFilter = BaseMssql.DateTimeFilter;
-  export type DateTimeNullableFilter = BaseMssql.DateTimeNullableFilter;
-  export type IntFieldUpdateOperationsInput = BaseMssql.IntFieldUpdateOperationsInput;
-  export type FloatFieldUpdateOperationsInput = BaseMssql.FloatFieldUpdateOperationsInput;
-  export const MssqlClientKnownRequestError = BaseMssql.MssqlClientKnownRequestError;
+export namespace An5 {
+  export type SortOrder = BaseAn5.SortOrder;
+  export type StringFilter = BaseAn5.StringFilter;
+  export type StringNullableFilter = BaseAn5.StringNullableFilter;
+  export type NumberFilter = BaseAn5.NumberFilter;
+  export type NumberNullableFilter = BaseAn5.NumberNullableFilter;
+  export type BooleanFilter = BaseAn5.BooleanFilter;
+  export type BooleanNullableFilter = BaseAn5.BooleanNullableFilter;
+  export type DateTimeFilter = BaseAn5.DateTimeFilter;
+  export type DateTimeNullableFilter = BaseAn5.DateTimeNullableFilter;
+  export type IntFieldUpdateOperationsInput = BaseAn5.IntFieldUpdateOperationsInput;
+  export type FloatFieldUpdateOperationsInput = BaseAn5.FloatFieldUpdateOperationsInput;
+  export const An5ClientKnownRequestError = BaseAn5.An5ClientKnownRequestError;
   export type User = UserTypes.User;
   export type UserWhereInput = UserTypes.UserWhereInput;
   export type UserSelect = UserTypes.UserSelect;
@@ -33,10 +33,10 @@ export namespace Mssql {
   export type OrderUpdateInput = OrderTypes.OrderUpdateInput;
 }
 
-export class MssqlClient {
+export class An5Client {
   $connect(): Promise<void> { return Promise.resolve(); }
   $disconnect(): Promise<void> { return Promise.resolve(); }
-  $transaction<R>(fn: (tx: MssqlClient) => Promise<R>, options?: { timeout?: number }): Promise<R>;
+  $transaction<R>(fn: (tx: An5Client) => Promise<R>, options?: { timeout?: number }): Promise<R>;
   $transaction<R>(list: Promise<R>[]): Promise<R[]>;
   $transaction(fn: any, options?: any): Promise<any> { return typeof fn === 'function' ? fn(this) : Promise.all(fn); }
   $queryRaw<T = any>(queryParts: TemplateStringsArray | string, ...values: any[]): Promise<T> { return Promise.resolve([] as any); }

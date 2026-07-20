@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MssqlOrm.Entities
+namespace An5Orm.Entities
 {
     public class User
     {

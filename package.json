@@ -1,7 +1,7 @@
 {
-  "name": "mssql-client",
+  "name": "an5-client",
   "version": "0.1.0",
-  "description": "Generated client artifacts for MSSQL ORM - TypeScript types, Python models, .NET entities.",
+  "description": "Generated client artifacts for AN5 ORM - TypeScript types, Python models, .NET entities.",
   "license": "MIT",
   "main": "typescript/index.js",
   "types": "typescript/index.d.ts",
@@ -9,14 +9,14 @@
     ".": "./typescript/index.js",
     "./typescript": "./typescript/index.js",
     "./typescript/*": "./typescript/*",
-    "./python": "./python/mssql_metadata.py",
+    "./python": "./python/an5_metadata.py",
     "./dotnet": "./dotnet"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mssqlORM/mssqlClient.git"
+    "url": "https://github.com/an5ORM/an5Client.git"
   },
-  "keywords": ["mssql", "client", "orm", "typescript", "python", "dotnet"],
+  "keywords": ["an5", "client", "orm", "typescript", "python", "dotnet"],
   "files": [
     "typescript/**/*.{ts,js,d.ts}",
     "python/**/*",

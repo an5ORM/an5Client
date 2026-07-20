@@ -14,16 +14,16 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MssqlClient = exports.Mssql = void 0;
+exports.An5Client = exports.An5 = void 0;
 __exportStar(require("./base"), exports);
 __exportStar(require("./User"), exports);
 __exportStar(require("./Order"), exports);
 const base_1 = require("./base");
-var Mssql;
-(function (Mssql) {
-    Mssql.MssqlClientKnownRequestError = base_1.Mssql.MssqlClientKnownRequestError;
-})(Mssql || (exports.Mssql = Mssql = {}));
-class MssqlClient {
+var An5;
+(function (An5) {
+    An5.An5ClientKnownRequestError = base_1.An5.An5ClientKnownRequestError;
+})(An5 || (exports.An5 = An5 = {}));
+class An5Client {
     $connect() { return Promise.resolve(); }
     $disconnect() { return Promise.resolve(); }
     $transaction(fn, options) { return typeof fn === 'function' ? fn(this) : Promise.all(fn); }
@@ -32,4 +32,4 @@ class MssqlClient {
     $executeRaw(queryParts, ...values) { return Promise.resolve(0); }
     $executeRawUnsafe(query, ...values) { return Promise.resolve(0); }
 }
-exports.MssqlClient = MssqlClient;
+exports.An5Client = An5Client;

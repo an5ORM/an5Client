@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using Microsoft.Data.SqlClient;
-using MssqlOrm.Entities;
+using An5Orm.Entities;
 
-namespace MssqlOrm
+namespace An5Orm
 {
-    public class MssqlDbContext
+    public class An5DbContext
     {
         public string ConnectionString { get; }
         
@@ -17,19 +17,19 @@ namespace MssqlOrm
         [ThreadStatic]
         private static SqlTransaction _tx;
 
-        public MssqlDbContext(string connectionString = null)
+        public An5DbContext(string connectionString = null)
         {
-            ConnectionString = connectionString ?? MssqlConfig.ConnectionString;
+            ConnectionString = connectionString ?? An5Config.ConnectionString;
         }
 
-        public MssqlTransaction BeginTransaction()
+        public An5Transaction BeginTransaction()
         {
             var conn = new SqlConnection(ConnectionString);
             conn.Open();
             var tx = conn.BeginTransaction();
             _txConn = conn;
             _tx = tx;
-            return new MssqlTransaction(conn, tx, () => {
+            return new An5Transaction(conn, tx, () => {
                 _txConn = null;
                 _tx = null;
             });
@@ -55,14 +55,14 @@ namespace MssqlOrm
         public TableClient<Order> Orders => new TableClient<Order>(ConnectionString, "dbo.orders");
     }
 
-    public class MssqlTransaction : IDisposable
+    public class An5Transaction : IDisposable
     {
         private readonly SqlConnection _conn;
         private readonly SqlTransaction _tx;
         private readonly Action _cleanup;
         private bool _completed;
 
-        public MssqlTransaction(SqlConnection conn, SqlTransaction tx, Action cleanup)
+        public An5Transaction(SqlConnection conn, SqlTransaction tx, Action cleanup)
         {
             _conn = conn;
             _tx = tx;
@@ -107,7 +107,7 @@ namespace MssqlOrm
         private SqlCommand CreateCommand(SqlConnection conn, string query)
         {
             var cmd = new SqlCommand(query, conn);
-            var activeTx = MssqlDbContext.GetActiveTransaction();
+            var activeTx = An5DbContext.GetActiveTransaction();
             if (activeTx != null)
             {
                 cmd.Transaction = activeTx;
@@ -124,7 +124,7 @@ namespace MssqlOrm
                 query += $" WHERE {whereClause}";
             }
 
-            var conn = MssqlDbContext.GetActiveConnection(ConnectionString, out bool isTx);
+            var conn = An5DbContext.GetActiveConnection(ConnectionString, out bool isTx);
             try
             {
                 using (var cmd = CreateCommand(conn, query))
@@ -174,7 +174,7 @@ namespace MssqlOrm
                 query += $" WHERE {whereClause}";
             }
 
-            var conn = MssqlDbContext.GetActiveConnection(ConnectionString, out bool isTx);
+            var conn = An5DbContext.GetActiveConnection(ConnectionString, out bool isTx);
             try
             {
                 using (var cmd = CreateCommand(conn, query))
@@ -240,7 +240,7 @@ namespace MssqlOrm
             }
 
             string query = $"INSERT INTO {TableName} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", values)})";
-            var conn = MssqlDbContext.GetActiveConnection(ConnectionString, out bool isTx);
+            var conn = An5DbContext.GetActiveConnection(ConnectionString, out bool isTx);
             try
             {
                 using (var cmd = CreateCommand(conn, query))
@@ -288,7 +288,7 @@ namespace MssqlOrm
 
             sqlParams.Add(new SqlParameter("@id", idVal));
             string query = $"UPDATE {TableName} SET {string.Join(", ", sets)} WHERE Id = @id";
-            var conn = MssqlDbContext.GetActiveConnection(ConnectionString, out bool isTx);
+            var conn = An5DbContext.GetActiveConnection(ConnectionString, out bool isTx);
             try
             {
                 using (var cmd = CreateCommand(conn, query))
@@ -307,7 +307,7 @@ namespace MssqlOrm
         public bool Delete(object id)
         {
             string query = $"DELETE FROM {TableName} WHERE Id = @id";
-            var conn = MssqlDbContext.GetActiveConnection(ConnectionString, out bool isTx);
+            var conn = An5DbContext.GetActiveConnection(ConnectionString, out bool isTx);
             try
             {
                 using (var cmd = CreateCommand(conn, query))

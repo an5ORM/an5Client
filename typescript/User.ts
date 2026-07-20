@@ -1,4 +1,4 @@
-import { Mssql, TableClient } from './base';
+import { An5, TableClient } from './base';
 
 export interface User {
   id: string;
@@ -11,10 +11,10 @@ export type UserWhereInput = {
   AND?: UserWhereInput | UserWhereInput[];
   OR?: UserWhereInput[];
   NOT?: UserWhereInput | UserWhereInput[];
-  id?: string | Mssql.StringFilter;
-  email?: string | Mssql.StringFilter;
-  name?: string | Mssql.StringNullableFilter | null;
-  createdAt?: Date | Mssql.DateTimeFilter;
+  id?: string | An5.StringFilter;
+  email?: string | An5.StringFilter;
+  name?: string | An5.StringNullableFilter | null;
+  createdAt?: Date | An5.DateTimeFilter;
 };
 
 export type UserSelect = { id?: boolean; email?: boolean; name?: boolean; createdAt?: boolean; };

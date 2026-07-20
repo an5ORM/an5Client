@@ -1,6 +1,6 @@
 
-export namespace Mssql {
-  export class MssqlClientKnownRequestError extends Error {
+export namespace An5 {
+  export class An5ClientKnownRequestError extends Error {
     code!: string;
     meta?: any;
     constructor(message: string, { code, clientVersion }: { code: string; clientVersion: string }) {

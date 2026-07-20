@@ -3,14 +3,14 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mssql-client"
+name = "an5-client"
 version = "0.1.0"
-description = "Python client models for MSSQL ORM."
+description = "Python client models for AN5 ORM."
 readme = "README.md"
 requires-python = ">=3.8"
-authors = [{ name = "mssqlORM" }]
+authors = [{ name = "an5ORM" }]
 license = { text = "MIT" }
-keywords = ["mssql", "client", "orm"]
+keywords = ["an5", "client", "orm"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License"
@@ -18,4 +18,4 @@ classifiers = [
 dependencies = []
 
 [tool.setuptools]
-py-modules = ["mssql_metadata"]
+py-modules = ["an5_metadata"]
