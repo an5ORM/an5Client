@@ -1,8 +1,12 @@
 export * from './base';
+export * from './EmbeddingConfig';
+export * from './LlmConfig';
 export * from './User';
 export * from './Order';
 
 import { An5 as BaseAn5 } from './base';
+import * as EmbeddingConfigTypes from './EmbeddingConfig';
+import * as LlmConfigTypes from './LlmConfig';
 import * as UserTypes from './User';
 import * as OrderTypes from './Order';
 
@@ -19,6 +23,18 @@ export namespace An5 {
   export type IntFieldUpdateOperationsInput = BaseAn5.IntFieldUpdateOperationsInput;
   export type FloatFieldUpdateOperationsInput = BaseAn5.FloatFieldUpdateOperationsInput;
   export const An5ClientKnownRequestError = BaseAn5.An5ClientKnownRequestError;
+  export type EmbeddingConfig = EmbeddingConfigTypes.EmbeddingConfig;
+  export type EmbeddingConfigWhereInput = EmbeddingConfigTypes.EmbeddingConfigWhereInput;
+  export type EmbeddingConfigSelect = EmbeddingConfigTypes.EmbeddingConfigSelect;
+  export type EmbeddingConfigInclude = EmbeddingConfigTypes.EmbeddingConfigInclude;
+  export type EmbeddingConfigCreateInput = EmbeddingConfigTypes.EmbeddingConfigCreateInput;
+  export type EmbeddingConfigUpdateInput = EmbeddingConfigTypes.EmbeddingConfigUpdateInput;
+  export type LlmConfig = LlmConfigTypes.LlmConfig;
+  export type LlmConfigWhereInput = LlmConfigTypes.LlmConfigWhereInput;
+  export type LlmConfigSelect = LlmConfigTypes.LlmConfigSelect;
+  export type LlmConfigInclude = LlmConfigTypes.LlmConfigInclude;
+  export type LlmConfigCreateInput = LlmConfigTypes.LlmConfigCreateInput;
+  export type LlmConfigUpdateInput = LlmConfigTypes.LlmConfigUpdateInput;
   export type User = UserTypes.User;
   export type UserWhereInput = UserTypes.UserWhereInput;
   export type UserSelect = UserTypes.UserSelect;
@@ -43,6 +59,8 @@ export class An5Client {
   $queryRawUnsafe<R = any>(query: string, ...values: any[]): Promise<R> { return Promise.resolve([] as any); }
   $executeRaw<T = any>(queryParts: TemplateStringsArray | string, ...values: any[]): Promise<any> { return Promise.resolve(0 as any); }
   $executeRawUnsafe(query: string, ...values: any[]): Promise<number> { return Promise.resolve(0); }
+  embeddingConfig!: EmbeddingConfigTypes.EmbeddingConfigTableClient;
+  llmConfig!: LlmConfigTypes.LlmConfigTableClient;
   user!: UserTypes.UserTableClient;
   order!: OrderTypes.OrderTableClient;
 }
