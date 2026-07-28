@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "an5-client"
+version = "0.1.0"
+description = "Python client models for AN5 ORM."
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{ name = "an5ORM" }]
+license = { text = "MIT" }
+keywords = ["an5", "client", "orm"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License"
+]
+dependencies = []
+
+[tool.setuptools]
+py-modules = ["an5_metadata"]
