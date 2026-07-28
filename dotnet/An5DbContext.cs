@@ -51,6 +51,8 @@ namespace An5Orm
         public static SqlTransaction GetActiveTransaction() => _tx;
 
         // ── Tables / Repositories ──────────────────────────────────────────────
+        public TableClient<EmbeddingConfig> EmbeddingConfigs => new TableClient<EmbeddingConfig>(ConnectionString, "dbo.embeddingconfigs");
+        public TableClient<LlmConfig> LlmConfigs => new TableClient<LlmConfig>(ConnectionString, "dbo.llmconfigs");
         public TableClient<User> Users => new TableClient<User>(ConnectionString, "dbo.users");
         public TableClient<Order> Orders => new TableClient<Order>(ConnectionString, "dbo.orders");
     }
