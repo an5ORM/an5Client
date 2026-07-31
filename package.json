@@ -12,6 +12,8 @@
     "./python": "./python/an5_metadata.py",
     "./dotnet": "./dotnet"
   },
+  "author": "an5ORM",
+  "homepage": "https://github.com/an5ORM/an5",
   "repository": {
     "type": "git",
     "url": "https://github.com/an5ORM/an5Client.git"
