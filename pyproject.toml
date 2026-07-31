@@ -18,4 +18,5 @@ classifiers = [
 dependencies = []
 
 [tool.setuptools]
+package-dir = {"" = "python"}
 py-modules = ["an5_metadata"]
