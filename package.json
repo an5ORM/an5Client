@@ -30,6 +30,9 @@
     "test": "node -e \"require('./typescript')\" 2>&1 || echo 'TypeScript check failed'",
     "test:python": "python -m compileall python 2>&1"
   },
+  "dependencies": {
+    "@an5/orm": "^1.0.7"
+  },
   "devDependencies": {
     "typescript": "^6.0.3"
   },

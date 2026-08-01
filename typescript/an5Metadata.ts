@@ -1,5 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 
+import type { RelationDef } from "@an5/orm";
+
 export const modelToTable: Record<string, string> = {
   embeddingConfig: "[dbo].[embeddingconfigs]",
   llmConfig: "[dbo].[llmconfigs]",
@@ -20,13 +22,6 @@ export const modelFields: Record<string, Record<string, { ts: string; sql: strin
   user: { id: { ts: "string", sql: "NVARCHAR(1000)", description: "Primary key for the User table (auto-generated UUID)" }, email: { ts: "string", sql: "NVARCHAR(255)", description: "Unique email address used for login and notifications" }, name: { ts: "string?", sql: "NVARCHAR(255)", description: "Display name of the user" }, createdAt: { ts: "Date", sql: "DATETIME2", description: "Timestamp when the user profile was created" } },
   order: { id: { ts: "string", sql: "NVARCHAR(1000)", description: "Primary key for the Order table (auto-generated UUID)" }, userId: { ts: "string", sql: "NVARCHAR(1000)", description: "Foreign key linking to the User model who placed the order" }, total: { ts: "number", sql: "INT", description: "Total cost amount of the order" }, createdAt: { ts: "Date", sql: "DATETIME2", description: "The date and time when the order was created." } },
 };
-
-export interface RelationDef {
-  modelName: string;
-  relationType: "many" | "one";
-  foreignKey: string;
-  localKey: string;
-}
 
 export const relationMap: Record<string, Record<string, RelationDef>> = {
   embeddingConfig:   {
