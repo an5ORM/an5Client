@@ -9,7 +9,9 @@ an5Client/
 ├── typescript/          # TypeScript types and metadata
 │   ├── index.ts         # Barrel exports
 │   ├── base.ts          # Base types, filters, error classes
-│   ├── an5Metadata.ts # Model-table mappings, relations
+│   ├── an5Metadata.ts   # Model-table mappings, relations
+│   ├── EmbeddingConfig.ts  # Generated EmbeddingConfig model
+│   ├── LlmConfig.ts        # Generated LlmConfig model
 │   ├── User.ts          # Generated User model
 │   └── Order.ts         # Generated Order model
 ├── python/              # Python metadata
@@ -17,6 +19,8 @@ an5Client/
 └── dotnet/              # .NET entity classes
     ├── User.cs
     ├── Order.cs
+    ├── EmbeddingConfig.cs
+    ├── LlmConfig.cs
     ├── An5DbContext.cs
     └── An5Config.cs
 ```
@@ -34,8 +38,12 @@ const user: User = { id: '123', email: 'john@example.com', name: 'John', created
 
 // Access metadata
 console.log(modelToTable['user']); // '[dbo].[users]'
-console.log(relationMap['order']); // { user: { ... } }
+console.log(relationMap['order']); // { user: RelationDef } — populated only when the schema declares relations
 ```
+
+`An5` is a namespace re-exporting the base filter/where types plus every model
+type. `RelationDef` is imported from `@an5/orm`; relations are resolved
+explicitly from the schema's `@relation` fields (there are no implicit joins).
 
 ### Python
 
