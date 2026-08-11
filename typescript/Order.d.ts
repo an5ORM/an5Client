@@ -103,9 +103,37 @@ export type OrderAggregateArgs = {
         createdAt?: true;
     };
 };
+export type OrderAggregateHavingInput = {
+    _count?: {
+        _all?: An5.NumberFilter | number;
+        id?: An5.NumberFilter | number;
+        userId?: An5.NumberFilter | number;
+        total?: An5.NumberFilter | number;
+        createdAt?: An5.NumberFilter | number;
+    };
+    _sum?: {
+        total?: An5.NumberFilter | number;
+    };
+    _avg?: {
+        total?: An5.NumberFilter | number;
+    };
+    _min?: {
+        id?: any;
+        userId?: any;
+        total?: any;
+        createdAt?: any;
+    };
+    _max?: {
+        id?: any;
+        userId?: any;
+        total?: any;
+        createdAt?: any;
+    };
+};
 export type OrderGroupByArgs = {
     by: OrderScalarFieldEnum | OrderScalarFieldEnum[];
     where?: OrderWhereInput;
+    having?: OrderAggregateHavingInput;
     orderBy?: any;
     skip?: number;
     take?: number;

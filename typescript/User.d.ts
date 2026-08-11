@@ -99,9 +99,33 @@ export type UserAggregateArgs = {
         createdAt?: true;
     };
 };
+export type UserAggregateHavingInput = {
+    _count?: {
+        _all?: An5.NumberFilter | number;
+        id?: An5.NumberFilter | number;
+        email?: An5.NumberFilter | number;
+        name?: An5.NumberFilter | number;
+        createdAt?: An5.NumberFilter | number;
+    };
+    _sum?: {};
+    _avg?: {};
+    _min?: {
+        id?: any;
+        email?: any;
+        name?: any;
+        createdAt?: any;
+    };
+    _max?: {
+        id?: any;
+        email?: any;
+        name?: any;
+        createdAt?: any;
+    };
+};
 export type UserGroupByArgs = {
     by: UserScalarFieldEnum | UserScalarFieldEnum[];
     where?: UserWhereInput;
+    having?: UserAggregateHavingInput;
     orderBy?: any;
     skip?: number;
     take?: number;

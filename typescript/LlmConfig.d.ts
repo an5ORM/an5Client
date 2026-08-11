@@ -131,9 +131,45 @@ export type LlmConfigAggregateArgs = {
         updatedAt?: true;
     };
 };
+export type LlmConfigAggregateHavingInput = {
+    _count?: {
+        _all?: An5.NumberFilter | number;
+        id?: An5.NumberFilter | number;
+        provider?: An5.NumberFilter | number;
+        apiKey?: An5.NumberFilter | number;
+        model?: An5.NumberFilter | number;
+        endpoint?: An5.NumberFilter | number;
+        isActive?: An5.NumberFilter | number;
+        createdAt?: An5.NumberFilter | number;
+        updatedAt?: An5.NumberFilter | number;
+    };
+    _sum?: {};
+    _avg?: {};
+    _min?: {
+        id?: any;
+        provider?: any;
+        apiKey?: any;
+        model?: any;
+        endpoint?: any;
+        isActive?: any;
+        createdAt?: any;
+        updatedAt?: any;
+    };
+    _max?: {
+        id?: any;
+        provider?: any;
+        apiKey?: any;
+        model?: any;
+        endpoint?: any;
+        isActive?: any;
+        createdAt?: any;
+        updatedAt?: any;
+    };
+};
 export type LlmConfigGroupByArgs = {
     by: LlmConfigScalarFieldEnum | LlmConfigScalarFieldEnum[];
     where?: LlmConfigWhereInput;
+    having?: LlmConfigAggregateHavingInput;
     orderBy?: any;
     skip?: number;
     take?: number;

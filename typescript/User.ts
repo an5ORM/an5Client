@@ -30,7 +30,8 @@ export type UserUpsertArgs = { where: UserWhereInput; create: UserCreateInput; u
 export type UserDeleteArgs = { where: UserWhereInput; include?: UserInclude; select?: UserSelect; };
 export type UserScalarFieldEnum = 'id' | 'email' | 'name' | 'createdAt';
 export type UserAggregateArgs = { where?: UserWhereInput; _count?: true | { _all?: true; id?: true; email?: true; name?: true; createdAt?: true }; _sum?: {  }; _avg?: {  }; _min?: { id?: true; email?: true; name?: true; createdAt?: true }; _max?: { id?: true; email?: true; name?: true; createdAt?: true }; };
-export type UserGroupByArgs = { by: UserScalarFieldEnum | UserScalarFieldEnum[]; where?: UserWhereInput; orderBy?: any; skip?: number; take?: number; _count?: true | { _all?: true; id?: true; email?: true; name?: true; createdAt?: true }; _sum?: {  }; _avg?: {  }; _min?: { id?: true; email?: true; name?: true; createdAt?: true }; _max?: { id?: true; email?: true; name?: true; createdAt?: true }; };
+export type UserAggregateHavingInput = { _count?: { _all?: An5.NumberFilter | number; id?: An5.NumberFilter | number; email?: An5.NumberFilter | number; name?: An5.NumberFilter | number; createdAt?: An5.NumberFilter | number }; _sum?: {  }; _avg?: {  }; _min?: { id?: any; email?: any; name?: any; createdAt?: any }; _max?: { id?: any; email?: any; name?: any; createdAt?: any }; };
+export type UserGroupByArgs = { by: UserScalarFieldEnum | UserScalarFieldEnum[]; where?: UserWhereInput; having?: UserAggregateHavingInput; orderBy?: any; skip?: number; take?: number; _count?: true | { _all?: true; id?: true; email?: true; name?: true; createdAt?: true }; _sum?: {  }; _avg?: {  }; _min?: { id?: true; email?: true; name?: true; createdAt?: true }; _max?: { id?: true; email?: true; name?: true; createdAt?: true }; };
 export type UserTableClient = TableClient<
   User,
   UserWhereInput,
