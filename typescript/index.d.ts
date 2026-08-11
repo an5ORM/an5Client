@@ -65,6 +65,9 @@ export declare class An5Client {
         timeout?: number;
     }): Promise<R>;
     $transaction<R>(list: Promise<R>[]): Promise<R[]>;
+    $begin(): Promise<An5Client>;
+    $commit(): Promise<void>;
+    $rollback(): Promise<void>;
     $queryRaw<T = any>(queryParts: TemplateStringsArray | string, ...values: any[]): Promise<T>;
     $queryRawUnsafe<R = any>(query: string, ...values: any[]): Promise<R>;
     $executeRaw<T = any>(queryParts: TemplateStringsArray | string, ...values: any[]): Promise<any>;

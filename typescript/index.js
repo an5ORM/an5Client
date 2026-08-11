@@ -29,6 +29,9 @@ class An5Client {
     $connect() { return Promise.resolve(); }
     $disconnect() { return Promise.resolve(); }
     $transaction(fn, options) { return typeof fn === 'function' ? fn(this) : Promise.all(fn); }
+    $begin() { return Promise.resolve(this); }
+    $commit() { return Promise.resolve(); }
+    $rollback() { return Promise.resolve(); }
     $queryRaw(queryParts, ...values) { return Promise.resolve([]); }
     $queryRawUnsafe(query, ...values) { return Promise.resolve([]); }
     $executeRaw(queryParts, ...values) { return Promise.resolve(0); }
