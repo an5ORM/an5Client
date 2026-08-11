@@ -36,6 +36,9 @@ export type LlmConfigCreateArgs = { data: LlmConfigCreateInput; include?: LlmCon
 export type LlmConfigUpdateArgs = { where: LlmConfigWhereInput; data: LlmConfigUpdateInput; include?: LlmConfigInclude; select?: LlmConfigSelect; };
 export type LlmConfigUpsertArgs = { where: LlmConfigWhereInput; create: LlmConfigCreateInput; update: LlmConfigUpdateInput; include?: LlmConfigInclude; select?: LlmConfigSelect; };
 export type LlmConfigDeleteArgs = { where: LlmConfigWhereInput; include?: LlmConfigInclude; select?: LlmConfigSelect; };
+export type LlmConfigScalarFieldEnum = 'id' | 'provider' | 'apiKey' | 'model' | 'endpoint' | 'isActive' | 'createdAt' | 'updatedAt';
+export type LlmConfigAggregateArgs = { where?: LlmConfigWhereInput; _count?: true | { _all?: true; id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; _sum?: {  }; _avg?: {  }; _min?: { id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; _max?: { id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; };
+export type LlmConfigGroupByArgs = { by: LlmConfigScalarFieldEnum | LlmConfigScalarFieldEnum[]; where?: LlmConfigWhereInput; orderBy?: any; skip?: number; take?: number; _count?: true | { _all?: true; id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; _sum?: {  }; _avg?: {  }; _min?: { id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; _max?: { id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; };
 export type LlmConfigTableClient = TableClient<
   LlmConfig,
   LlmConfigWhereInput,
@@ -49,5 +52,7 @@ export type LlmConfigTableClient = TableClient<
   LlmConfigCreateArgs,
   LlmConfigUpdateArgs,
   LlmConfigUpsertArgs,
-  LlmConfigDeleteArgs
+  LlmConfigDeleteArgs,
+  LlmConfigAggregateArgs,
+  LlmConfigGroupByArgs
 >;

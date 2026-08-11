@@ -28,6 +28,9 @@ export type UserCreateArgs = { data: UserCreateInput; include?: UserInclude; sel
 export type UserUpdateArgs = { where: UserWhereInput; data: UserUpdateInput; include?: UserInclude; select?: UserSelect; };
 export type UserUpsertArgs = { where: UserWhereInput; create: UserCreateInput; update: UserUpdateInput; include?: UserInclude; select?: UserSelect; };
 export type UserDeleteArgs = { where: UserWhereInput; include?: UserInclude; select?: UserSelect; };
+export type UserScalarFieldEnum = 'id' | 'email' | 'name' | 'createdAt';
+export type UserAggregateArgs = { where?: UserWhereInput; _count?: true | { _all?: true; id?: true; email?: true; name?: true; createdAt?: true }; _sum?: {  }; _avg?: {  }; _min?: { id?: true; email?: true; name?: true; createdAt?: true }; _max?: { id?: true; email?: true; name?: true; createdAt?: true }; };
+export type UserGroupByArgs = { by: UserScalarFieldEnum | UserScalarFieldEnum[]; where?: UserWhereInput; orderBy?: any; skip?: number; take?: number; _count?: true | { _all?: true; id?: true; email?: true; name?: true; createdAt?: true }; _sum?: {  }; _avg?: {  }; _min?: { id?: true; email?: true; name?: true; createdAt?: true }; _max?: { id?: true; email?: true; name?: true; createdAt?: true }; };
 export type UserTableClient = TableClient<
   User,
   UserWhereInput,
@@ -41,5 +44,7 @@ export type UserTableClient = TableClient<
   UserCreateArgs,
   UserUpdateArgs,
   UserUpsertArgs,
-  UserDeleteArgs
+  UserDeleteArgs,
+  UserAggregateArgs,
+  UserGroupByArgs
 >;

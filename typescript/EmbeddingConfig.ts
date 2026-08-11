@@ -36,6 +36,9 @@ export type EmbeddingConfigCreateArgs = { data: EmbeddingConfigCreateInput; incl
 export type EmbeddingConfigUpdateArgs = { where: EmbeddingConfigWhereInput; data: EmbeddingConfigUpdateInput; include?: EmbeddingConfigInclude; select?: EmbeddingConfigSelect; };
 export type EmbeddingConfigUpsertArgs = { where: EmbeddingConfigWhereInput; create: EmbeddingConfigCreateInput; update: EmbeddingConfigUpdateInput; include?: EmbeddingConfigInclude; select?: EmbeddingConfigSelect; };
 export type EmbeddingConfigDeleteArgs = { where: EmbeddingConfigWhereInput; include?: EmbeddingConfigInclude; select?: EmbeddingConfigSelect; };
+export type EmbeddingConfigScalarFieldEnum = 'id' | 'provider' | 'apiKey' | 'model' | 'endpoint' | 'isActive' | 'createdAt' | 'updatedAt';
+export type EmbeddingConfigAggregateArgs = { where?: EmbeddingConfigWhereInput; _count?: true | { _all?: true; id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; _sum?: {  }; _avg?: {  }; _min?: { id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; _max?: { id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; };
+export type EmbeddingConfigGroupByArgs = { by: EmbeddingConfigScalarFieldEnum | EmbeddingConfigScalarFieldEnum[]; where?: EmbeddingConfigWhereInput; orderBy?: any; skip?: number; take?: number; _count?: true | { _all?: true; id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; _sum?: {  }; _avg?: {  }; _min?: { id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; _max?: { id?: true; provider?: true; apiKey?: true; model?: true; endpoint?: true; isActive?: true; createdAt?: true; updatedAt?: true }; };
 export type EmbeddingConfigTableClient = TableClient<
   EmbeddingConfig,
   EmbeddingConfigWhereInput,
@@ -49,5 +52,7 @@ export type EmbeddingConfigTableClient = TableClient<
   EmbeddingConfigCreateArgs,
   EmbeddingConfigUpdateArgs,
   EmbeddingConfigUpsertArgs,
-  EmbeddingConfigDeleteArgs
+  EmbeddingConfigDeleteArgs,
+  EmbeddingConfigAggregateArgs,
+  EmbeddingConfigGroupByArgs
 >;

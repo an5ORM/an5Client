@@ -17,7 +17,7 @@ export namespace An5 {
   export type DateTimeNullableFilter = { equals?: Date | null; in?: (Date | null)[]; notIn?: (Date | null)[]; lt?: Date; lte?: Date; gt?: Date; gte?: Date; not?: Date | DateTimeNullableFilter | null; };
 }
 
-export interface TableClient<T, WhereInput = any, Select = any, Include = any, CreateInput = any, UpdateInput = any, FindManyArgs = any, FindFirstArgs = any, FindUniqueArgs = any, CreateArgs = any, UpdateArgs = any, UpsertArgs = any, DeleteArgs = any> {
+export interface TableClient<T, WhereInput = any, Select = any, Include = any, CreateInput = any, UpdateInput = any, FindManyArgs = any, FindFirstArgs = any, FindUniqueArgs = any, CreateArgs = any, UpdateArgs = any, UpsertArgs = any, DeleteArgs = any, AggregateArgs = any, GroupByArgs = any> {
   findMany(args?: FindManyArgs): Promise<T[]>;
   vectorSearch(args: { vector: number[]; take?: number; where?: WhereInput; include?: Include; vectorField?: string; distanceMetric?: 'cosine' | 'euclidean' | 'dot'; }): Promise<(T & { distance: number })[]>;
   findFirst(args?: FindFirstArgs): Promise<T | null>;
@@ -29,7 +29,7 @@ export interface TableClient<T, WhereInput = any, Select = any, Include = any, C
   updateMany(args: { where?: WhereInput; data: UpdateInput; }): Promise<{ count: number }>;
   delete(args: DeleteArgs): Promise<T>;
   deleteMany(args?: { where?: WhereInput; }): Promise<{ count: number }>;
-  aggregate(args: any): Promise<any>;
-  groupBy(args: any): Promise<any[]>;
+  aggregate(args: AggregateArgs): Promise<any>;
+  groupBy(args: GroupByArgs): Promise<any[]>;
   upsert(args: UpsertArgs): Promise<T>;
 }

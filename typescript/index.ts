@@ -29,24 +29,36 @@ export namespace An5 {
   export type EmbeddingConfigInclude = EmbeddingConfigTypes.EmbeddingConfigInclude;
   export type EmbeddingConfigCreateInput = EmbeddingConfigTypes.EmbeddingConfigCreateInput;
   export type EmbeddingConfigUpdateInput = EmbeddingConfigTypes.EmbeddingConfigUpdateInput;
+  export type EmbeddingConfigScalarFieldEnum = EmbeddingConfigTypes.EmbeddingConfigScalarFieldEnum;
+  export type EmbeddingConfigAggregateArgs = EmbeddingConfigTypes.EmbeddingConfigAggregateArgs;
+  export type EmbeddingConfigGroupByArgs = EmbeddingConfigTypes.EmbeddingConfigGroupByArgs;
   export type LlmConfig = LlmConfigTypes.LlmConfig;
   export type LlmConfigWhereInput = LlmConfigTypes.LlmConfigWhereInput;
   export type LlmConfigSelect = LlmConfigTypes.LlmConfigSelect;
   export type LlmConfigInclude = LlmConfigTypes.LlmConfigInclude;
   export type LlmConfigCreateInput = LlmConfigTypes.LlmConfigCreateInput;
   export type LlmConfigUpdateInput = LlmConfigTypes.LlmConfigUpdateInput;
+  export type LlmConfigScalarFieldEnum = LlmConfigTypes.LlmConfigScalarFieldEnum;
+  export type LlmConfigAggregateArgs = LlmConfigTypes.LlmConfigAggregateArgs;
+  export type LlmConfigGroupByArgs = LlmConfigTypes.LlmConfigGroupByArgs;
   export type User = UserTypes.User;
   export type UserWhereInput = UserTypes.UserWhereInput;
   export type UserSelect = UserTypes.UserSelect;
   export type UserInclude = UserTypes.UserInclude;
   export type UserCreateInput = UserTypes.UserCreateInput;
   export type UserUpdateInput = UserTypes.UserUpdateInput;
+  export type UserScalarFieldEnum = UserTypes.UserScalarFieldEnum;
+  export type UserAggregateArgs = UserTypes.UserAggregateArgs;
+  export type UserGroupByArgs = UserTypes.UserGroupByArgs;
   export type Order = OrderTypes.Order;
   export type OrderWhereInput = OrderTypes.OrderWhereInput;
   export type OrderSelect = OrderTypes.OrderSelect;
   export type OrderInclude = OrderTypes.OrderInclude;
   export type OrderCreateInput = OrderTypes.OrderCreateInput;
   export type OrderUpdateInput = OrderTypes.OrderUpdateInput;
+  export type OrderScalarFieldEnum = OrderTypes.OrderScalarFieldEnum;
+  export type OrderAggregateArgs = OrderTypes.OrderAggregateArgs;
+  export type OrderGroupByArgs = OrderTypes.OrderGroupByArgs;
 }
 
 export class An5Client {
@@ -59,8 +71,20 @@ export class An5Client {
   $queryRawUnsafe<R = any>(query: string, ...values: any[]): Promise<R> { return Promise.resolve([] as any); }
   $executeRaw<T = any>(queryParts: TemplateStringsArray | string, ...values: any[]): Promise<any> { return Promise.resolve(0 as any); }
   $executeRawUnsafe(query: string, ...values: any[]): Promise<number> { return Promise.resolve(0); }
+  EmbeddingConfig!: EmbeddingConfigTypes.EmbeddingConfigTableClient;
   embeddingConfig!: EmbeddingConfigTypes.EmbeddingConfigTableClient;
+  EmbeddingConfigs!: EmbeddingConfigTypes.EmbeddingConfigTableClient;
+  embeddingConfigs!: EmbeddingConfigTypes.EmbeddingConfigTableClient;
+  LlmConfig!: LlmConfigTypes.LlmConfigTableClient;
   llmConfig!: LlmConfigTypes.LlmConfigTableClient;
+  LlmConfigs!: LlmConfigTypes.LlmConfigTableClient;
+  llmConfigs!: LlmConfigTypes.LlmConfigTableClient;
+  User!: UserTypes.UserTableClient;
   user!: UserTypes.UserTableClient;
+  Users!: UserTypes.UserTableClient;
+  users!: UserTypes.UserTableClient;
+  Order!: OrderTypes.OrderTableClient;
   order!: OrderTypes.OrderTableClient;
+  Orders!: OrderTypes.OrderTableClient;
+  orders!: OrderTypes.OrderTableClient;
 }

@@ -1,7 +1,7 @@
 {
   "name": "an5-client",
   "version": "0.1.0",
-  "description": "Generated client artifacts for AN5 ORM - TypeScript types, Python models, .NET entities.",
+  "description": "Generated client artifacts for AN5 ORM - TypeScript types, Python models, .NET entities, and Go structs.",
   "license": "MIT",
   "main": "typescript/index.js",
   "types": "typescript/index.d.ts",
@@ -10,7 +10,8 @@
     "./typescript": "./typescript/index.js",
     "./typescript/*": "./typescript/*",
     "./python": "./python/an5_metadata.py",
-    "./dotnet": "./dotnet"
+    "./dotnet": "./dotnet",
+    "./golang": "./golang"
   },
   "author": "an5ORM",
   "homepage": "https://github.com/an5ORM/an5",
@@ -18,20 +19,24 @@
     "type": "git",
     "url": "https://github.com/an5ORM/an5Client.git"
   },
-  "keywords": ["an5", "client", "orm", "typescript", "python", "dotnet"],
+  "keywords": ["an5", "client", "orm", "typescript", "python", "dotnet", "go", "golang"],
   "files": [
-    "typescript/**/*.{ts,js,d.ts}",
+    "typescript/*.{ts,js,d.ts}",
     "python/**/*.py",
     "dotnet/**/*",
+    "golang/**/*",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc --noEmit",
-    "test": "node -e \"require('./typescript')\" 2>&1 || echo 'TypeScript check failed'",
-    "test:python": "python -m compileall python 2>&1"
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node test/smoke.test.js",
+    "test:package:smoke": "node test/package-smoke.js",
+    "test:python": "python -m compileall python 2>&1",
+    "test:dotnet": "node test/dotnet-compile-check.js",
+    "test:go": "cd golang && go test ./..."
   },
   "dependencies": {
-    "@an5/orm": "^1.0.7"
+    "@an5/orm": "^1.0.8"
   },
   "devDependencies": {
     "typescript": "^6.0.3"
