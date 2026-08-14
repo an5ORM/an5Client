@@ -83,13 +83,17 @@ type Dialect string
 const (
 	DialectMssql    Dialect = "mssql"
 	DialectPostgres Dialect = "postgres"
+	DialectSqlite   Dialect = "sqlite"
 )
 
 // detectDialect infers dialect from a connection string.
 func detectDialect(connStr string) Dialect {
-	l := strings.ToLower(connStr)
+	l := strings.ToLower(strings.TrimSpace(connStr))
 	if strings.HasPrefix(l, "postgres://") || strings.HasPrefix(l, "postgresql://") || strings.Contains(l, "port=5432") {
 		return DialectPostgres
+	}
+	if strings.HasPrefix(l, "sqlite://") || strings.HasPrefix(l, "sqlite:") || strings.HasPrefix(l, "file:") || strings.HasSuffix(l, ".db") || strings.HasSuffix(l, ".sqlite") || strings.HasSuffix(l, ".sqlite3") || l == ":memory:" {
+		return DialectSqlite
 	}
 	return DialectMssql
 }
@@ -158,7 +162,7 @@ func NewTableClient[T any](db *sql.DB, tableName string, dialect Dialect) *Table
 
 // quoteName quotes a column/identifier for the dialect.
 func (c *TableClient[T]) quoteName(name string) string {
-	if c.Dialect == DialectPostgres {
+	if c.Dialect == DialectPostgres || c.Dialect == DialectSqlite {
 		return `"` + strings.ReplaceAll(name, `"`, `""`) + `"`
 	}
 	return "[" + strings.ReplaceAll(name, "]", "]]") + "]"
@@ -352,7 +356,7 @@ func (c *TableClient[T]) FindMany(ctx context.Context, args interface{}) ([]T, e
 	if orderBy != "" {
 		query += " " + orderBy
 	}
-	if c.Dialect == DialectPostgres {
+	if c.Dialect == DialectPostgres || c.Dialect == DialectSqlite {
 		if take > 0 {
 			query += fmt.Sprintf(" LIMIT %d", take)
 		}
