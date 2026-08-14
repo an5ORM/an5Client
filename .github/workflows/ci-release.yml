@@ -26,6 +26,9 @@ jobs:
         if: hashFiles('package.json') != ''
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Build TypeScript
+        if: hashFiles('package.json') != ''
+        run: npm run build
       - name: Run Node tests
         if: hashFiles('package.json') != ''
         run: npm test
