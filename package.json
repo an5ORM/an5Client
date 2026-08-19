@@ -39,7 +39,7 @@
     "@an5/orm": "^1.0.8"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "publishConfig": {
     "access": "public"
