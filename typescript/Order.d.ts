@@ -12,7 +12,7 @@ export type OrderWhereInput = {
     id?: string | An5.StringFilter;
     userId?: string | An5.StringFilter;
     total?: number | An5.NumberFilter;
-    createdAt?: Date | An5.DateTimeFilter;
+    createdAt?: Date | string | An5.DateTimeFilter;
 };
 export type OrderSelect = {
     id?: boolean;
@@ -25,16 +25,22 @@ export type OrderCreateInput = {
     id?: string;
     userId: string;
     total?: number;
-    createdAt?: Date;
+    createdAt?: Date | string;
 };
 export type OrderUpdateInput = {
     userId?: string;
     total?: number | An5.IntFieldUpdateOperationsInput;
-    createdAt?: Date;
+    createdAt?: Date | string;
+};
+export type OrderOrderByInput = {
+    id?: An5.SortOrder;
+    userId?: An5.SortOrder;
+    total?: An5.SortOrder;
+    createdAt?: An5.SortOrder;
 };
 export type OrderFindManyArgs = {
     where?: OrderWhereInput;
-    orderBy?: any;
+    orderBy?: OrderOrderByInput | OrderOrderByInput[];
     take?: number;
     skip?: number;
     include?: OrderInclude;
@@ -42,7 +48,7 @@ export type OrderFindManyArgs = {
 };
 export type OrderFindFirstArgs = {
     where?: OrderWhereInput;
-    orderBy?: any;
+    orderBy?: OrderOrderByInput | OrderOrderByInput[];
     include?: OrderInclude;
     select?: OrderSelect;
 };
@@ -134,7 +140,7 @@ export type OrderGroupByArgs = {
     by: OrderScalarFieldEnum | OrderScalarFieldEnum[];
     where?: OrderWhereInput;
     having?: OrderAggregateHavingInput;
-    orderBy?: any;
+    orderBy?: OrderOrderByInput | OrderOrderByInput[];
     skip?: number;
     take?: number;
     _count?: true | {

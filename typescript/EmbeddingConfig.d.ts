@@ -19,8 +19,8 @@ export type EmbeddingConfigWhereInput = {
     model?: string | An5.StringNullableFilter | null;
     endpoint?: string | An5.StringNullableFilter | null;
     isActive?: boolean | An5.BooleanFilter;
-    createdAt?: Date | An5.DateTimeFilter;
-    updatedAt?: Date | An5.DateTimeFilter;
+    createdAt?: Date | string | An5.DateTimeFilter;
+    updatedAt?: Date | string | An5.DateTimeFilter;
 };
 export type EmbeddingConfigSelect = {
     id?: boolean;
@@ -40,8 +40,8 @@ export type EmbeddingConfigCreateInput = {
     model?: string | null;
     endpoint?: string | null;
     isActive?: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
 };
 export type EmbeddingConfigUpdateInput = {
     provider?: string;
@@ -49,12 +49,22 @@ export type EmbeddingConfigUpdateInput = {
     model?: string | null;
     endpoint?: string | null;
     isActive?: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+};
+export type EmbeddingConfigOrderByInput = {
+    id?: An5.SortOrder;
+    provider?: An5.SortOrder;
+    apiKey?: An5.SortOrder;
+    model?: An5.SortOrder;
+    endpoint?: An5.SortOrder;
+    isActive?: An5.SortOrder;
+    createdAt?: An5.SortOrder;
+    updatedAt?: An5.SortOrder;
 };
 export type EmbeddingConfigFindManyArgs = {
     where?: EmbeddingConfigWhereInput;
-    orderBy?: any;
+    orderBy?: EmbeddingConfigOrderByInput | EmbeddingConfigOrderByInput[];
     take?: number;
     skip?: number;
     include?: EmbeddingConfigInclude;
@@ -62,7 +72,7 @@ export type EmbeddingConfigFindManyArgs = {
 };
 export type EmbeddingConfigFindFirstArgs = {
     where?: EmbeddingConfigWhereInput;
-    orderBy?: any;
+    orderBy?: EmbeddingConfigOrderByInput | EmbeddingConfigOrderByInput[];
     include?: EmbeddingConfigInclude;
     select?: EmbeddingConfigSelect;
 };
@@ -170,7 +180,7 @@ export type EmbeddingConfigGroupByArgs = {
     by: EmbeddingConfigScalarFieldEnum | EmbeddingConfigScalarFieldEnum[];
     where?: EmbeddingConfigWhereInput;
     having?: EmbeddingConfigAggregateHavingInput;
-    orderBy?: any;
+    orderBy?: EmbeddingConfigOrderByInput | EmbeddingConfigOrderByInput[];
     skip?: number;
     take?: number;
     _count?: true | {

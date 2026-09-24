@@ -19,8 +19,8 @@ export type LlmConfigWhereInput = {
     model?: string | An5.StringNullableFilter | null;
     endpoint?: string | An5.StringNullableFilter | null;
     isActive?: boolean | An5.BooleanFilter;
-    createdAt?: Date | An5.DateTimeFilter;
-    updatedAt?: Date | An5.DateTimeFilter;
+    createdAt?: Date | string | An5.DateTimeFilter;
+    updatedAt?: Date | string | An5.DateTimeFilter;
 };
 export type LlmConfigSelect = {
     id?: boolean;
@@ -40,8 +40,8 @@ export type LlmConfigCreateInput = {
     model?: string | null;
     endpoint?: string | null;
     isActive?: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
 };
 export type LlmConfigUpdateInput = {
     provider?: string;
@@ -49,12 +49,22 @@ export type LlmConfigUpdateInput = {
     model?: string | null;
     endpoint?: string | null;
     isActive?: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+};
+export type LlmConfigOrderByInput = {
+    id?: An5.SortOrder;
+    provider?: An5.SortOrder;
+    apiKey?: An5.SortOrder;
+    model?: An5.SortOrder;
+    endpoint?: An5.SortOrder;
+    isActive?: An5.SortOrder;
+    createdAt?: An5.SortOrder;
+    updatedAt?: An5.SortOrder;
 };
 export type LlmConfigFindManyArgs = {
     where?: LlmConfigWhereInput;
-    orderBy?: any;
+    orderBy?: LlmConfigOrderByInput | LlmConfigOrderByInput[];
     take?: number;
     skip?: number;
     include?: LlmConfigInclude;
@@ -62,7 +72,7 @@ export type LlmConfigFindManyArgs = {
 };
 export type LlmConfigFindFirstArgs = {
     where?: LlmConfigWhereInput;
-    orderBy?: any;
+    orderBy?: LlmConfigOrderByInput | LlmConfigOrderByInput[];
     include?: LlmConfigInclude;
     select?: LlmConfigSelect;
 };
@@ -170,7 +180,7 @@ export type LlmConfigGroupByArgs = {
     by: LlmConfigScalarFieldEnum | LlmConfigScalarFieldEnum[];
     where?: LlmConfigWhereInput;
     having?: LlmConfigAggregateHavingInput;
-    orderBy?: any;
+    orderBy?: LlmConfigOrderByInput | LlmConfigOrderByInput[];
     skip?: number;
     take?: number;
     _count?: true | {

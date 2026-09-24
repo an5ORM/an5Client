@@ -72,24 +72,24 @@ export declare namespace An5 {
         not?: boolean | BooleanNullableFilter | null;
     };
     type DateTimeFilter = {
-        equals?: Date;
-        in?: Date[];
-        notIn?: Date[];
-        lt?: Date;
-        lte?: Date;
-        gt?: Date;
-        gte?: Date;
-        not?: Date | DateTimeFilter;
+        equals?: Date | string;
+        in?: (Date | string)[];
+        notIn?: (Date | string)[];
+        lt?: Date | string;
+        lte?: Date | string;
+        gt?: Date | string;
+        gte?: Date | string;
+        not?: Date | string | DateTimeFilter;
     };
     type DateTimeNullableFilter = {
-        equals?: Date | null;
-        in?: (Date | null)[];
-        notIn?: (Date | null)[];
-        lt?: Date;
-        lte?: Date;
-        gt?: Date;
-        gte?: Date;
-        not?: Date | DateTimeNullableFilter | null;
+        equals?: Date | string | null;
+        in?: ((Date | string) | null)[];
+        notIn?: ((Date | string) | null)[];
+        lt?: Date | string;
+        lte?: Date | string;
+        gt?: Date | string;
+        gte?: Date | string;
+        not?: Date | string | DateTimeNullableFilter | null;
     };
 }
 export interface TableClient<T, WhereInput = any, Select = any, Include = any, CreateInput = any, UpdateInput = any, FindManyArgs = any, FindFirstArgs = any, FindUniqueArgs = any, CreateArgs = any, UpdateArgs = any, UpsertArgs = any, DeleteArgs = any, AggregateArgs = any, GroupByArgs = any> {

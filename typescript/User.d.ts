@@ -12,7 +12,7 @@ export type UserWhereInput = {
     id?: string | An5.StringFilter;
     email?: string | An5.StringFilter;
     name?: string | An5.StringNullableFilter | null;
-    createdAt?: Date | An5.DateTimeFilter;
+    createdAt?: Date | string | An5.DateTimeFilter;
 };
 export type UserSelect = {
     id?: boolean;
@@ -25,16 +25,22 @@ export type UserCreateInput = {
     id?: string;
     email: string;
     name?: string | null;
-    createdAt?: Date;
+    createdAt?: Date | string;
 };
 export type UserUpdateInput = {
     email?: string;
     name?: string | null;
-    createdAt?: Date;
+    createdAt?: Date | string;
+};
+export type UserOrderByInput = {
+    id?: An5.SortOrder;
+    email?: An5.SortOrder;
+    name?: An5.SortOrder;
+    createdAt?: An5.SortOrder;
 };
 export type UserFindManyArgs = {
     where?: UserWhereInput;
-    orderBy?: any;
+    orderBy?: UserOrderByInput | UserOrderByInput[];
     take?: number;
     skip?: number;
     include?: UserInclude;
@@ -42,7 +48,7 @@ export type UserFindManyArgs = {
 };
 export type UserFindFirstArgs = {
     where?: UserWhereInput;
-    orderBy?: any;
+    orderBy?: UserOrderByInput | UserOrderByInput[];
     include?: UserInclude;
     select?: UserSelect;
 };
@@ -126,7 +132,7 @@ export type UserGroupByArgs = {
     by: UserScalarFieldEnum | UserScalarFieldEnum[];
     where?: UserWhereInput;
     having?: UserAggregateHavingInput;
-    orderBy?: any;
+    orderBy?: UserOrderByInput | UserOrderByInput[];
     skip?: number;
     take?: number;
     _count?: true | {
