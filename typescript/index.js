@@ -28,13 +28,13 @@ var An5;
 class An5Client {
     $connect() { return Promise.resolve(); }
     $disconnect() { return Promise.resolve(); }
-    $transaction(fn, options) { return typeof fn === 'function' ? fn(this) : Promise.all(fn); }
+    $transaction(fn, _options) { return typeof fn === 'function' ? fn(this) : Promise.all(fn); }
     $begin() { return Promise.resolve(this); }
     $commit() { return Promise.resolve(); }
     $rollback() { return Promise.resolve(); }
-    $queryRaw(queryParts, ...values) { return Promise.resolve([]); }
-    $queryRawUnsafe(query, ...values) { return Promise.resolve([]); }
-    $executeRaw(queryParts, ...values) { return Promise.resolve(0); }
-    $executeRawUnsafe(query, ...values) { return Promise.resolve(0); }
+    $queryRaw(_queryParts, ..._values) { return Promise.resolve([]); }
+    $queryRawUnsafe(_query, ..._values) { return Promise.resolve([]); }
+    $executeRaw(_queryParts, ..._values) { return Promise.resolve(0); }
+    $executeRawUnsafe(_query, ..._values) { return Promise.resolve(0); }
 }
 exports.An5Client = An5Client;

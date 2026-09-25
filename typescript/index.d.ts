@@ -104,10 +104,10 @@ export declare class An5Client {
     $begin(): Promise<An5Client>;
     $commit(): Promise<void>;
     $rollback(): Promise<void>;
-    $queryRaw<T = any>(queryParts: TemplateStringsArray | string, ...values: any[]): Promise<T>;
-    $queryRawUnsafe<R = any>(query: string, ...values: any[]): Promise<R>;
-    $executeRaw<T = any>(queryParts: TemplateStringsArray | string, ...values: any[]): Promise<any>;
-    $executeRawUnsafe(query: string, ...values: any[]): Promise<number>;
+    $queryRaw<T = any>(_queryParts: TemplateStringsArray | string, ..._values: any[]): Promise<T>;
+    $queryRawUnsafe<R = any>(_query: string, ..._values: any[]): Promise<R>;
+    $executeRaw<_T = any>(_queryParts: TemplateStringsArray | string, ..._values: any[]): Promise<any>;
+    $executeRawUnsafe(_query: string, ..._values: any[]): Promise<number>;
     EmbeddingConfig: EmbeddingConfigTypes.EmbeddingConfigTableClient;
     embeddingConfig: EmbeddingConfigTypes.EmbeddingConfigTableClient;
     EmbeddingConfigs: EmbeddingConfigTypes.EmbeddingConfigTableClient;

@@ -92,7 +92,7 @@ export declare namespace An5 {
         not?: Date | string | DateTimeNullableFilter | null;
     };
 }
-export interface TableClient<T, WhereInput = any, Select = any, Include = any, CreateInput = any, UpdateInput = any, FindManyArgs = any, FindFirstArgs = any, FindUniqueArgs = any, CreateArgs = any, UpdateArgs = any, UpsertArgs = any, DeleteArgs = any, AggregateArgs = any, GroupByArgs = any> {
+export interface TableClient<T, WhereInput = any, _Select = any, Include = any, CreateInput = any, UpdateInput = any, FindManyArgs = any, FindFirstArgs = any, FindUniqueArgs = any, CreateArgs = any, UpdateArgs = any, UpsertArgs = any, DeleteArgs = any, AggregateArgs = any, GroupByArgs = any> {
     findMany(args?: FindManyArgs): Promise<T[]>;
     vectorSearch(args: {
         vector: number[];
