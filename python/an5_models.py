@@ -15,11 +15,14 @@ class EmbeddingConfig:
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-class EmbeddingConfigRow(TypedDict, total=False):
-    """Row shape returned for EmbeddingConfig queries."""
-    id: str
+class _EmbeddingConfigRequired(TypedDict):
+    """Required keys of a EmbeddingConfig row."""
     provider: str
     api_key: str
+
+class EmbeddingConfigRow(_EmbeddingConfigRequired, total=False):
+    """Row shape returned for EmbeddingConfig queries."""
+    id: str
     model: str
     endpoint: str
     is_active: bool
@@ -38,11 +41,14 @@ class LlmConfig:
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-class LlmConfigRow(TypedDict, total=False):
-    """Row shape returned for LlmConfig queries."""
-    id: str
+class _LlmConfigRequired(TypedDict):
+    """Required keys of a LlmConfig row."""
     provider: str
     api_key: str
+
+class LlmConfigRow(_LlmConfigRequired, total=False):
+    """Row shape returned for LlmConfig queries."""
+    id: str
     model: str
     endpoint: str
     is_active: bool
@@ -57,10 +63,13 @@ class User:
     name: Optional[str] = None
     created_at: Optional[datetime] = None
 
-class UserRow(TypedDict, total=False):
+class _UserRequired(TypedDict):
+    """Required keys of a User row."""
+    email: str
+
+class UserRow(_UserRequired, total=False):
     """Row shape returned for User queries."""
     id: str
-    email: str
     name: str
     created_at: datetime
 
@@ -72,10 +81,13 @@ class Order:
     total: Optional[int] = None
     created_at: Optional[datetime] = None
 
-class OrderRow(TypedDict, total=False):
+class _OrderRequired(TypedDict):
+    """Required keys of a Order row."""
+    user_id: str
+
+class OrderRow(_OrderRequired, total=False):
     """Row shape returned for Order queries."""
     id: str
-    user_id: str
     total: int
     created_at: datetime
 
