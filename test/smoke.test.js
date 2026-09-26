@@ -67,6 +67,9 @@ assert.ok(rustModels.includes('pub struct User'), 'Expected Rust models.rs to co
 assert.ok(rustModels.includes('UserWhereInput'), 'Expected Rust models.rs to contain WhereInput types');
 const rustClient = fs.readFileSync(path.join(root, 'rust', 'src', 'client.rs'), 'utf8');
 assert.ok(rustClient.includes('pub struct An5Client'), 'Expected Rust client.rs to contain An5Client');
-assert.ok(rustClient.includes('find_many_'), 'Expected Rust client.rs to contain find_many builders');
+assert.ok(rustClient.includes('use an5_adapters::'), 'Expected Rust client.rs to use the adapter runtime');
+assert.ok(rustClient.includes('pub fn user(&self) -> UserTable'), 'Expected Rust client.rs to expose typed model handles');
+assert.ok(rustClient.includes('pub async fn find_many(&self, args: &UserFindManyArgs)'), 'Expected Rust typed find_many');
+assert.ok(rustClient.includes('pub fn table(&self, name: &str) -> TableClient'), 'Expected Rust dynamic table access');
 
 console.log('an5Client smoke test passed');
