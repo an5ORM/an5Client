@@ -28,6 +28,32 @@ pub fn model_to_table(model: &str) -> Option<&'static str> {
     }
 }
 
+/// Every model alias mapped to its physical table, for adapter registration.
+pub fn model_to_table_map() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("EmbeddingConfig", "[dbo].[embeddingconfigs]"),
+        ("embeddingConfig", "[dbo].[embeddingconfigs]"),
+        ("EmbeddingConfigs", "[dbo].[embeddingconfigs]"),
+        ("embeddingConfigs", "[dbo].[embeddingconfigs]"),
+        ("embedding_config", "[dbo].[embeddingconfigs]"),
+        ("embedding_configs", "[dbo].[embeddingconfigs]"),
+        ("LlmConfig", "[dbo].[llmconfigs]"),
+        ("llmConfig", "[dbo].[llmconfigs]"),
+        ("LlmConfigs", "[dbo].[llmconfigs]"),
+        ("llmConfigs", "[dbo].[llmconfigs]"),
+        ("llm_config", "[dbo].[llmconfigs]"),
+        ("llm_configs", "[dbo].[llmconfigs]"),
+        ("User", "[dbo].[users]"),
+        ("user", "[dbo].[users]"),
+        ("Users", "[dbo].[users]"),
+        ("users", "[dbo].[users]"),
+        ("Order", "[dbo].[orders]"),
+        ("order", "[dbo].[orders]"),
+        ("Orders", "[dbo].[orders]"),
+        ("orders", "[dbo].[orders]"),
+    ]
+}
+
 /// Primary-key column (snake_case) for a model alias.
 pub fn model_primary_key(model: &str) -> Option<&'static str> {
     match model {

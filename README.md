@@ -35,7 +35,7 @@ an5Client/
         ├── filters.rs   # StringFilter/IntFilter/NumberFilter/Bool/DateTime + Dialect
         ├── metadata.rs  # model_to_table / model_primary_key
         ├── config.rs    # DATABASE_URL helper
-        └── client.rs    # An5Client + find_many_*/count_* SQL builders + vector math
+        └── client.rs    # An5Client (adapter-backed) + typed <Model>Table handles + vector math
 ```
 
 ## Usage
@@ -104,10 +104,15 @@ func main() {
 ### Rust
 
 ```rust
-use an5_client::{An5Client, UserFindManyArgs, UserWhereInput, StringFilter};
+use an5_client::{An5Client, StringFilter, UserFindManyArgs, UserWhereInput};
 
-fn main() {
-    let db = An5Client::new(None); // reads DATABASE_URL
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    // Register the sqlx drivers you need before connecting.
+    sqlx::any::install_drivers(&[sqlx::sqlite::any::DRIVER])?;
+    let db = An5Client::connect("sqlite:file:app.sqlite?mode=rwc").await?;
+
+    // Typed per-model handle.
     let args = UserFindManyArgs {
         where_: Some(UserWhereInput {
             email: Some(StringFilter {
@@ -119,11 +124,19 @@ fn main() {
         take: Some(10),
         ..Default::default()
     };
-    // Build SQL + bind args, then execute with sqlx / tiberius / rusqlite.
-    let (sql, params) = db.find_many_user_sql(&args);
-    println!("{sql} {params:?}");
+    let users = db.user().find_many(&args).await?;
+    println!("{} users", users.len());
+
+    // Or dynamic access, like `db.User` in TypeScript.
+    let all = db.table("User").find_many(&Default::default()).await?;
+    println!("{} total", all.len());
+    Ok(())
 }
 ```
+
+Rust has no dynamic property access, so a generated method (`db.user()`) is
+the equivalent of `db.User` — matching Go, where the generator emits a real
+`ctx.User` field.
 
 ## Generation
 

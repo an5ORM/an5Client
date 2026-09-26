@@ -9,7 +9,8 @@ use crate::filters::*;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EmbeddingConfig {
     /// Primary key
-    pub id: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
     /// Embedding provider: openai, cohere, custom
     pub provider: String,
     /// API key for the embedding service
@@ -21,11 +22,14 @@ pub struct EmbeddingConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub endpoint: Option<String>,
     /// Whether this config is active
-    pub is_active: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub is_active: Option<bool>,
     /// Creation timestamp
-    pub created_at: DateTime<Utc>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTime<Utc>>,
     /// Last update timestamp
-    pub updated_at: DateTime<Utc>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<DateTime<Utc>>,
 }
 
 /// Type-safe WHERE filter for EmbeddingConfig queries.
@@ -136,18 +140,28 @@ pub struct EmbeddingConfigFindFirstArgs {
     pub order_by: Option<EmbeddingConfigOrderByInput>,
 }
 
-/// ORM-style args for EmbeddingConfig.find_unique() / count().
+/// ORM-style args for EmbeddingConfig.find_unique() / count() / delete().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct EmbeddingConfigFindUniqueArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<EmbeddingConfigWhereInput>,
 }
 
+/// ORM-style args for EmbeddingConfig.update().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct EmbeddingConfigUpdateArgs {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<EmbeddingConfigWhereInput>,
+    #[serde(default)]
+    pub data: EmbeddingConfigUpdateInput,
+}
+
 /// LLM provider configuration. Stores API keys and model settings for AI features.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LlmConfig {
     /// Primary key
-    pub id: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
     /// LLM provider: openai, gemini, custom, azure
     pub provider: String,
     /// API key for the LLM provider
@@ -159,11 +173,14 @@ pub struct LlmConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub endpoint: Option<String>,
     /// Whether this config is active
-    pub is_active: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub is_active: Option<bool>,
     /// Creation timestamp
-    pub created_at: DateTime<Utc>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTime<Utc>>,
     /// Last update timestamp
-    pub updated_at: DateTime<Utc>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<DateTime<Utc>>,
 }
 
 /// Type-safe WHERE filter for LlmConfig queries.
@@ -274,25 +291,36 @@ pub struct LlmConfigFindFirstArgs {
     pub order_by: Option<LlmConfigOrderByInput>,
 }
 
-/// ORM-style args for LlmConfig.find_unique() / count().
+/// ORM-style args for LlmConfig.find_unique() / count() / delete().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct LlmConfigFindUniqueArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<LlmConfigWhereInput>,
 }
 
+/// ORM-style args for LlmConfig.update().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct LlmConfigUpdateArgs {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<LlmConfigWhereInput>,
+    #[serde(default)]
+    pub data: LlmConfigUpdateInput,
+}
+
 /// Represents a registered user in the database.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
     /// Primary key for the User table (auto-generated UUID)
-    pub id: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
     /// Unique email address used for login and notifications
     pub email: String,
     /// Display name of the user
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// Timestamp when the user profile was created
-    pub created_at: DateTime<Utc>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTime<Utc>>,
 }
 
 /// Type-safe WHERE filter for User queries.
@@ -372,24 +400,36 @@ pub struct UserFindFirstArgs {
     pub order_by: Option<UserOrderByInput>,
 }
 
-/// ORM-style args for User.find_unique() / count().
+/// ORM-style args for User.find_unique() / count() / delete().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct UserFindUniqueArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<UserWhereInput>,
 }
 
+/// ORM-style args for User.update().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct UserUpdateArgs {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<UserWhereInput>,
+    #[serde(default)]
+    pub data: UserUpdateInput,
+}
+
 /// Represents a customer order in the system.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Order {
     /// Primary key for the Order table (auto-generated UUID)
-    pub id: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
     /// Foreign key linking to the User model who placed the order
     pub user_id: String,
     /// Total cost amount of the order
-    pub total: i64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub total: Option<i64>,
     /// The date and time when the order was created.
-    pub created_at: DateTime<Utc>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTime<Utc>>,
 }
 
 /// Type-safe WHERE filter for Order queries.
@@ -469,10 +509,19 @@ pub struct OrderFindFirstArgs {
     pub order_by: Option<OrderOrderByInput>,
 }
 
-/// ORM-style args for Order.find_unique() / count().
+/// ORM-style args for Order.find_unique() / count() / delete().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OrderFindUniqueArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<OrderWhereInput>,
+}
+
+/// ORM-style args for Order.update().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct OrderUpdateArgs {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<OrderWhereInput>,
+    #[serde(default)]
+    pub data: OrderUpdateInput,
 }
 

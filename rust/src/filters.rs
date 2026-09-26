@@ -68,6 +68,69 @@ impl Dialect {
     }
 }
 
+/// A typed bind parameter produced by the query builders.
+///
+/// Values keep their Rust type so drivers can bind them natively (a Bool
+/// must not become the string "true" when the column is an integer).
+#[derive(Debug, Clone, PartialEq)]
+pub enum BindValue {
+    Text(String),
+    Int(i64),
+    Float(f64),
+    Bool(bool),
+    /// RFC 3339 timestamp.
+    DateTime(String),
+}
+
+impl BindValue {
+    /// Textual rendering, useful for logging or drivers that take strings.
+    pub fn as_str(&self) -> String {
+        match self {
+            BindValue::Text(v) => v.clone(),
+            BindValue::Int(v) => v.to_string(),
+            BindValue::Float(v) => v.to_string(),
+            BindValue::Bool(v) => v.to_string(),
+            BindValue::DateTime(v) => v.clone(),
+        }
+    }
+}
+
+impl std::fmt::Display for BindValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.as_str())
+    }
+}
+
+impl From<&str> for BindValue {
+    fn from(v: &str) -> Self {
+        BindValue::Text(v.to_string())
+    }
+}
+
+impl From<String> for BindValue {
+    fn from(v: String) -> Self {
+        BindValue::Text(v)
+    }
+}
+
+impl From<i64> for BindValue {
+    fn from(v: i64) -> Self {
+        BindValue::Int(v)
+    }
+}
+
+impl From<f64> for BindValue {
+    fn from(v: f64) -> Self {
+        BindValue::Float(v)
+    }
+}
+
+impl From<bool> for BindValue {
+    fn from(v: bool) -> Self {
+        BindValue::Bool(v)
+    }
+}
+
 /// Type-safe filter for string fields.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct StringFilter {
@@ -167,50 +230,50 @@ pub(crate) fn push_string_filter(
     col: &str,
     f: &StringFilter,
     dialect: Dialect,
-    args: &mut Vec<String>,
+    args: &mut Vec<BindValue>,
     parts: &mut Vec<String>,
 ) {
-    let ph = |args: &Vec<String>| dialect.placeholder(args.len() + 1);
+    let ph = |args: &Vec<BindValue>| dialect.placeholder(args.len() + 1);
     if let Some(v) = &f.equals {
-        args.push(v.clone());
+        args.push(BindValue::Text(v.clone()));
         parts.push(format!("{} = {}", col, ph(args)));
     }
     if let Some(v) = &f.not {
-        args.push(v.clone());
+        args.push(BindValue::Text(v.clone()));
         parts.push(format!("{} <> {}", col, ph(args)));
     }
     if let Some(v) = &f.contains {
-        args.push(format!("%{}%", v));
+        args.push(BindValue::Text(format!("%{}%", v)));
         parts.push(format!("{} LIKE {}", col, ph(args)));
     }
     if let Some(v) = &f.starts_with {
-        args.push(format!("{}%", v));
+        args.push(BindValue::Text(format!("{}%", v)));
         parts.push(format!("{} LIKE {}", col, ph(args)));
     }
     if let Some(v) = &f.ends_with {
-        args.push(format!("%{}", v));
+        args.push(BindValue::Text(format!("%{}", v)));
         parts.push(format!("{} LIKE {}", col, ph(args)));
     }
     if let Some(v) = &f.gt {
-        args.push(v.clone());
+        args.push(BindValue::Text(v.clone()));
         parts.push(format!("{} > {}", col, ph(args)));
     }
     if let Some(v) = &f.gte {
-        args.push(v.clone());
+        args.push(BindValue::Text(v.clone()));
         parts.push(format!("{} >= {}", col, ph(args)));
     }
     if let Some(v) = &f.lt {
-        args.push(v.clone());
+        args.push(BindValue::Text(v.clone()));
         parts.push(format!("{} < {}", col, ph(args)));
     }
     if let Some(v) = &f.lte {
-        args.push(v.clone());
+        args.push(BindValue::Text(v.clone()));
         parts.push(format!("{} <= {}", col, ph(args)));
     }
     if !f.in_list.is_empty() {
         let mut phs = Vec::new();
         for v in &f.in_list {
-            args.push(v.clone());
+            args.push(BindValue::Text(v.clone()));
             phs.push(ph(args));
         }
         parts.push(format!("{} IN ({})", col, phs.join(", ")));
@@ -218,7 +281,7 @@ pub(crate) fn push_string_filter(
     if !f.not_in.is_empty() {
         let mut phs = Vec::new();
         for v in &f.not_in {
-            args.push(v.clone());
+            args.push(BindValue::Text(v.clone()));
             phs.push(ph(args));
         }
         parts.push(format!("{} NOT IN ({})", col, phs.join(", ")));
@@ -229,38 +292,38 @@ pub(crate) fn push_int_filter(
     col: &str,
     f: &IntFilter,
     dialect: Dialect,
-    args: &mut Vec<String>,
+    args: &mut Vec<BindValue>,
     parts: &mut Vec<String>,
 ) {
-    let ph = |args: &Vec<String>| dialect.placeholder(args.len() + 1);
+    let ph = |args: &Vec<BindValue>| dialect.placeholder(args.len() + 1);
     if let Some(v) = f.equals {
-        args.push(v.to_string());
+        args.push(BindValue::Int(v));
         parts.push(format!("{} = {}", col, ph(args)));
     }
     if let Some(v) = f.not {
-        args.push(v.to_string());
+        args.push(BindValue::Int(v));
         parts.push(format!("{} <> {}", col, ph(args)));
     }
     if let Some(v) = f.gt {
-        args.push(v.to_string());
+        args.push(BindValue::Int(v));
         parts.push(format!("{} > {}", col, ph(args)));
     }
     if let Some(v) = f.gte {
-        args.push(v.to_string());
+        args.push(BindValue::Int(v));
         parts.push(format!("{} >= {}", col, ph(args)));
     }
     if let Some(v) = f.lt {
-        args.push(v.to_string());
+        args.push(BindValue::Int(v));
         parts.push(format!("{} < {}", col, ph(args)));
     }
     if let Some(v) = f.lte {
-        args.push(v.to_string());
+        args.push(BindValue::Int(v));
         parts.push(format!("{} <= {}", col, ph(args)));
     }
     if !f.in_list.is_empty() {
         let mut phs = Vec::new();
         for v in &f.in_list {
-            args.push(v.to_string());
+            args.push(BindValue::Int(*v));
             phs.push(ph(args));
         }
         parts.push(format!("{} IN ({})", col, phs.join(", ")));
@@ -271,33 +334,41 @@ pub(crate) fn push_number_filter(
     col: &str,
     f: &NumberFilter,
     dialect: Dialect,
-    args: &mut Vec<String>,
+    args: &mut Vec<BindValue>,
     parts: &mut Vec<String>,
 ) {
-    let ph = |args: &Vec<String>| dialect.placeholder(args.len() + 1);
+    let ph = |args: &Vec<BindValue>| dialect.placeholder(args.len() + 1);
     if let Some(v) = f.equals {
-        args.push(v.to_string());
+        args.push(BindValue::Float(v));
         parts.push(format!("{} = {}", col, ph(args)));
     }
     if let Some(v) = f.not {
-        args.push(v.to_string());
+        args.push(BindValue::Float(v));
         parts.push(format!("{} <> {}", col, ph(args)));
     }
     if let Some(v) = f.gt {
-        args.push(v.to_string());
+        args.push(BindValue::Float(v));
         parts.push(format!("{} > {}", col, ph(args)));
     }
     if let Some(v) = f.gte {
-        args.push(v.to_string());
+        args.push(BindValue::Float(v));
         parts.push(format!("{} >= {}", col, ph(args)));
     }
     if let Some(v) = f.lt {
-        args.push(v.to_string());
+        args.push(BindValue::Float(v));
         parts.push(format!("{} < {}", col, ph(args)));
     }
     if let Some(v) = f.lte {
-        args.push(v.to_string());
+        args.push(BindValue::Float(v));
         parts.push(format!("{} <= {}", col, ph(args)));
+    }
+    if !f.in_list.is_empty() {
+        let mut phs = Vec::new();
+        for v in &f.in_list {
+            args.push(BindValue::Float(*v));
+            phs.push(ph(args));
+        }
+        parts.push(format!("{} IN ({})", col, phs.join(", ")));
     }
 }
 
@@ -305,32 +376,32 @@ pub(crate) fn push_datetime_filter(
     col: &str,
     f: &DateTimeFilter,
     dialect: Dialect,
-    args: &mut Vec<String>,
+    args: &mut Vec<BindValue>,
     parts: &mut Vec<String>,
 ) {
-    let ph = |args: &Vec<String>| dialect.placeholder(args.len() + 1);
+    let ph = |args: &Vec<BindValue>| dialect.placeholder(args.len() + 1);
     if let Some(v) = &f.equals {
-        args.push(v.to_rfc3339());
+        args.push(BindValue::DateTime(v.to_rfc3339()));
         parts.push(format!("{} = {}", col, ph(args)));
     }
     if let Some(v) = &f.not {
-        args.push(v.to_rfc3339());
+        args.push(BindValue::DateTime(v.to_rfc3339()));
         parts.push(format!("{} <> {}", col, ph(args)));
     }
     if let Some(v) = &f.gt {
-        args.push(v.to_rfc3339());
+        args.push(BindValue::DateTime(v.to_rfc3339()));
         parts.push(format!("{} > {}", col, ph(args)));
     }
     if let Some(v) = &f.gte {
-        args.push(v.to_rfc3339());
+        args.push(BindValue::DateTime(v.to_rfc3339()));
         parts.push(format!("{} >= {}", col, ph(args)));
     }
     if let Some(v) = &f.lt {
-        args.push(v.to_rfc3339());
+        args.push(BindValue::DateTime(v.to_rfc3339()));
         parts.push(format!("{} < {}", col, ph(args)));
     }
     if let Some(v) = &f.lte {
-        args.push(v.to_rfc3339());
+        args.push(BindValue::DateTime(v.to_rfc3339()));
         parts.push(format!("{} <= {}", col, ph(args)));
     }
 }
