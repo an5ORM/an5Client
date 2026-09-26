@@ -14,7 +14,11 @@ assert.ok(fs.existsSync(metadata), 'Expected generated metadata runtime file');
 assert.ok(fs.existsSync(path.join(root, 'python', 'an5_client.py')), 'Expected generated Python client');
 assert.ok(fs.existsSync(path.join(root, 'dotnet', 'An5DbContext.cs')), 'Expected generated .NET client');
 assert.ok(fs.existsSync(path.join(root, 'golang', 'client.go')), 'Expected generated Go client');
+assert.ok(fs.existsSync(path.join(root, 'rust', 'Cargo.toml')), 'Expected generated Rust crate');
+assert.ok(fs.existsSync(path.join(root, 'rust', 'src', 'lib.rs')), 'Expected generated Rust lib.rs');
+assert.ok(fs.existsSync(path.join(root, 'rust', 'src', 'models.rs')), 'Expected generated Rust models.rs');
 assert.ok(fs.existsSync(path.join(root, 'test', 'dotnet-compile-check.js')), 'Expected .NET compile check script');
+assert.ok(fs.existsSync(path.join(root, 'test', 'rust-compile-check.js')), 'Expected Rust compile check script');
 assert.ok(fs.existsSync(path.join(root, 'test', 'package-smoke.js')), 'Expected package smoke test script');
 
 const client = require(entry);
@@ -34,11 +38,14 @@ assert.ok(meta.modelToTable, 'Expected modelToTable metadata export');
 assert.ok(meta.modelFields, 'Expected modelFields metadata export');
 
 assert.strictEqual(pkg.exports['./golang'], './golang', 'Expected Go subpath export');
+assert.strictEqual(pkg.exports['./rust'], './rust/Cargo.toml', 'Expected Rust subpath export');
 assert.ok(pkg.files.includes('golang/**/*'), 'Expected Go files to be packaged');
+assert.ok(pkg.files.includes('rust/**/*'), 'Expected Rust files to be packaged');
 assert.strictEqual(pkg.scripts.test, 'npm run build && node test/smoke.test.js', 'Expected smoke test to build first');
 assert.strictEqual(pkg.scripts['test:package:smoke'], 'node test/package-smoke.js', 'Expected package smoke test script');
 assert.strictEqual(pkg.scripts['test:dotnet'], 'node test/dotnet-compile-check.js', 'Expected .NET compile test script');
 assert.strictEqual(pkg.scripts['test:go'], 'cd golang && go test ./...', 'Expected Go compile test script');
+assert.strictEqual(pkg.scripts['test:rust'], 'node test/rust-compile-check.js', 'Expected Rust compile test script');
 
 const dotnetDbContext = fs.readFileSync(path.join(root, 'dotnet', 'An5DbContext.cs'), 'utf8');
 const dotnetTypes = fs.readFileSync(path.join(root, 'dotnet', 'An5OrmTypes.cs'), 'utf8');
@@ -51,5 +58,15 @@ assert.ok(dotnetTypes.includes('public new string Equals { get; set; }'), 'Expec
 const goClient = fs.readFileSync(path.join(root, 'golang', 'client.go'), 'utf8');
 assert.ok(goClient.includes('direction := strings.ToUpper(fv.Elem().String())'), 'Expected safe Go SortOrder reflection');
 assert.ok(!goClient.includes('fv.Pointer()'), 'Go generated client must not convert reflect pointer to SortOrder');
+
+const rustLib = fs.readFileSync(path.join(root, 'rust', 'src', 'lib.rs'), 'utf8');
+assert.ok(rustLib.includes('pub mod models'), 'Expected Rust lib.rs to export models module');
+assert.ok(rustLib.includes('pub mod client'), 'Expected Rust lib.rs to export client module');
+const rustModels = fs.readFileSync(path.join(root, 'rust', 'src', 'models.rs'), 'utf8');
+assert.ok(rustModels.includes('pub struct User'), 'Expected Rust models.rs to contain User struct');
+assert.ok(rustModels.includes('UserWhereInput'), 'Expected Rust models.rs to contain WhereInput types');
+const rustClient = fs.readFileSync(path.join(root, 'rust', 'src', 'client.rs'), 'utf8');
+assert.ok(rustClient.includes('pub struct An5Client'), 'Expected Rust client.rs to contain An5Client');
+assert.ok(rustClient.includes('find_many_'), 'Expected Rust client.rs to contain find_many builders');
 
 console.log('an5Client smoke test passed');

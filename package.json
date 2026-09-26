@@ -1,7 +1,7 @@
 {
   "name": "an5-client",
   "version": "0.1.0",
-  "description": "Generated client artifacts for AN5 ORM - TypeScript types, Python models, .NET entities, and Go structs.",
+  "description": "Generated client artifacts for AN5 ORM - TypeScript types, Python models, .NET entities, Go structs, and Rust crate.",
   "license": "MIT",
   "main": "typescript/index.js",
   "types": "typescript/index.d.ts",
@@ -11,7 +11,8 @@
     "./typescript/*": "./typescript/*",
     "./python": "./python/an5_metadata.py",
     "./dotnet": "./dotnet",
-    "./golang": "./golang"
+    "./golang": "./golang",
+    "./rust": "./rust/Cargo.toml"
   },
   "author": "an5ORM",
   "homepage": "https://github.com/an5ORM/an5",
@@ -19,12 +20,13 @@
     "type": "git",
     "url": "https://github.com/an5ORM/an5Client.git"
   },
-  "keywords": ["an5", "client", "orm", "typescript", "python", "dotnet", "go", "golang"],
+  "keywords": ["an5", "client", "orm", "typescript", "python", "dotnet", "go", "golang", "rust"],
   "files": [
     "typescript/*.{ts,js,d.ts}",
     "python/**/*.py",
     "dotnet/**/*",
     "golang/**/*",
+    "rust/**/*",
     "README.md"
   ],
   "scripts": {
@@ -33,7 +35,8 @@
     "test:package:smoke": "node test/package-smoke.js",
     "test:python": "(python -m compileall python 2>&1 || python3 -m compileall python 2>&1)",
     "test:dotnet": "node test/dotnet-compile-check.js",
-    "test:go": "cd golang && go test ./..."
+    "test:go": "cd golang && go test ./...",
+    "test:rust": "node test/rust-compile-check.js"
   },
   "dependencies": {
     "@an5/orm": "^1.0.8"
