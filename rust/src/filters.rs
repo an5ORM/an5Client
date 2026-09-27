@@ -133,6 +133,7 @@ impl From<bool> for BindValue {
 
 /// Type-safe filter for string fields.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct StringFilter {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub equals: Option<String>,
@@ -160,6 +161,7 @@ pub struct StringFilter {
 
 /// Type-safe filter for integer fields.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct IntFilter {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub equals: Option<i64>,
@@ -181,6 +183,7 @@ pub struct IntFilter {
 
 /// Type-safe filter for float / decimal fields.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct NumberFilter {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub equals: Option<f64>,
@@ -200,15 +203,66 @@ pub struct NumberFilter {
     pub not_in: Vec<f64>,
 }
 
+/// Deserializes a boolean that some engines store as 0/1 or "0"/"1"
+/// (SQLite, MySQL TINYINT, MSSQL BIT via JSON).
+pub fn deserialize_bool_flexible<'de, D>(deserializer: D) -> Result<bool, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    match serde_json::Value::deserialize(deserializer)? {
+        serde_json::Value::Bool(b) => Ok(b),
+        serde_json::Value::Number(n) => Ok(n.as_i64().unwrap_or(0) != 0),
+        serde_json::Value::String(s) => match s.trim().to_ascii_lowercase().as_str() {
+            "1" | "true" | "t" | "yes" | "y" => Ok(true),
+            "0" | "false" | "f" | "no" | "n" | "" => Ok(false),
+            _ => Err(serde::de::Error::custom(format!("cannot parse {s:?} as a boolean"))),
+        },
+        _ => Err(serde::de::Error::custom("expected a boolean value")),
+    }
+}
+
+/// Optional variant of deserialize_bool_flexible.
+pub fn deserialize_option_bool_flexible<'de, D>(deserializer: D) -> Result<Option<bool>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    match serde_json::Value::deserialize(deserializer)? {
+        serde_json::Value::Null => Ok(None),
+        other => {
+            let as_bool = match other {
+                serde_json::Value::Bool(b) => b,
+                serde_json::Value::Number(n) => n.as_i64().unwrap_or(0) != 0,
+                serde_json::Value::String(s) => match s.trim().to_ascii_lowercase().as_str() {
+                    "1" | "true" | "t" | "yes" | "y" => true,
+                    "0" | "false" | "f" | "no" | "n" | "" => false,
+                    _ => {
+                        return Err(serde::de::Error::custom(format!(
+                            "cannot parse {s:?} as a boolean"
+                        )))
+                    }
+                },
+                _ => return Err(serde::de::Error::custom("expected a boolean value")),
+            };
+            Ok(Some(as_bool))
+        }
+    }
+}
+
 /// Type-safe filter for boolean fields.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BoolFilter {
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_bool_flexible",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub equals: Option<bool>,
 }
 
 /// Type-safe filter for datetime fields.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct DateTimeFilter {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub equals: Option<DateTime<Utc>>,
@@ -226,184 +280,8 @@ pub struct DateTimeFilter {
 
 // ─── SQL fragment builders (shared) ─────────────────────────────────────────
 
-pub(crate) fn push_string_filter(
-    col: &str,
-    f: &StringFilter,
-    dialect: Dialect,
-    args: &mut Vec<BindValue>,
-    parts: &mut Vec<String>,
-) {
-    let ph = |args: &Vec<BindValue>| dialect.placeholder(args.len() + 1);
-    if let Some(v) = &f.equals {
-        args.push(BindValue::Text(v.clone()));
-        parts.push(format!("{} = {}", col, ph(args)));
-    }
-    if let Some(v) = &f.not {
-        args.push(BindValue::Text(v.clone()));
-        parts.push(format!("{} <> {}", col, ph(args)));
-    }
-    if let Some(v) = &f.contains {
-        args.push(BindValue::Text(format!("%{}%", v)));
-        parts.push(format!("{} LIKE {}", col, ph(args)));
-    }
-    if let Some(v) = &f.starts_with {
-        args.push(BindValue::Text(format!("{}%", v)));
-        parts.push(format!("{} LIKE {}", col, ph(args)));
-    }
-    if let Some(v) = &f.ends_with {
-        args.push(BindValue::Text(format!("%{}", v)));
-        parts.push(format!("{} LIKE {}", col, ph(args)));
-    }
-    if let Some(v) = &f.gt {
-        args.push(BindValue::Text(v.clone()));
-        parts.push(format!("{} > {}", col, ph(args)));
-    }
-    if let Some(v) = &f.gte {
-        args.push(BindValue::Text(v.clone()));
-        parts.push(format!("{} >= {}", col, ph(args)));
-    }
-    if let Some(v) = &f.lt {
-        args.push(BindValue::Text(v.clone()));
-        parts.push(format!("{} < {}", col, ph(args)));
-    }
-    if let Some(v) = &f.lte {
-        args.push(BindValue::Text(v.clone()));
-        parts.push(format!("{} <= {}", col, ph(args)));
-    }
-    if !f.in_list.is_empty() {
-        let mut phs = Vec::new();
-        for v in &f.in_list {
-            args.push(BindValue::Text(v.clone()));
-            phs.push(ph(args));
-        }
-        parts.push(format!("{} IN ({})", col, phs.join(", ")));
-    }
-    if !f.not_in.is_empty() {
-        let mut phs = Vec::new();
-        for v in &f.not_in {
-            args.push(BindValue::Text(v.clone()));
-            phs.push(ph(args));
-        }
-        parts.push(format!("{} NOT IN ({})", col, phs.join(", ")));
-    }
-}
 
-pub(crate) fn push_int_filter(
-    col: &str,
-    f: &IntFilter,
-    dialect: Dialect,
-    args: &mut Vec<BindValue>,
-    parts: &mut Vec<String>,
-) {
-    let ph = |args: &Vec<BindValue>| dialect.placeholder(args.len() + 1);
-    if let Some(v) = f.equals {
-        args.push(BindValue::Int(v));
-        parts.push(format!("{} = {}", col, ph(args)));
-    }
-    if let Some(v) = f.not {
-        args.push(BindValue::Int(v));
-        parts.push(format!("{} <> {}", col, ph(args)));
-    }
-    if let Some(v) = f.gt {
-        args.push(BindValue::Int(v));
-        parts.push(format!("{} > {}", col, ph(args)));
-    }
-    if let Some(v) = f.gte {
-        args.push(BindValue::Int(v));
-        parts.push(format!("{} >= {}", col, ph(args)));
-    }
-    if let Some(v) = f.lt {
-        args.push(BindValue::Int(v));
-        parts.push(format!("{} < {}", col, ph(args)));
-    }
-    if let Some(v) = f.lte {
-        args.push(BindValue::Int(v));
-        parts.push(format!("{} <= {}", col, ph(args)));
-    }
-    if !f.in_list.is_empty() {
-        let mut phs = Vec::new();
-        for v in &f.in_list {
-            args.push(BindValue::Int(*v));
-            phs.push(ph(args));
-        }
-        parts.push(format!("{} IN ({})", col, phs.join(", ")));
-    }
-}
 
-pub(crate) fn push_number_filter(
-    col: &str,
-    f: &NumberFilter,
-    dialect: Dialect,
-    args: &mut Vec<BindValue>,
-    parts: &mut Vec<String>,
-) {
-    let ph = |args: &Vec<BindValue>| dialect.placeholder(args.len() + 1);
-    if let Some(v) = f.equals {
-        args.push(BindValue::Float(v));
-        parts.push(format!("{} = {}", col, ph(args)));
-    }
-    if let Some(v) = f.not {
-        args.push(BindValue::Float(v));
-        parts.push(format!("{} <> {}", col, ph(args)));
-    }
-    if let Some(v) = f.gt {
-        args.push(BindValue::Float(v));
-        parts.push(format!("{} > {}", col, ph(args)));
-    }
-    if let Some(v) = f.gte {
-        args.push(BindValue::Float(v));
-        parts.push(format!("{} >= {}", col, ph(args)));
-    }
-    if let Some(v) = f.lt {
-        args.push(BindValue::Float(v));
-        parts.push(format!("{} < {}", col, ph(args)));
-    }
-    if let Some(v) = f.lte {
-        args.push(BindValue::Float(v));
-        parts.push(format!("{} <= {}", col, ph(args)));
-    }
-    if !f.in_list.is_empty() {
-        let mut phs = Vec::new();
-        for v in &f.in_list {
-            args.push(BindValue::Float(*v));
-            phs.push(ph(args));
-        }
-        parts.push(format!("{} IN ({})", col, phs.join(", ")));
-    }
-}
 
-pub(crate) fn push_datetime_filter(
-    col: &str,
-    f: &DateTimeFilter,
-    dialect: Dialect,
-    args: &mut Vec<BindValue>,
-    parts: &mut Vec<String>,
-) {
-    let ph = |args: &Vec<BindValue>| dialect.placeholder(args.len() + 1);
-    if let Some(v) = &f.equals {
-        args.push(BindValue::DateTime(v.to_rfc3339()));
-        parts.push(format!("{} = {}", col, ph(args)));
-    }
-    if let Some(v) = &f.not {
-        args.push(BindValue::DateTime(v.to_rfc3339()));
-        parts.push(format!("{} <> {}", col, ph(args)));
-    }
-    if let Some(v) = &f.gt {
-        args.push(BindValue::DateTime(v.to_rfc3339()));
-        parts.push(format!("{} > {}", col, ph(args)));
-    }
-    if let Some(v) = &f.gte {
-        args.push(BindValue::DateTime(v.to_rfc3339()));
-        parts.push(format!("{} >= {}", col, ph(args)));
-    }
-    if let Some(v) = &f.lt {
-        args.push(BindValue::DateTime(v.to_rfc3339()));
-        parts.push(format!("{} < {}", col, ph(args)));
-    }
-    if let Some(v) = &f.lte {
-        args.push(BindValue::DateTime(v.to_rfc3339()));
-        parts.push(format!("{} <= {}", col, ph(args)));
-    }
-}
 
 

@@ -8,7 +8,7 @@ use an5_adapters::{
 use serde::de::DeserializeOwned;
 
 use crate::filters::*;
-use crate::metadata::{model_primary_key, model_to_table, model_to_table_map};
+use crate::metadata::{model_fields_map, model_primary_key, model_to_table, model_to_table_map};
 use crate::models::*;
 
 /// Error type shared with the adapter runtime.
@@ -59,8 +59,13 @@ impl An5Client {
         for (alias, table) in model_to_table_map() {
             map.insert(alias.to_string(), table.to_string());
         }
+        let mut fields = std::collections::HashMap::new();
+        for (alias, field_meta) in model_fields_map() {
+            fields.insert(alias.to_string(), field_meta);
+        }
         adapter.set_metadata(AdapterMetadata {
             model_to_table: map,
+            model_fields: fields,
             ..Default::default()
         });
         Self { adapter }

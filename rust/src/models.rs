@@ -22,7 +22,7 @@ pub struct EmbeddingConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub endpoint: Option<String>,
     /// Whether this config is active
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, deserialize_with = "deserialize_option_bool_flexible", skip_serializing_if = "Option::is_none")]
     pub is_active: Option<bool>,
     /// Creation timestamp
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -35,11 +35,11 @@ pub struct EmbeddingConfig {
 /// Type-safe WHERE filter for EmbeddingConfig queries.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct EmbeddingConfigWhereInput {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "AND", skip_serializing_if = "Option::is_none")]
     pub and: Option<Vec<EmbeddingConfigWhereInput>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "OR", skip_serializing_if = "Option::is_none")]
     pub or: Option<Vec<EmbeddingConfigWhereInput>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "NOT", skip_serializing_if = "Option::is_none")]
     pub not: Option<Box<EmbeddingConfigWhereInput>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<StringFilter>,
@@ -173,7 +173,7 @@ pub struct LlmConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub endpoint: Option<String>,
     /// Whether this config is active
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, deserialize_with = "deserialize_option_bool_flexible", skip_serializing_if = "Option::is_none")]
     pub is_active: Option<bool>,
     /// Creation timestamp
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -186,11 +186,11 @@ pub struct LlmConfig {
 /// Type-safe WHERE filter for LlmConfig queries.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct LlmConfigWhereInput {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "AND", skip_serializing_if = "Option::is_none")]
     pub and: Option<Vec<LlmConfigWhereInput>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "OR", skip_serializing_if = "Option::is_none")]
     pub or: Option<Vec<LlmConfigWhereInput>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "NOT", skip_serializing_if = "Option::is_none")]
     pub not: Option<Box<LlmConfigWhereInput>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<StringFilter>,
@@ -326,11 +326,11 @@ pub struct User {
 /// Type-safe WHERE filter for User queries.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct UserWhereInput {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "AND", skip_serializing_if = "Option::is_none")]
     pub and: Option<Vec<UserWhereInput>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "OR", skip_serializing_if = "Option::is_none")]
     pub or: Option<Vec<UserWhereInput>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "NOT", skip_serializing_if = "Option::is_none")]
     pub not: Option<Box<UserWhereInput>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<StringFilter>,
@@ -435,11 +435,11 @@ pub struct Order {
 /// Type-safe WHERE filter for Order queries.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OrderWhereInput {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "AND", skip_serializing_if = "Option::is_none")]
     pub and: Option<Vec<OrderWhereInput>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "OR", skip_serializing_if = "Option::is_none")]
     pub or: Option<Vec<OrderWhereInput>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "NOT", skip_serializing_if = "Option::is_none")]
     pub not: Option<Box<OrderWhereInput>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<StringFilter>,
