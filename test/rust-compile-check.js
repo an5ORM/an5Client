@@ -19,7 +19,13 @@ const path = require('path');
 
 const root = path.join(__dirname, '..');
 const rustDir = path.join(root, 'rust');
-const adapterDir = path.resolve(root, '..', 'an5Adapters', 'rust');
+// Look for the adapter checkout beside this repo, then one level further up,
+// so the check works in the monorepo and in a nested workspace layout.
+const adapterCandidates = [
+  path.resolve(root, '..', 'an5Adapters', 'rust'),
+  path.resolve(root, '..', '..', 'an5Adapters', 'rust'),
+];
+const adapterDir = adapterCandidates.find((dir) => fs.existsSync(path.join(dir, 'Cargo.toml')));
 
 function haveCargo() {
   try {
@@ -62,7 +68,7 @@ if (!haveCargo()) {
   console.log('rust-compile-check: cargo not installed, skipping');
   process.exit(0);
 }
-if (!fs.existsSync(path.join(adapterDir, 'Cargo.toml'))) {
+if (!adapterDir) {
   console.log('rust-compile-check: an5Adapters/rust not available, structural check only');
   structuralCheck();
   process.exit(0);
