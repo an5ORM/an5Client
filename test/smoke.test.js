@@ -44,7 +44,14 @@ assert.ok(pkg.files.includes('rust/Cargo.toml'), 'Expected Rust manifest to be p
 assert.ok(pkg.files.includes('rust/src/**/*'), 'Expected Rust sources to be packaged');
 assert.strictEqual(pkg.scripts.test, 'npm run build && node test/smoke.test.js', 'Expected smoke test to build first');
 assert.strictEqual(pkg.scripts['test:package:smoke'], 'node test/package-smoke.js', 'Expected package smoke test script');
-assert.strictEqual(pkg.scripts['test:dotnet'], 'node test/dotnet-compile-check.js', 'Expected .NET compile test script');
+// The gate must build the generated sources and run them, or a client that
+// compiles but queries wrongly would still pass.
+assert.ok(
+  pkg.scripts['test:dotnet'].includes('dotnet-compile-check.js') &&
+    pkg.scripts['test:dotnet'].includes('dotnet-sqlite-smoke.js'),
+  'Expected .NET compile check and SQLite smoke test'
+);
+assert.ok(fs.existsSync(path.join(root, 'test', 'dotnet-sqlite-smoke.js')), 'Expected .NET SQLite smoke script');
 assert.strictEqual(pkg.scripts['test:go'], 'cd golang && go test ./...', 'Expected Go compile test script');
 assert.strictEqual(pkg.scripts['test:rust'], 'node test/rust-compile-check.js', 'Expected Rust compile test script');
 
@@ -52,7 +59,12 @@ const dotnetDbContext = fs.readFileSync(path.join(root, 'dotnet', 'An5DbContext.
 const dotnetTypes = fs.readFileSync(path.join(root, 'dotnet', 'An5OrmTypes.cs'), 'utf8');
 assert.ok(dotnetDbContext.includes('using System.Text.Json;'), 'Expected .NET client to import System.Text.Json');
 assert.ok(dotnetDbContext.includes('public List<T> QueryRaw('), 'Expected .NET TableClient raw query helper');
-assert.ok(dotnetDbContext.includes('using Microsoft.Data.SqlClient;'), 'Expected .NET client to use Microsoft.Data.SqlClient');
+// The generated client picks its provider from the connection string rather
+// than importing one set of types, so all three have to be reachable.
+assert.ok(dotnetDbContext.includes('Microsoft.Data.SqlClient.SqlConnection'), 'Expected .NET client to reach the SQL Server provider');
+assert.ok(dotnetDbContext.includes('Npgsql.NpgsqlConnection'), 'Expected .NET client to reach the Postgres provider');
+assert.ok(dotnetDbContext.includes('Microsoft.Data.Sqlite.SqliteConnection'), 'Expected .NET client to reach the SQLite provider');
+assert.ok(!dotnetDbContext.includes('using Microsoft.Data.SqlClient;'), 'Expected no direct SqlClient using, the client is dialect-driven');
 assert.ok(!dotnetDbContext.includes('System.Data.SqlClient'), 'Generated .NET client must not use System.Data.SqlClient');
 assert.ok(dotnetTypes.includes('public new string Equals { get; set; }'), 'Expected .NET filters to hide object.Equals explicitly');
 
