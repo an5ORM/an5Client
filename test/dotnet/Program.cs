@@ -6,12 +6,15 @@ using An5Orm;
 
 namespace SmokeTest
 {
-    // Runtime smoke test cho generated .NET client trên SQLite.
+    // Runtime smoke test for the generated .NET client on SQLite.
     //
-    // Chạy qua test/dotnet-sqlite-smoke.js. Điểm cần canh: generator phát tên
-    // bảng dạng "dbo.users" mà SQLite không có schema, nên client phải bóc
-    // prefix đi. Client compile được nhưng quên bước này sẽ trả 0 dòng ở
-    // mọi truy vấn — loại lỗi mà compile check không bắt được.
+    // Run through test/dotnet-sqlite-smoke.js. The thing to watch: the generator
+    // emits table names like "dbo.users" while SQLite has no schemas, so the client
+    // has to strip that prefix. The client compiles fine without it and still
+    // returns 0 rows on every query — the kind of bug a compile check cannot see.
+    //
+    // The NameVi values are deliberately non-ASCII so the round trip through
+    // SQLite is exercised, not just ASCII text.
 
     public class Doc
     {
@@ -87,7 +90,7 @@ namespace SmokeTest
             Check("dialect", ctx.Dialect, An5Dialect.Sqlite);
 
             var users = ctx.Users;
-            Check("dbo. prefix đã bóc", users.TableName, "users");
+            Check("dbo. prefix stripped", users.TableName, "users");
 
             using (var ddl = An5Provider.Open(ctx.ConnectionString, ctx.Dialect))
             using (var cmd = ddl.CreateCommand())
@@ -166,7 +169,7 @@ namespace SmokeTest
             {
                 Console.WriteLine($"  note rollback raised {ex.GetType().Name}");
             }
-            Check("rollback hiệu lực", ctx.Users.Count(), 2);
+            Check("rollback took effect", ctx.Users.Count(), 2);
         }
 
         private static void VectorSearchFallback(string dbPath)
@@ -185,7 +188,7 @@ namespace SmokeTest
             // SQLite has no vector operator, so this must not try
             // VECTOR_DISTANCE and must reach the in-memory path.
             var docs = new TableClient<Doc>(ctx.ConnectionString, "dbo.docs");
-            Check("dbo. prefix bóc ở vector", docs.TableName, "docs");
+            Check("dbo. prefix stripped for vector", docs.TableName, "docs");
             var hits = docs.VectorSearch(new List<double> { 1, 0 }, take: 2);
             Check("hit count", hits.Count, 2);
         }
