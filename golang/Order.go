@@ -9,7 +9,7 @@ import (
 type Order struct {
 	Id string `json:"id" db:"id"`
 	UserId string `json:"userId" db:"user_id"`
-	Total string `json:"total" db:"total"`
+	Total int `json:"total" db:"total"`
 	CreatedAt time.Time `json:"createdAt" db:"created_at"`
 }
 
@@ -22,7 +22,7 @@ type OrderWhereInput struct {
 	NOT *OrderWhereInput
 	Id *StringFilter
 	UserId *StringFilter
-	Total *StringFilter
+	Total *IntFilter
 	CreatedAt *DateTimeFilter
 }
 
@@ -37,14 +37,14 @@ type OrderOrderByInput struct {
 // OrderCreateInput holds data for creating a new Order record.
 type OrderCreateInput struct {
 	UserId string
-	Total *string
+	Total *int
 	CreatedAt *time.Time
 }
 
 // OrderUpdateInput holds data for updating an existing Order record.
 type OrderUpdateInput struct {
 	UserId *string
-	Total *string
+	Total *int
 	CreatedAt *time.Time
 }
 
