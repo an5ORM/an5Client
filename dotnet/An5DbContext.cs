@@ -594,31 +594,44 @@ namespace An5Orm
 
         public List<T> VectorSearch(List<double> vector, int take = 10, string whereClause = null, Dictionary<string, object> parameters = null, string vectorField = "Embedding", string distanceMetric = "cosine")
         {
-            // 1. Primary path: Native database SQL vector query execution (VECTOR_DISTANCE)
+            // 1. Primary path: native vector query. SQL Server has VECTOR_DISTANCE
+            //    and Postgres has pgvector; SQLite has no vector operator, so it is
+            //    skipped outright rather than issuing SQL that can only fail and
+            //    cost a round trip before falling through.
+            if (Dialect != An5Dialect.Sqlite)
             try
             {
                 var dim = vector.Count;
                 var vecJson = JsonSerializer.Serialize(vector);
-                var sql = $"SELECT TOP ({take}) *, VECTOR_DISTANCE('{distanceMetric}', CAST([{vectorField}] AS VECTOR({dim}, float32)), CAST(@query_vector AS VECTOR({dim}, float32))) AS distance FROM {TableName} WITH (NOLOCK)";
-                // Postgres reaches this through pgvector below; SQLite has no
-                // vector operator at all, so it goes straight to the in-memory
-                // path rather than build SQL that can only fail.
+                var field = An5Provider.Quote(vectorField, Dialect);
+                string sql;
+                if (Dialect == An5Dialect.Postgres)
+                {
+                    var op = distanceMetric.Equals("cosine", StringComparison.OrdinalIgnoreCase) ? "<=>"
+                           : (distanceMetric.Equals("euclidean", StringComparison.OrdinalIgnoreCase) ? "<->" : "<#>");
+                    sql = $"SELECT *, ({field} {op} @query_vector::vector) AS distance FROM {TableName}";
+                }
+                else
+                {
+                    sql = $"SELECT TOP ({take}) *, VECTOR_DISTANCE('{distanceMetric}', CAST({field} AS VECTOR({dim}, float32)), CAST(@query_vector AS VECTOR({dim}, float32))) AS distance FROM {TableName} WITH (NOLOCK)";
+                }
 
                 var p = parameters != null ? new Dictionary<string, object>(parameters) : new Dictionary<string, object>();
                 p["query_vector"] = vecJson;
 
                 if (!string.IsNullOrWhiteSpace(whereClause))
-                    sql += $" WHERE [{vectorField}] IS NOT NULL AND ({whereClause})";
+                    sql += $" WHERE {field} IS NOT NULL AND ({whereClause})";
                 else
-                    sql += $" WHERE [{vectorField}] IS NOT NULL";
+                    sql += $" WHERE {field} IS NOT NULL";
                 sql += " ORDER BY distance ASC";
+                if (Dialect == An5Dialect.Postgres) sql += $" LIMIT {take}";
 
                 var nativeRows = QueryRaw(sql, p);
                 if (nativeRows != null) return nativeRows;
             }
             catch
             {
-                // Fallback to in-memory similarity computation if DB instance lacks native VECTOR_DISTANCE
+                // Fallback to in-memory similarity computation if the database has no native vector support
             }
 
             // 2. Secondary fallback: In-memory similarity computation
