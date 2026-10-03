@@ -1,6 +1,6 @@
 {
   "name": "an5-client",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Generated client artifacts for AN5 ORM - TypeScript types, Python models, .NET entities, Go structs, and Rust crate.",
   "license": "MIT",
   "main": "typescript/index.js",

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.3] - 2026-10-03
+
+- Align SQLite query semantics and empty filter branches across generated runtimes.
+
 ## [Unreleased]
 
 ### Fixed
