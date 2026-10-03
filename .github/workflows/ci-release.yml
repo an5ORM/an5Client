@@ -50,7 +50,7 @@ jobs:
         with:
           node-version: '22'
           registry-url: https://registry.npmjs.org
-      - run: npm ci
+      - run: npm install
       - name: Publish npm release if not already present
         run: |
           package_name=$(node -p 'require("./package.json").name')
