@@ -92,7 +92,7 @@ func detectDialect(connStr string) Dialect {
 	if strings.HasPrefix(l, "postgres://") || strings.HasPrefix(l, "postgresql://") || strings.Contains(l, "port=5432") {
 		return DialectPostgres
 	}
-	if strings.HasPrefix(l, "sqlite://") || strings.HasPrefix(l, "sqlite:") || strings.HasPrefix(l, "file:") || strings.HasSuffix(l, ".db") || strings.HasSuffix(l, ".sqlite") || strings.HasSuffix(l, ".sqlite3") || l == ":memory:" {
+	if l == "sqlite" || strings.HasPrefix(l, "sqlite://") || strings.HasPrefix(l, "sqlite:") || strings.HasPrefix(l, "file:") || strings.HasSuffix(l, ".db") || strings.HasSuffix(l, ".sqlite") || strings.HasSuffix(l, ".sqlite3") || l == ":memory:" {
 		return DialectSqlite
 	}
 	return DialectMssql
@@ -171,6 +171,7 @@ func (c *TableClient[T]) quoteName(name string) string {
 // quoteTable quotes a schema.table name for the dialect.
 func (c *TableClient[T]) quoteTable() string {
 	parts := strings.Split(c.TableName, ".")
+	if c.Dialect == DialectSqlite && len(parts) == 2 && strings.EqualFold(parts[0], "dbo") { parts = parts[1:] }
 	quoted := make([]string, len(parts))
 	for i, p := range parts {
 		quoted[i] = c.quoteName(p)
@@ -694,14 +695,14 @@ func (c *TableClient[T]) buildWhereFromStruct(v reflect.Value, argOffset int) (s
 			var subParts []string
 			for j := 0; j < fv.Len(); j++ {
 				sub, subArgs := c.buildWhereFromStruct(fv.Index(j), argOffset+len(args))
-				if sub != "" { subParts = append(subParts, sub); args = append(args, subArgs...) }
+				if sub == "" { sub = "1=1" }; subParts = append(subParts, sub); args = append(args, subArgs...)
 			}
-			if len(subParts) > 0 { parts = append(parts, "("+strings.Join(subParts, " OR ")+")") }
+			if len(subParts) > 0 { parts = append(parts, "("+strings.Join(subParts, " OR ")+")") } else { parts = append(parts, "1=0") }
 			continue
 		}
 		if name == "NOT" && fv.Kind() == reflect.Ptr && !fv.IsNil() {
 			sub, subArgs := c.buildWhereFromStruct(fv.Elem(), argOffset+len(args))
-			if sub != "" { parts = append(parts, "NOT ("+sub+")"); args = append(args, subArgs...) }
+			if sub == "" { sub = "1=1" }; parts = append(parts, "NOT ("+sub+")"); args = append(args, subArgs...)
 			continue
 		}
 

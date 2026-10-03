@@ -52,7 +52,7 @@ assert.ok(
   'Expected .NET compile check and SQLite smoke test'
 );
 assert.ok(fs.existsSync(path.join(root, 'test', 'dotnet-sqlite-smoke.js')), 'Expected .NET SQLite smoke script');
-assert.strictEqual(pkg.scripts['test:go'], 'cd golang && go test ./...', 'Expected Go compile test script');
+assert.strictEqual(pkg.scripts['test:go'], 'cd golang && go test ./... && cd ../test/golang-runtime && go test -mod=mod ./...', 'Expected Go runtime test script');
 assert.strictEqual(pkg.scripts['test:rust'], 'node test/rust-compile-check.js', 'Expected Rust compile test script');
 
 const dotnetDbContext = fs.readFileSync(path.join(root, 'dotnet', 'An5DbContext.cs'), 'utf8');

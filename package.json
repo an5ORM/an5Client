@@ -20,7 +20,17 @@
     "type": "git",
     "url": "https://github.com/an5ORM/an5Client.git"
   },
-  "keywords": ["an5", "client", "orm", "typescript", "python", "dotnet", "go", "golang", "rust"],
+  "keywords": [
+    "an5",
+    "client",
+    "orm",
+    "typescript",
+    "python",
+    "dotnet",
+    "go",
+    "golang",
+    "rust"
+  ],
   "files": [
     "typescript/*.{ts,js,d.ts}",
     "python/**/*.py",
@@ -34,9 +44,9 @@
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node test/smoke.test.js",
     "test:package:smoke": "node test/package-smoke.js",
-    "test:python": "(python -m compileall python 2>&1 || python3 -m compileall python 2>&1)",
+    "test:python": "node test/python-tests.js",
     "test:dotnet": "node test/dotnet-compile-check.js && node test/dotnet-sqlite-smoke.js",
-    "test:go": "cd golang && go test ./...",
+    "test:go": "cd golang && go test ./... && cd ../test/golang-runtime && go test -mod=mod ./...",
     "test:rust": "node test/rust-compile-check.js"
   },
   "dependencies": {

@@ -82,6 +82,8 @@ const patch = `patch.crates-io.an5-adapters.path="${adapterDir}"`;
 try {
   execFileSync('cargo', ['--config', patch, 'check'], { cwd: rustDir, stdio: 'inherit', env });
   console.log('an5Client Rust crate cargo check passed');
+  execFileSync('cargo', ['test', '--manifest-path', path.join(root, 'test', 'rust-runtime', 'Cargo.toml')], { cwd: root, stdio: 'inherit', env });
+  console.log('an5Client Rust SQLite runtime tests passed');
 } catch (err) {
   const msg = String((err && err.message) || err);
   if (/offline|network|failed to download|no matching package|failed to query/i.test(msg)) {
