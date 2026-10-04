@@ -4,6 +4,7 @@ export declare const modelDescriptions: Record<string, string | undefined>;
 export declare const modelFields: Record<string, Record<string, {
     ts: string;
     sql: string;
+    isId?: boolean;
     description?: string;
 }>>;
 export declare const relationMap: Record<string, Record<string, RelationDef>>;

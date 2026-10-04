@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-10-04
+
+### Added
+- Regenerate TypeScript metadata with isId primary-key markers, allowing adapters to use schema IDs instead of field-name guesses.
+
 ## [0.1.3] - 2026-10-03
 
 - Align SQLite query semantics and empty filter branches across generated runtimes.
@@ -47,4 +52,3 @@
 ## [0.1.0] - 2026-07-04
 
 - Initial release
-
