@@ -68,14 +68,17 @@ try {
       `assert.ok(root.An5, 'missing An5 namespace');`,
       `assert.ok(require.resolve('an5-client/typescript/index.js'));`,
       `assert.ok(fs.existsSync(path.join(pkgDir, 'typescript', 'index.d.ts')), 'missing generated declarations');`,
-      `['python/an5_client.py','python/an5_metadata.py','dotnet/An5DbContext.cs','dotnet/An5OrmTypes.cs','golang/client.go','golang/User.go','golang/Order.go','golang/go.mod','rust/Cargo.toml','rust/src/lib.rs','rust/src/models.rs','rust/src/client.rs'].forEach((rel) => {`,
+      `['python/an5_client.py','python/an5_metadata.py','dotnet/An5DbContext.cs','dotnet/An5OrmTypes.cs','golang/client.go','golang/User.go','golang/Order.go','golang/go.mod','rust/Cargo.toml','rust/src/lib.rs','rust/src/models.rs','rust/src/client.rs','java/An5DbContext.java','java/ModelClient.java','java/An5OrmTypes.java','java/An5Metadata.java','java/User.java','kotlin/An5Db.kt','kotlin/An5OrmTypes.kt','kotlin/An5Metadata.kt','kotlin/User.kt','swift/Package.swift','swift/Sources/An5Client/An5Db.swift','swift/Sources/An5Client/An5OrmTypes.swift','swift/Sources/An5Client/An5Metadata.swift','swift/Sources/An5Client/User.swift'].forEach((rel) => {`,
       `  assert.ok(fs.existsSync(path.join(pkgDir, rel)), 'missing packaged file: ' + rel);`,
       `});`,
       `const pkg = JSON.parse(fs.readFileSync(path.join(pkgDir, 'package.json'), 'utf8'));`,
       `assert.strictEqual(pkg.exports['./python'], './python/an5_metadata.py');`,
       `assert.strictEqual(pkg.exports['./dotnet'], './dotnet');`,
       `assert.strictEqual(pkg.exports['./golang'], './golang');`,
-      `assert.strictEqual(pkg.exports['./rust'], './rust/Cargo.toml');`,
+      `assert.strictEqual(pkg.exports['./rust'], './rust/Cargo.toml');
+      assert.strictEqual(pkg.exports['./java'], './java');
+      assert.strictEqual(pkg.exports['./kotlin'], './kotlin');
+      assert.strictEqual(pkg.exports['./swift'], './swift/Package.swift');`,
       `console.log('an5-client installed package smoke passed');`,
       ``
     ].join('\n'),

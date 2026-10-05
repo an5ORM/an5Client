@@ -3,6 +3,7 @@
 ## [0.1.4] - 2026-10-04
 
 ### Added
+- Add the generated Java, Kotlin and Swift clients alongside the existing TypeScript, Python, .NET, Go and Rust artifacts.
 - Regenerate TypeScript metadata with isId primary-key markers, allowing adapters to use schema IDs instead of field-name guesses.
 
 ## [0.1.3] - 2026-10-03

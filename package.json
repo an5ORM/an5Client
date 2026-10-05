@@ -1,7 +1,7 @@
 {
   "name": "an5-client",
   "version": "0.1.4",
-  "description": "Generated client artifacts for AN5 ORM - TypeScript types, Python models, .NET entities, Go structs, and Rust crate.",
+  "description": "Generated client artifacts for AN5 ORM - TypeScript types, Python models, .NET entities, Go structs, and Rust, Java, Kotlin, and Swift crate.",
   "license": "MIT",
   "main": "typescript/index.js",
   "types": "typescript/index.d.ts",
@@ -12,7 +12,10 @@
     "./python": "./python/an5_metadata.py",
     "./dotnet": "./dotnet",
     "./golang": "./golang",
-    "./rust": "./rust/Cargo.toml"
+    "./rust": "./rust/Cargo.toml",
+    "./java": "./java",
+    "./kotlin": "./kotlin",
+    "./swift": "./swift/Package.swift"
   },
   "author": "an5ORM",
   "homepage": "https://github.com/an5ORM/an5",
@@ -29,7 +32,10 @@
     "dotnet",
     "go",
     "golang",
-    "rust"
+    "rust",
+    "java",
+    "kotlin",
+    "swift"
   ],
   "files": [
     "typescript/*.{ts,js,d.ts}",
@@ -38,6 +44,10 @@
     "golang/**/*",
     "rust/Cargo.toml",
     "rust/src/**/*",
+    "java/**/*.java",
+    "kotlin/**/*.kt",
+    "swift/Package.swift",
+    "swift/Sources/An5Client/*.swift",
     "README.md"
   ],
   "scripts": {
@@ -47,7 +57,8 @@
     "test:python": "node test/python-tests.js",
     "test:dotnet": "node test/dotnet-compile-check.js && node test/dotnet-sqlite-smoke.js",
     "test:go": "cd golang && go test ./... && cd ../test/golang-runtime && go test -mod=mod ./...",
-    "test:rust": "node test/rust-compile-check.js"
+    "test:rust": "node test/rust-compile-check.js",
+    "test:java": "node test/client-compile-check.js"
   },
   "dependencies": {
     "@an5/orm": "^1.0.8"

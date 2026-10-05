@@ -42,6 +42,25 @@ assert.strictEqual(pkg.exports['./rust'], './rust/Cargo.toml', 'Expected Rust su
 assert.ok(pkg.files.includes('golang/**/*'), 'Expected Go files to be packaged');
 assert.ok(pkg.files.includes('rust/Cargo.toml'), 'Expected Rust manifest to be packaged');
 assert.ok(pkg.files.includes('rust/src/**/*'), 'Expected Rust sources to be packaged');
+assert.strictEqual(pkg.exports['./java'], './java', 'Expected Java subpath export');
+assert.strictEqual(pkg.exports['./kotlin'], './kotlin', 'Expected Kotlin subpath export');
+assert.strictEqual(pkg.exports['./swift'], './swift/Package.swift', 'Expected Swift subpath export to name the manifest');
+assert.ok(pkg.files.includes('java/**/*.java'), 'Expected Java sources to be packaged');
+assert.ok(pkg.files.includes('kotlin/**/*.kt'), 'Expected Kotlin sources to be packaged');
+assert.ok(pkg.files.includes('swift/Sources/An5Client/*.swift'), 'Expected Swift sources to be packaged');
+for (const [language, file] of [
+  ['java', 'An5DbContext.java'],
+  ['kotlin', 'An5Db.kt'],
+  ['swift', 'Sources/An5Client/An5Db.swift'],
+]) {
+  assert.ok(
+    fs.existsSync(path.join(root, language, file)),
+    `Expected generated ${language} client entry point ${language}/${file}`
+  );
+}
+// Swift ships as a package rather than loose sources, because SwiftPM has no way to point a
+// target at an arbitrary directory the way a csproj or a go.mod does.
+assert.ok(fs.existsSync(path.join(root, 'swift', 'Package.swift')), 'Expected a generated SwiftPM manifest');
 assert.strictEqual(pkg.scripts.test, 'npm run build && node test/smoke.test.js', 'Expected smoke test to build first');
 assert.strictEqual(pkg.scripts['test:package:smoke'], 'node test/package-smoke.js', 'Expected package smoke test script');
 // The gate must build the generated sources and run them, or a client that
@@ -54,6 +73,7 @@ assert.ok(
 assert.ok(fs.existsSync(path.join(root, 'test', 'dotnet-sqlite-smoke.js')), 'Expected .NET SQLite smoke script');
 assert.strictEqual(pkg.scripts['test:go'], 'cd golang && go test ./... && cd ../test/golang-runtime && go test -mod=mod ./...', 'Expected Go runtime test script');
 assert.strictEqual(pkg.scripts['test:rust'], 'node test/rust-compile-check.js', 'Expected Rust compile test script');
+assert.strictEqual(pkg.scripts['test:java'], 'node test/client-compile-check.js', 'Expected JVM and Swift client compile test script');
 
 const dotnetDbContext = fs.readFileSync(path.join(root, 'dotnet', 'An5DbContext.cs'), 'utf8');
 const dotnetTypes = fs.readFileSync(path.join(root, 'dotnet', 'An5OrmTypes.cs'), 'utf8');
