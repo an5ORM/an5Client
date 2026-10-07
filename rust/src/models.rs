@@ -147,6 +147,20 @@ pub struct EmbeddingConfigFindUniqueArgs {
     pub where_: Option<EmbeddingConfigWhereInput>,
 }
 
+/// ORM-style args for EmbeddingConfig.vector_search().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct EmbeddingConfigVectorSearchArgs {
+    pub vector: Vec<f32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<EmbeddingConfigWhereInput>,
+    #[serde(default)]
+    pub vector_field: String,
+    #[serde(default)]
+    pub distance_metric: String,
+}
+
 /// ORM-style args for EmbeddingConfig.update().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct EmbeddingConfigUpdateArgs {
@@ -298,6 +312,20 @@ pub struct LlmConfigFindUniqueArgs {
     pub where_: Option<LlmConfigWhereInput>,
 }
 
+/// ORM-style args for LlmConfig.vector_search().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct LlmConfigVectorSearchArgs {
+    pub vector: Vec<f32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<LlmConfigWhereInput>,
+    #[serde(default)]
+    pub vector_field: String,
+    #[serde(default)]
+    pub distance_metric: String,
+}
+
 /// ORM-style args for LlmConfig.update().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct LlmConfigUpdateArgs {
@@ -407,6 +435,20 @@ pub struct UserFindUniqueArgs {
     pub where_: Option<UserWhereInput>,
 }
 
+/// ORM-style args for User.vector_search().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct UserVectorSearchArgs {
+    pub vector: Vec<f32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<UserWhereInput>,
+    #[serde(default)]
+    pub vector_field: String,
+    #[serde(default)]
+    pub distance_metric: String,
+}
+
 /// ORM-style args for User.update().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct UserUpdateArgs {
@@ -514,6 +556,20 @@ pub struct OrderFindFirstArgs {
 pub struct OrderFindUniqueArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<OrderWhereInput>,
+}
+
+/// ORM-style args for Order.vector_search().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct OrderVectorSearchArgs {
+    pub vector: Vec<f32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<OrderWhereInput>,
+    #[serde(default)]
+    pub vector_field: String,
+    #[serde(default)]
+    pub distance_metric: String,
 }
 
 /// ORM-style args for Order.update().

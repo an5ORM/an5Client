@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- The generated Rust client exposes `vector_search` and a typed `<Model>VectorSearchArgs`, so
+  `db.embeddingConfig().vector_search(..)` ranks a `VECTOR(n)` column the way the other seven
+  clients do. Regenerated from the an5Orm generator.
+
 ## [0.1.4] - 2026-10-04
 
 ### Added

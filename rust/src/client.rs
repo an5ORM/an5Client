@@ -3,7 +3,7 @@
 
 use an5_adapters::{
     AdapterMetadata, An5Adapter, CountArgs, DeleteManyArgs, FindManyArgs, RowMap, TableClient,
-    UpdateArgs,
+    UpdateArgs, VectorSearchArgs,
 };
 use serde::de::DeserializeOwned;
 
@@ -206,6 +206,23 @@ impl EmbeddingConfigTable {
         deserialize_rows(rows)
     }
 
+    /// The rows nearest `vector`, each carrying a `distance`.
+    pub async fn vector_search(&self, args: &EmbeddingConfigVectorSearchArgs) -> Result<Vec<EmbeddingConfig>> {
+        let rows = self
+            .db
+            .table("EmbeddingConfig")
+            .vector_search(&VectorSearchArgs {
+                vector: args.vector.iter().map(|v| *v as f64).collect(),
+                take: args.take.unwrap_or(0),
+                r#where: to_value(&args.where_)?,
+                vector_field: args.vector_field.clone(),
+                distance_metric: args.distance_metric.clone(),
+                ..Default::default()
+            })
+            .await?;
+        deserialize_rows(rows)
+    }
+
     pub async fn find_first(&self, args: &EmbeddingConfigFindFirstArgs) -> Result<Option<EmbeddingConfig>> {
         let row = self
             .db
@@ -298,6 +315,23 @@ impl LlmConfigTable {
                 take: args.take.unwrap_or(0),
                 skip: args.skip,
                 select: args.select.as_ref().map(|s| serde_json::json!(s)),
+                ..Default::default()
+            })
+            .await?;
+        deserialize_rows(rows)
+    }
+
+    /// The rows nearest `vector`, each carrying a `distance`.
+    pub async fn vector_search(&self, args: &LlmConfigVectorSearchArgs) -> Result<Vec<LlmConfig>> {
+        let rows = self
+            .db
+            .table("LlmConfig")
+            .vector_search(&VectorSearchArgs {
+                vector: args.vector.iter().map(|v| *v as f64).collect(),
+                take: args.take.unwrap_or(0),
+                r#where: to_value(&args.where_)?,
+                vector_field: args.vector_field.clone(),
+                distance_metric: args.distance_metric.clone(),
                 ..Default::default()
             })
             .await?;
@@ -402,6 +436,23 @@ impl UserTable {
         deserialize_rows(rows)
     }
 
+    /// The rows nearest `vector`, each carrying a `distance`.
+    pub async fn vector_search(&self, args: &UserVectorSearchArgs) -> Result<Vec<User>> {
+        let rows = self
+            .db
+            .table("User")
+            .vector_search(&VectorSearchArgs {
+                vector: args.vector.iter().map(|v| *v as f64).collect(),
+                take: args.take.unwrap_or(0),
+                r#where: to_value(&args.where_)?,
+                vector_field: args.vector_field.clone(),
+                distance_metric: args.distance_metric.clone(),
+                ..Default::default()
+            })
+            .await?;
+        deserialize_rows(rows)
+    }
+
     pub async fn find_first(&self, args: &UserFindFirstArgs) -> Result<Option<User>> {
         let row = self
             .db
@@ -494,6 +545,23 @@ impl OrderTable {
                 take: args.take.unwrap_or(0),
                 skip: args.skip,
                 select: args.select.as_ref().map(|s| serde_json::json!(s)),
+                ..Default::default()
+            })
+            .await?;
+        deserialize_rows(rows)
+    }
+
+    /// The rows nearest `vector`, each carrying a `distance`.
+    pub async fn vector_search(&self, args: &OrderVectorSearchArgs) -> Result<Vec<Order>> {
+        let rows = self
+            .db
+            .table("Order")
+            .vector_search(&VectorSearchArgs {
+                vector: args.vector.iter().map(|v| *v as f64).collect(),
+                take: args.take.unwrap_or(0),
+                r#where: to_value(&args.where_)?,
+                vector_field: args.vector_field.clone(),
+                distance_metric: args.distance_metric.clone(),
                 ..Default::default()
             })
             .await?;
