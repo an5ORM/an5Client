@@ -1,11 +1,30 @@
 # Changelog
 
-## [Unreleased]
+## [0.1.5] - 2026-10-08
 
 ### Added
+- regenerate the Rust client with vector_search (8da4eb4)
 - The generated Rust client exposes `vector_search` and a typed `<Model>VectorSearchArgs`, so
   `db.embeddingConfig().vector_search(..)` ranks a `VECTOR(n)` column the way the other seven
   clients do. Regenerated from the an5Orm generator.
+- Runtime tests for the generated clients: the Go client against real SQLite (create,
+  filter, transaction rollback verified through `Count`, `UpdateMany`, `DeleteMany`), the
+  Rust client over `sqlx`, and the Python client. `test:go` and `test:rust` now run them,
+  and `test:python` executes the client instead of only compiling it.
+
+### Changed
+- Update `rust/src/client.rs`.
+- Update `pyproject.toml`.
+
+### Fixed
+- **The Go client treated SQLite as SQL Server** — the bare connection string `"sqlite"`
+  now selects `DialectSqlite` instead of silently defaulting to SQL Server.
+- **The Go client kept the `dbo.` schema prefix under SQLite** — the prefix is stripped
+  for SQLite, which has no `dbo` schema.
+- **`OR: []`, an empty `OR` branch and `NOT: {}` did not build a constraint** — they now
+  produce `1=0` / `1=1` as the ORM does, instead of silently matching every row.
+  **This changes results.** A filter that used `OR: []` to mean "no restriction" now
+  matches nothing.
 
 ## [0.1.4] - 2026-10-04
 
@@ -16,25 +35,6 @@
 ## [0.1.3] - 2026-10-03
 
 - Align SQLite query semantics and empty filter branches across generated runtimes.
-
-## [Unreleased]
-
-### Fixed
-- **The Go client treated SQLite as SQL Server** — the bare connection string `"sqlite"`
-  now selects `DialectSqlite` instead of silently defaulting to SQL Server.
-- **The Go client kept the `dbo.` schema prefix under SQLite** — the prefix is stripped
-  for SQLite, which has no `dbo` schema.
-- **`OR: []`, an empty `OR` branch and `NOT: {}` did not build a constraint** — they now
-  produce `1=0` / `1=1` as the ORM does, instead of silently matching every row.
-
-  **This changes results.** A filter that used `OR: []` to mean "no restriction" now
-  matches nothing.
-
-### Added
-- Runtime tests for the generated clients: the Go client against real SQLite (create,
-  filter, transaction rollback verified through `Count`, `UpdateMany`, `DeleteMany`), the
-  Rust client over `sqlx`, and the Python client. `test:go` and `test:rust` now run them,
-  and `test:python` executes the client instead of only compiling it.
 
 ## [0.1.2] - 2026-10-02
 
@@ -52,6 +52,8 @@
   This release is `0.1.2` so the version and this file stay in step.
 
 ## [0.1.1] - 2026-08-19
+
+
 
 ## [0.1.1] - 2026-08-19
 

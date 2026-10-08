@@ -207,7 +207,7 @@ impl EmbeddingConfigTable {
     }
 
     /// The rows nearest `vector`, each carrying a `distance`.
-    pub async fn vector_search(&self, args: &EmbeddingConfigVectorSearchArgs) -> Result<Vec<EmbeddingConfig>> {
+    pub async fn vector_search(&self, args: &EmbeddingConfigVectorSearchArgs) -> Result<Vec<(EmbeddingConfig, f64)>> {
         let rows = self
             .db
             .table("EmbeddingConfig")
@@ -220,7 +220,11 @@ impl EmbeddingConfigTable {
                 ..Default::default()
             })
             .await?;
-        deserialize_rows(rows)
+        rows.into_iter().map(|row| {
+            let distance = row.get("distance").and_then(serde_json::Value::as_f64)
+                .ok_or("vector search returned no distance")?;
+            Ok((deserialize_row(row)?, distance))
+        }).collect()
     }
 
     pub async fn find_first(&self, args: &EmbeddingConfigFindFirstArgs) -> Result<Option<EmbeddingConfig>> {
@@ -322,7 +326,7 @@ impl LlmConfigTable {
     }
 
     /// The rows nearest `vector`, each carrying a `distance`.
-    pub async fn vector_search(&self, args: &LlmConfigVectorSearchArgs) -> Result<Vec<LlmConfig>> {
+    pub async fn vector_search(&self, args: &LlmConfigVectorSearchArgs) -> Result<Vec<(LlmConfig, f64)>> {
         let rows = self
             .db
             .table("LlmConfig")
@@ -335,7 +339,11 @@ impl LlmConfigTable {
                 ..Default::default()
             })
             .await?;
-        deserialize_rows(rows)
+        rows.into_iter().map(|row| {
+            let distance = row.get("distance").and_then(serde_json::Value::as_f64)
+                .ok_or("vector search returned no distance")?;
+            Ok((deserialize_row(row)?, distance))
+        }).collect()
     }
 
     pub async fn find_first(&self, args: &LlmConfigFindFirstArgs) -> Result<Option<LlmConfig>> {
@@ -437,7 +445,7 @@ impl UserTable {
     }
 
     /// The rows nearest `vector`, each carrying a `distance`.
-    pub async fn vector_search(&self, args: &UserVectorSearchArgs) -> Result<Vec<User>> {
+    pub async fn vector_search(&self, args: &UserVectorSearchArgs) -> Result<Vec<(User, f64)>> {
         let rows = self
             .db
             .table("User")
@@ -450,7 +458,11 @@ impl UserTable {
                 ..Default::default()
             })
             .await?;
-        deserialize_rows(rows)
+        rows.into_iter().map(|row| {
+            let distance = row.get("distance").and_then(serde_json::Value::as_f64)
+                .ok_or("vector search returned no distance")?;
+            Ok((deserialize_row(row)?, distance))
+        }).collect()
     }
 
     pub async fn find_first(&self, args: &UserFindFirstArgs) -> Result<Option<User>> {
@@ -552,7 +564,7 @@ impl OrderTable {
     }
 
     /// The rows nearest `vector`, each carrying a `distance`.
-    pub async fn vector_search(&self, args: &OrderVectorSearchArgs) -> Result<Vec<Order>> {
+    pub async fn vector_search(&self, args: &OrderVectorSearchArgs) -> Result<Vec<(Order, f64)>> {
         let rows = self
             .db
             .table("Order")
@@ -565,7 +577,11 @@ impl OrderTable {
                 ..Default::default()
             })
             .await?;
-        deserialize_rows(rows)
+        rows.into_iter().map(|row| {
+            let distance = row.get("distance").and_then(serde_json::Value::as_f64)
+                .ok_or("vector search returned no distance")?;
+            Ok((deserialize_row(row)?, distance))
+        }).collect()
     }
 
     pub async fn find_first(&self, args: &OrderFindFirstArgs) -> Result<Option<Order>> {
