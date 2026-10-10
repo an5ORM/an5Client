@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.6] - 2026-10-10
+
+### Fixed
+- Regenerated the Java and Python clients from the corrected generator. The checked-in `An5DbContext.java` javadoc example used `Filters.eq("name", "Ada")`, which does not compile because `Filters.eq` takes the filter value alone, and the Python `an5_client.py` and `an5_orm_types.py` docstrings showed an `order_by` on `created_at` where the column is `createdAt`, plus a `UserWhereInput(...)` query argument the Python adapter does not accept.
+
 ## [0.1.5] - 2026-10-08
 
 ### Added
