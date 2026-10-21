@@ -19,6 +19,7 @@ namespace SmokeTest
     public class Doc
     {
         public string Id { get; set; }
+        public float[] Embedding { get; set; }
         public double Distance { get; set; }
     }
 
@@ -191,6 +192,11 @@ namespace SmokeTest
             Check("dbo. prefix stripped for vector", docs.TableName, "docs");
             var hits = docs.VectorSearch(new List<double> { 1, 0 }, take: 2);
             Check("hit count", hits.Count, 2);
+            Check("cosine order", string.Join(",", hits.Select(h => h.Id)), "d1,d2");
+            var l2Hits = docs.VectorSearch(new List<double> { 0, 1 }, take: 2, distanceMetric: "euclidean");
+            Check("euclidean order", string.Join(",", l2Hits.Select(h => h.Id)), "d2,d1");
+            var dotHits = docs.VectorSearch(new List<double> { 0, 1 }, take: 2, distanceMetric: "dot");
+            Check("dot order", string.Join(",", dotHits.Select(h => h.Id)), "d2,d1");
         }
 
         private static int Main()

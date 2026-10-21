@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.7] - 2026-10-21
+
+### Fixed
+- Regenerated the .NET (`dotnet/An5DbContext.cs`), Go (`golang/client.go`) and Java (`java/An5Values.java`) clients from the `an5Orm` 1.3.2 generator:
+  - The .NET `TableClient<T>` now binds `float[]`/`double[]` vectors as JSON arrays via `An5Provider.Bindable`, decodes stored vector columns (`float[]`, `byte[]` float32 BLOBs and JSON text) through `DecodeVectorColumn`, and scores `float[]` properties across `cosine`, `euclidean` and `dot` metrics in `VectorSearch`.
+  - The Go `TableClient[T]` skips the SQL Server `VECTOR_DISTANCE` query on SQLite and encodes/decodes float32 vector slices on write and read.
+  - The Java `An5Values.asVector` delegates to `an5.adapters.base.SqliteVectors.decodeVector`.
+
 ## [0.1.6] - 2026-10-10
 
 ### Fixed
