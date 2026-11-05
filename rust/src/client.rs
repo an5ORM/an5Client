@@ -191,9 +191,7 @@ impl EmbeddingConfigTable {
     pub fn adapter(&self) -> &An5Adapter { self.db.adapter() }
 
     pub async fn find_many(&self, args: &EmbeddingConfigFindManyArgs) -> Result<Vec<EmbeddingConfig>> {
-        let rows = self
-            .db
-            .table("EmbeddingConfig")
+        let rows = self.db.table("EmbeddingConfig")
             .find_many(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 order_by: to_value(&args.order_by)?,
@@ -208,9 +206,7 @@ impl EmbeddingConfigTable {
 
     /// The rows nearest `vector`, each carrying a `distance`.
     pub async fn vector_search(&self, args: &EmbeddingConfigVectorSearchArgs) -> Result<Vec<(EmbeddingConfig, f64)>> {
-        let rows = self
-            .db
-            .table("EmbeddingConfig")
+        let rows = self.db.table("EmbeddingConfig")
             .vector_search(&VectorSearchArgs {
                 vector: args.vector.iter().map(|v| *v as f64).collect(),
                 take: args.take.unwrap_or(0),
@@ -228,9 +224,7 @@ impl EmbeddingConfigTable {
     }
 
     pub async fn find_first(&self, args: &EmbeddingConfigFindFirstArgs) -> Result<Option<EmbeddingConfig>> {
-        let row = self
-            .db
-            .table("EmbeddingConfig")
+        let row = self.db.table("EmbeddingConfig")
             .find_first(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 order_by: to_value(&args.order_by)?,
@@ -244,9 +238,7 @@ impl EmbeddingConfigTable {
     }
 
     pub async fn find_unique(&self, args: &EmbeddingConfigFindUniqueArgs) -> Result<Option<EmbeddingConfig>> {
-        let row = self
-            .db
-            .table("EmbeddingConfig")
+        let row = self.db.table("EmbeddingConfig")
             .find_unique(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 ..Default::default()
@@ -259,8 +251,7 @@ impl EmbeddingConfigTable {
     }
 
     pub async fn count(&self, args: &EmbeddingConfigFindUniqueArgs) -> Result<i64> {
-        self.db
-            .table("EmbeddingConfig")
+        self.db.table("EmbeddingConfig")
             .count(&CountArgs { r#where: to_value(&args.where_)? })
             .await
     }
@@ -310,9 +301,7 @@ impl LlmConfigTable {
     pub fn adapter(&self) -> &An5Adapter { self.db.adapter() }
 
     pub async fn find_many(&self, args: &LlmConfigFindManyArgs) -> Result<Vec<LlmConfig>> {
-        let rows = self
-            .db
-            .table("LlmConfig")
+        let rows = self.db.table("LlmConfig")
             .find_many(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 order_by: to_value(&args.order_by)?,
@@ -327,9 +316,7 @@ impl LlmConfigTable {
 
     /// The rows nearest `vector`, each carrying a `distance`.
     pub async fn vector_search(&self, args: &LlmConfigVectorSearchArgs) -> Result<Vec<(LlmConfig, f64)>> {
-        let rows = self
-            .db
-            .table("LlmConfig")
+        let rows = self.db.table("LlmConfig")
             .vector_search(&VectorSearchArgs {
                 vector: args.vector.iter().map(|v| *v as f64).collect(),
                 take: args.take.unwrap_or(0),
@@ -347,9 +334,7 @@ impl LlmConfigTable {
     }
 
     pub async fn find_first(&self, args: &LlmConfigFindFirstArgs) -> Result<Option<LlmConfig>> {
-        let row = self
-            .db
-            .table("LlmConfig")
+        let row = self.db.table("LlmConfig")
             .find_first(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 order_by: to_value(&args.order_by)?,
@@ -363,9 +348,7 @@ impl LlmConfigTable {
     }
 
     pub async fn find_unique(&self, args: &LlmConfigFindUniqueArgs) -> Result<Option<LlmConfig>> {
-        let row = self
-            .db
-            .table("LlmConfig")
+        let row = self.db.table("LlmConfig")
             .find_unique(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 ..Default::default()
@@ -378,8 +361,7 @@ impl LlmConfigTable {
     }
 
     pub async fn count(&self, args: &LlmConfigFindUniqueArgs) -> Result<i64> {
-        self.db
-            .table("LlmConfig")
+        self.db.table("LlmConfig")
             .count(&CountArgs { r#where: to_value(&args.where_)? })
             .await
     }
@@ -429,9 +411,7 @@ impl UserTable {
     pub fn adapter(&self) -> &An5Adapter { self.db.adapter() }
 
     pub async fn find_many(&self, args: &UserFindManyArgs) -> Result<Vec<User>> {
-        let rows = self
-            .db
-            .table("User")
+        let rows = self.db.table("User")
             .find_many(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 order_by: to_value(&args.order_by)?,
@@ -446,9 +426,7 @@ impl UserTable {
 
     /// The rows nearest `vector`, each carrying a `distance`.
     pub async fn vector_search(&self, args: &UserVectorSearchArgs) -> Result<Vec<(User, f64)>> {
-        let rows = self
-            .db
-            .table("User")
+        let rows = self.db.table("User")
             .vector_search(&VectorSearchArgs {
                 vector: args.vector.iter().map(|v| *v as f64).collect(),
                 take: args.take.unwrap_or(0),
@@ -466,9 +444,7 @@ impl UserTable {
     }
 
     pub async fn find_first(&self, args: &UserFindFirstArgs) -> Result<Option<User>> {
-        let row = self
-            .db
-            .table("User")
+        let row = self.db.table("User")
             .find_first(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 order_by: to_value(&args.order_by)?,
@@ -482,9 +458,7 @@ impl UserTable {
     }
 
     pub async fn find_unique(&self, args: &UserFindUniqueArgs) -> Result<Option<User>> {
-        let row = self
-            .db
-            .table("User")
+        let row = self.db.table("User")
             .find_unique(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 ..Default::default()
@@ -497,8 +471,7 @@ impl UserTable {
     }
 
     pub async fn count(&self, args: &UserFindUniqueArgs) -> Result<i64> {
-        self.db
-            .table("User")
+        self.db.table("User")
             .count(&CountArgs { r#where: to_value(&args.where_)? })
             .await
     }
@@ -548,9 +521,7 @@ impl OrderTable {
     pub fn adapter(&self) -> &An5Adapter { self.db.adapter() }
 
     pub async fn find_many(&self, args: &OrderFindManyArgs) -> Result<Vec<Order>> {
-        let rows = self
-            .db
-            .table("Order")
+        let rows = self.db.table("Order")
             .find_many(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 order_by: to_value(&args.order_by)?,
@@ -565,9 +536,7 @@ impl OrderTable {
 
     /// The rows nearest `vector`, each carrying a `distance`.
     pub async fn vector_search(&self, args: &OrderVectorSearchArgs) -> Result<Vec<(Order, f64)>> {
-        let rows = self
-            .db
-            .table("Order")
+        let rows = self.db.table("Order")
             .vector_search(&VectorSearchArgs {
                 vector: args.vector.iter().map(|v| *v as f64).collect(),
                 take: args.take.unwrap_or(0),
@@ -585,9 +554,7 @@ impl OrderTable {
     }
 
     pub async fn find_first(&self, args: &OrderFindFirstArgs) -> Result<Option<Order>> {
-        let row = self
-            .db
-            .table("Order")
+        let row = self.db.table("Order")
             .find_first(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 order_by: to_value(&args.order_by)?,
@@ -601,9 +568,7 @@ impl OrderTable {
     }
 
     pub async fn find_unique(&self, args: &OrderFindUniqueArgs) -> Result<Option<Order>> {
-        let row = self
-            .db
-            .table("Order")
+        let row = self.db.table("Order")
             .find_unique(&FindManyArgs {
                 r#where: to_value(&args.where_)?,
                 ..Default::default()
@@ -616,8 +581,7 @@ impl OrderTable {
     }
 
     pub async fn count(&self, args: &OrderFindUniqueArgs) -> Result<i64> {
-        self.db
-            .table("Order")
+        self.db.table("Order")
             .count(&CountArgs { r#where: to_value(&args.where_)? })
             .await
     }
