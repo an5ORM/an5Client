@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.8] - 2026-11-07
+
+### Added
+- Synchronized generated .NET, Go, and Python clients with complete query capabilities (Aggregate, GroupBy, where input handling).
+- Synchronized Python TypedDict `_<Model>Required` and `<Model>Row` definitions to include all model fields for static type checkers.
+
 ## [0.1.7] - 2026-10-21
 
 ### Fixed
