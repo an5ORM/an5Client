@@ -130,10 +130,14 @@ func SortOrderPtr(s SortOrder) *SortOrder { return &s }
 type An5DbContext struct {
 	DB      *sql.DB
 	Dialect Dialect
-	Orders *TableClient[Order]
-	Order  *TableClient[Order]
+	EmbeddingConfigs *TableClient[EmbeddingConfig]
+	EmbeddingConfig  *TableClient[EmbeddingConfig]
+	LlmConfigs *TableClient[LlmConfig]
+	LlmConfig  *TableClient[LlmConfig]
 	Users *TableClient[User]
 	User  *TableClient[User]
+	Orders *TableClient[Order]
+	Order  *TableClient[Order]
 }
 
 // NewAn5DbContext initializes the ORM context (defaults to MSSQL dialect).
@@ -145,12 +149,18 @@ func NewAn5DbContext(db *sql.DB) *An5DbContext {
 func NewAn5DbContextWithConnStr(db *sql.DB, connStr string) *An5DbContext {
 	d := detectDialect(connStr)
 	ctx := &An5DbContext{DB: db, Dialect: d}
-	clientOrder := NewTableClient[Order](db, "orders", d)
-	ctx.Orders = clientOrder
-	ctx.Order  = clientOrder
-	clientUser := NewTableClient[User](db, "users", d)
+	clientEmbeddingConfig := NewTableClient[EmbeddingConfig](db, "dbo.embeddingconfigs", d)
+	ctx.EmbeddingConfigs = clientEmbeddingConfig
+	ctx.EmbeddingConfig  = clientEmbeddingConfig
+	clientLlmConfig := NewTableClient[LlmConfig](db, "dbo.llmconfigs", d)
+	ctx.LlmConfigs = clientLlmConfig
+	ctx.LlmConfig  = clientLlmConfig
+	clientUser := NewTableClient[User](db, "dbo.users", d)
 	ctx.Users = clientUser
 	ctx.User  = clientUser
+	clientOrder := NewTableClient[Order](db, "dbo.orders", d)
+	ctx.Orders = clientOrder
+	ctx.Order  = clientOrder
 	return ctx
 }
 
@@ -600,7 +610,7 @@ func (c *TableClient[T]) UpdateMany(ctx context.Context, whereArgs interface{}, 
 		sets = append(sets, c.quoteName(col)+" = "+c.ph(len(execArgs)))
 	}
 
-	clause, _, _, _, _, whereQueryArgs := c.parseArgs(whereArgs)
+	clause, _, _, _, _, whereQueryArgs := c.parseArgsWithOffset(whereArgs, len(execArgs)+1)
 	execArgs = append(execArgs, whereQueryArgs...)
 	query := fmt.Sprintf("UPDATE %s SET %s", c.quoteTable(), strings.Join(sets, ", "))
 	if clause != "" {
@@ -804,6 +814,10 @@ func (c *TableClient[T]) GroupBy(ctx context.Context, args GroupByArgs) ([]map[s
 // parseArgs is the generic where/orderBy/take/skip extractor.
 // It uses reflection to read WhereClause, OrderBy, Take, Skip, Select from any args struct.
 func (c *TableClient[T]) parseArgs(args interface{}) (whereClause string, orderBy string, take int, skip int, selectCols []string, queryArgs []interface{}) {
+	return c.parseArgsWithOffset(args, 1)
+}
+
+func (c *TableClient[T]) parseArgsWithOffset(args interface{}, offset int) (whereClause string, orderBy string, take int, skip int, selectCols []string, queryArgs []interface{}) {
 	if args == nil {
 		return
 	}
@@ -820,10 +834,18 @@ func (c *TableClient[T]) parseArgs(args interface{}) (whereClause string, orderB
 
 	// Where
 	whereField := v.FieldByName("Where")
-	if whereField.IsValid() && !whereField.IsNil() {
-		// where is a pointer to a model-specific WhereInput struct
-		// Delegate to buildWhereFromStruct
-		wc, wa := c.buildWhereFromStruct(whereField.Elem(), 1)
+	if whereField.IsValid() {
+		if !whereField.IsNil() {
+			elem := whereField
+			if elem.Kind() == reflect.Ptr {
+				elem = elem.Elem()
+			}
+			wc, wa := c.buildWhereFromStruct(elem, offset)
+			whereClause = wc
+			queryArgs = wa
+		}
+	} else {
+		wc, wa := c.buildWhereFromStruct(v, offset)
 		whereClause = wc
 		queryArgs = wa
 	}

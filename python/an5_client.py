@@ -11,13 +11,21 @@ except ImportError:
 
 if TYPE_CHECKING:
     try:
-        from .Order import OrderRow
+        from .EmbeddingConfig import EmbeddingConfigRow
     except ImportError:
-        from .an5_models import OrderRow  # fallback aggregator
+        from .an5_models import EmbeddingConfigRow  # fallback aggregator
+    try:
+        from .LlmConfig import LlmConfigRow
+    except ImportError:
+        from .an5_models import LlmConfigRow  # fallback aggregator
     try:
         from .User import UserRow
     except ImportError:
         from .an5_models import UserRow  # fallback aggregator
+    try:
+        from .Order import OrderRow
+    except ImportError:
+        from .an5_models import OrderRow  # fallback aggregator
 
 class An5Client:
     """AN5 Python ORM Client - type-safe database access.
@@ -38,16 +46,26 @@ class An5Client:
         set_adapter_metadata({"model_to_table": MODEL_TO_TABLE, "model_fields": MODEL_FIELDS, "relation_map": RELATION_MAP})
         self.adapter: An5Adapter = create_an5_adapter(conn_str)
 
-        client = AdapterTableClient(self.adapter, "Order")
-        self.Order: AdapterTableClient["OrderRow"] = client
-        self.Orders: AdapterTableClient["OrderRow"] = client
-        self.order: AdapterTableClient["OrderRow"] = client
-        self.orders: AdapterTableClient["OrderRow"] = client
+        client = AdapterTableClient(self.adapter, "EmbeddingConfig")
+        self.EmbeddingConfig: AdapterTableClient["EmbeddingConfigRow"] = client
+        self.EmbeddingConfigs: AdapterTableClient["EmbeddingConfigRow"] = client
+        self.embedding_config: AdapterTableClient["EmbeddingConfigRow"] = client
+        self.embedding_configs: AdapterTableClient["EmbeddingConfigRow"] = client
+        client = AdapterTableClient(self.adapter, "LlmConfig")
+        self.LlmConfig: AdapterTableClient["LlmConfigRow"] = client
+        self.LlmConfigs: AdapterTableClient["LlmConfigRow"] = client
+        self.llm_config: AdapterTableClient["LlmConfigRow"] = client
+        self.llm_configs: AdapterTableClient["LlmConfigRow"] = client
         client = AdapterTableClient(self.adapter, "User")
         self.User: AdapterTableClient["UserRow"] = client
         self.Users: AdapterTableClient["UserRow"] = client
         self.user: AdapterTableClient["UserRow"] = client
         self.users: AdapterTableClient["UserRow"] = client
+        client = AdapterTableClient(self.adapter, "Order")
+        self.Order: AdapterTableClient["OrderRow"] = client
+        self.Orders: AdapterTableClient["OrderRow"] = client
+        self.order: AdapterTableClient["OrderRow"] = client
+        self.orders: AdapterTableClient["OrderRow"] = client
 
     def __getattr__(self, name: str) -> AdapterTableClient[Any]:
         return self.adapter.table(name)

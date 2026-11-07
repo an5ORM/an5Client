@@ -201,10 +201,14 @@ namespace An5Orm
         public static DbTransaction GetActiveTransaction() => _tx;
 
         // ── Tables / Repositories ──────────────────────────────────────────────
-        public TableClient<Order> Orders => new TableClient<Order>(ConnectionString, "orders");
-        public TableClient<Order> Order => Orders;
-        public TableClient<User> Users => new TableClient<User>(ConnectionString, "users");
+        public TableClient<EmbeddingConfig> EmbeddingConfigs => new TableClient<EmbeddingConfig>(ConnectionString, "dbo.embeddingconfigs");
+        public TableClient<EmbeddingConfig> EmbeddingConfig => EmbeddingConfigs;
+        public TableClient<LlmConfig> LlmConfigs => new TableClient<LlmConfig>(ConnectionString, "dbo.llmconfigs");
+        public TableClient<LlmConfig> LlmConfig => LlmConfigs;
+        public TableClient<User> Users => new TableClient<User>(ConnectionString, "dbo.users");
         public TableClient<User> User => Users;
+        public TableClient<Order> Orders => new TableClient<Order>(ConnectionString, "dbo.orders");
+        public TableClient<Order> Order => Orders;
     }
 
     public class An5Transaction : IDisposable
@@ -431,6 +435,14 @@ namespace An5Orm
             return FindFirst("Id = @id", new Dictionary<string, object> { { "id", id } });
         }
 
+        private static bool IsScalarColumn(PropertyInfo prop)
+        {
+            var t = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+            if (t.IsPrimitive || t.IsEnum || t.IsValueType) return true;
+            if (t == typeof(string) || t == typeof(byte[]) || t == typeof(float[]) || t == typeof(double[])) return true;
+            return false;
+        }
+
         public T Create(T entity)
         {
             var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -442,6 +454,7 @@ namespace An5Orm
 
             foreach (var prop in properties)
             {
+                if (!IsScalarColumn(prop)) continue;
                 var val = prop.GetValue(entity);
                 if (val != null)
                 {
@@ -483,6 +496,7 @@ namespace An5Orm
 
             foreach (var prop in properties)
             {
+                if (!IsScalarColumn(prop)) continue;
                 var val = prop.GetValue(entity);
                 if (prop.Name.Equals("Id", StringComparison.OrdinalIgnoreCase))
                 {
