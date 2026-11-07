@@ -77,6 +77,26 @@ type DateTimeFilter struct {
 	Lte    *time.Time
 }
 
+// AggregateArgs configures an aggregate query.
+type AggregateArgs struct {
+	Where interface{}
+	Count bool
+	Sum   []string
+	Avg   []string
+	Min   []string
+	Max   []string
+}
+
+// GroupByArgs configures a GroupBy query.
+type GroupByArgs struct {
+	By    []string
+	Where interface{}
+	Sum   []string
+	Avg   []string
+	Min   []string
+	Max   []string
+}
+
 // Dialect identifies the database engine in use.
 type Dialect string
 
@@ -110,14 +130,10 @@ func SortOrderPtr(s SortOrder) *SortOrder { return &s }
 type An5DbContext struct {
 	DB      *sql.DB
 	Dialect Dialect
-	EmbeddingConfigs *TableClient[EmbeddingConfig]
-	EmbeddingConfig  *TableClient[EmbeddingConfig]
-	LlmConfigs *TableClient[LlmConfig]
-	LlmConfig  *TableClient[LlmConfig]
-	Users *TableClient[User]
-	User  *TableClient[User]
 	Orders *TableClient[Order]
 	Order  *TableClient[Order]
+	Users *TableClient[User]
+	User  *TableClient[User]
 }
 
 // NewAn5DbContext initializes the ORM context (defaults to MSSQL dialect).
@@ -129,18 +145,12 @@ func NewAn5DbContext(db *sql.DB) *An5DbContext {
 func NewAn5DbContextWithConnStr(db *sql.DB, connStr string) *An5DbContext {
 	d := detectDialect(connStr)
 	ctx := &An5DbContext{DB: db, Dialect: d}
-	clientEmbeddingConfig := NewTableClient[EmbeddingConfig](db, "dbo.embeddingconfigs", d)
-	ctx.EmbeddingConfigs = clientEmbeddingConfig
-	ctx.EmbeddingConfig  = clientEmbeddingConfig
-	clientLlmConfig := NewTableClient[LlmConfig](db, "dbo.llmconfigs", d)
-	ctx.LlmConfigs = clientLlmConfig
-	ctx.LlmConfig  = clientLlmConfig
-	clientUser := NewTableClient[User](db, "dbo.users", d)
-	ctx.Users = clientUser
-	ctx.User  = clientUser
-	clientOrder := NewTableClient[Order](db, "dbo.orders", d)
+	clientOrder := NewTableClient[Order](db, "orders", d)
 	ctx.Orders = clientOrder
 	ctx.Order  = clientOrder
+	clientUser := NewTableClient[User](db, "users", d)
+	ctx.Users = clientUser
+	ctx.User  = clientUser
 	return ctx
 }
 
@@ -233,6 +243,16 @@ func (c *ViewClient[T]) QueryRaw(ctx context.Context, query string, args ...inte
 // VectorSearch searches a vector column of the view.
 func (c *ViewClient[T]) VectorSearch(ctx context.Context, vector []float64, opts ...VectorSearchOptions) ([]T, error) {
 	return c.table.VectorSearch(ctx, vector, opts...)
+}
+
+// Aggregate returns aggregate calculations on the view.
+func (c *ViewClient[T]) Aggregate(ctx context.Context, args AggregateArgs) (map[string]interface{}, error) {
+	return c.table.Aggregate(ctx, args)
+}
+
+// GroupBy groups view rows by specified columns and computes aggregates.
+func (c *ViewClient[T]) GroupBy(ctx context.Context, args GroupByArgs) ([]map[string]interface{}, error) {
+	return c.table.GroupBy(ctx, args)
 }
 
 // queryAndScan executes a raw SELECT and scans results into []T via db struct tags.
@@ -663,6 +683,122 @@ func (c *TableClient[T]) Transaction(ctx context.Context, fn func(tx *sql.Tx) er
 		return err
 	}
 	return tx.Commit()
+}
+
+// Aggregate returns aggregate calculations (count, sum, avg, min, max).
+func (c *TableClient[T]) Aggregate(ctx context.Context, args AggregateArgs) (map[string]interface{}, error) {
+	clause, _, _, _, _, queryArgs := c.parseArgs(args.Where)
+	var selectParts []string
+	if args.Count || (len(args.Sum) == 0 && len(args.Avg) == 0 && len(args.Min) == 0 && len(args.Max) == 0) {
+		selectParts = append(selectParts, "COUNT(*) AS _count")
+	}
+	for _, col := range args.Sum {
+		selectParts = append(selectParts, fmt.Sprintf("SUM(%s) AS _sum_%s", c.quoteName(col), col))
+	}
+	for _, col := range args.Avg {
+		selectParts = append(selectParts, fmt.Sprintf("AVG(%s) AS _avg_%s", c.quoteName(col), col))
+	}
+	for _, col := range args.Min {
+		selectParts = append(selectParts, fmt.Sprintf("MIN(%s) AS _min_%s", c.quoteName(col), col))
+	}
+	for _, col := range args.Max {
+		selectParts = append(selectParts, fmt.Sprintf("MAX(%s) AS _max_%s", c.quoteName(col), col))
+	}
+
+	query := fmt.Sprintf("SELECT %s FROM %s", strings.Join(selectParts, ", "), c.quoteTable())
+	if clause != "" {
+		query += " WHERE " + clause
+	}
+
+	rows, err := c.DB.QueryContext(ctx, query, queryArgs...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	cols, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	res := make(map[string]interface{})
+	if rows.Next() {
+		colVals := make([]interface{}, len(cols))
+		colPtrs := make([]interface{}, len(cols))
+		for i := range colVals {
+			colPtrs[i] = &colVals[i]
+		}
+		if err := rows.Scan(colPtrs...); err != nil {
+			return nil, err
+		}
+		for i, name := range cols {
+			res[name] = colVals[i]
+		}
+	}
+	return res, nil
+}
+
+// GroupBy groups records by specified columns and computes aggregates.
+func (c *TableClient[T]) GroupBy(ctx context.Context, args GroupByArgs) ([]map[string]interface{}, error) {
+	if len(args.By) == 0 {
+		return nil, fmt.Errorf("GroupBy requires at least one column in 'By'")
+	}
+	clause, _, _, _, _, queryArgs := c.parseArgs(args.Where)
+	byCols := make([]string, len(args.By))
+	for i, col := range args.By {
+		byCols[i] = c.quoteName(col)
+	}
+
+	selectParts := make([]string, len(byCols))
+	copy(selectParts, byCols)
+	selectParts = append(selectParts, "COUNT(*) AS _count")
+	for _, col := range args.Sum {
+		selectParts = append(selectParts, fmt.Sprintf("SUM(%s) AS _sum_%s", c.quoteName(col), col))
+	}
+	for _, col := range args.Avg {
+		selectParts = append(selectParts, fmt.Sprintf("AVG(%s) AS _avg_%s", c.quoteName(col), col))
+	}
+	for _, col := range args.Min {
+		selectParts = append(selectParts, fmt.Sprintf("MIN(%s) AS _min_%s", c.quoteName(col), col))
+	}
+	for _, col := range args.Max {
+		selectParts = append(selectParts, fmt.Sprintf("MAX(%s) AS _max_%s", c.quoteName(col), col))
+	}
+
+	query := fmt.Sprintf("SELECT %s FROM %s", strings.Join(selectParts, ", "), c.quoteTable())
+	if clause != "" {
+		query += " WHERE " + clause
+	}
+	query += " GROUP BY " + strings.Join(byCols, ", ")
+
+	rows, err := c.DB.QueryContext(ctx, query, queryArgs...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	cols, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	var results []map[string]interface{}
+	for rows.Next() {
+		colVals := make([]interface{}, len(cols))
+		colPtrs := make([]interface{}, len(cols))
+		for i := range colVals {
+			colPtrs[i] = &colVals[i]
+		}
+		if err := rows.Scan(colPtrs...); err != nil {
+			return nil, err
+		}
+		rowMap := make(map[string]interface{})
+		for i, name := range cols {
+			rowMap[name] = colVals[i]
+		}
+		results = append(results, rowMap)
+	}
+	return results, nil
 }
 
 // parseArgs is the generic where/orderBy/take/skip extractor.
