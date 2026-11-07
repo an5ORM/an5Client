@@ -17,15 +17,16 @@ class LlmConfig:
 
 class _LlmConfigRequired(TypedDict):
     """Required keys of a LlmConfig row."""
+    id: str
     provider: str
     api_key: str
-
-class LlmConfigRow(_LlmConfigRequired, total=False):
-    """Row shape returned for LlmConfig queries."""
-    id: str
-    model: str
-    endpoint: str
+    model: Optional[str]
+    endpoint: Optional[str]
     is_active: bool
     created_at: datetime
     updated_at: datetime
+
+class LlmConfigRow(_LlmConfigRequired, total=False):
+    """Row shape returned for LlmConfig queries."""
+    pass
 

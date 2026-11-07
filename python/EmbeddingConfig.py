@@ -17,15 +17,16 @@ class EmbeddingConfig:
 
 class _EmbeddingConfigRequired(TypedDict):
     """Required keys of a EmbeddingConfig row."""
+    id: str
     provider: str
     api_key: str
-
-class EmbeddingConfigRow(_EmbeddingConfigRequired, total=False):
-    """Row shape returned for EmbeddingConfig queries."""
-    id: str
-    model: str
-    endpoint: str
+    model: Optional[str]
+    endpoint: Optional[str]
     is_active: bool
     created_at: datetime
     updated_at: datetime
+
+class EmbeddingConfigRow(_EmbeddingConfigRequired, total=False):
+    """Row shape returned for EmbeddingConfig queries."""
+    pass
 

@@ -13,11 +13,12 @@ class User:
 
 class _UserRequired(TypedDict):
     """Required keys of a User row."""
+    id: str
     email: str
+    name: Optional[str]
+    created_at: datetime
 
 class UserRow(_UserRequired, total=False):
     """Row shape returned for User queries."""
-    id: str
-    name: str
-    created_at: datetime
+    pass
 
