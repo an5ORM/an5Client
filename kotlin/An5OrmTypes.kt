@@ -128,6 +128,41 @@ object An5Orm {
         return map
     }
 
+    /** Common interface implemented by generated model `WHERE` builders. */
+    interface WhereBuilder {
+        fun build(): Where
+    }
+
+    /** A filter on a to-many relation (`some`, `none`, `every`). */
+    class ListRelationFilter<T : WhereBuilder> private constructor(
+        private val operators: Map<String, Any?> = emptyMap(),
+    ) {
+        fun some(filter: T? = null) = ListRelationFilter<T>(operators + ("some" to (filter?.build() ?: emptyMap<String, Any?>())))
+        fun none(filter: T? = null) = ListRelationFilter<T>(operators + ("none" to (filter?.build() ?: emptyMap<String, Any?>())))
+        fun every(filter: T) = ListRelationFilter<T>(operators + ("every" to filter.build()))
+        fun build(): Where = LinkedHashMap(operators)
+
+        companion object {
+            fun <T : WhereBuilder> some(filter: T? = null) = ListRelationFilter<T>().some(filter)
+            fun <T : WhereBuilder> none(filter: T? = null) = ListRelationFilter<T>().none(filter)
+            fun <T : WhereBuilder> every(filter: T) = ListRelationFilter<T>().every(filter)
+        }
+    }
+
+    /** A filter on a to-one relation (`is`, `isNot`). */
+    class RelationFilter<T : WhereBuilder> private constructor(
+        private val operators: Map<String, Any?> = emptyMap(),
+    ) {
+        fun `is`(filter: T?) = RelationFilter<T>(operators + ("is" to filter?.build()))
+        fun isNot(filter: T?) = RelationFilter<T>(operators + ("isNot" to filter?.build()))
+        fun build(): Where = LinkedHashMap(operators)
+
+        companion object {
+            fun <T : WhereBuilder> `is`(filter: T?) = RelationFilter<T>().`is`(filter)
+            fun <T : WhereBuilder> isNot(filter: T?) = RelationFilter<T>().isNot(filter)
+        }
+    }
+
     /** A `WHERE` for EmbeddingConfig. Unset filters are left out. */
     data class EmbeddingConfigWhere(
         val and: List<EmbeddingConfigWhere>? = null,
@@ -141,9 +176,9 @@ object An5Orm {
         val isActive: BoolFilter? = null,
         val createdAt: DateFilter? = null,
         val updatedAt: DateFilter? = null,
-    ) {
+    ) : WhereBuilder {
         /** The filter tree as the runtime reads it. */
-        fun build(): Where = operatorMap {
+        override fun build(): Where = operatorMap {
             and?.let { put("AND", it.map { clause -> clause.build() }) }
             or?.let { put("OR", it.map { clause -> clause.build() }) }
             not?.let { put("NOT", it.map { clause -> clause.build() }) }
@@ -194,9 +229,9 @@ object An5Orm {
         val isActive: BoolFilter? = null,
         val createdAt: DateFilter? = null,
         val updatedAt: DateFilter? = null,
-    ) {
+    ) : WhereBuilder {
         /** The filter tree as the runtime reads it. */
-        fun build(): Where = operatorMap {
+        override fun build(): Where = operatorMap {
             and?.let { put("AND", it.map { clause -> clause.build() }) }
             or?.let { put("OR", it.map { clause -> clause.build() }) }
             not?.let { put("NOT", it.map { clause -> clause.build() }) }
@@ -243,9 +278,9 @@ object An5Orm {
         val email: StringFilter? = null,
         val name: StringFilter? = null,
         val createdAt: DateFilter? = null,
-    ) {
+    ) : WhereBuilder {
         /** The filter tree as the runtime reads it. */
-        fun build(): Where = operatorMap {
+        override fun build(): Where = operatorMap {
             and?.let { put("AND", it.map { clause -> clause.build() }) }
             or?.let { put("OR", it.map { clause -> clause.build() }) }
             not?.let { put("NOT", it.map { clause -> clause.build() }) }
@@ -288,9 +323,9 @@ object An5Orm {
         val userId: StringFilter? = null,
         val total: NumberFilter? = null,
         val createdAt: DateFilter? = null,
-    ) {
+    ) : WhereBuilder {
         /** The filter tree as the runtime reads it. */
-        fun build(): Where = operatorMap {
+        override fun build(): Where = operatorMap {
             and?.let { put("AND", it.map { clause -> clause.build() }) }
             or?.let { put("OR", it.map { clause -> clause.build() }) }
             not?.let { put("NOT", it.map { clause -> clause.build() }) }
