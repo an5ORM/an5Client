@@ -2,17 +2,21 @@
 """
 AN5 ORM typed filter/args dataclasses.
 
-These describe the filter shapes the Python client accepts. The adapter reads plain
-dicts, not these dataclasses, and it quotes every key verbatim, so use the schema
-field names (`createdAt`, not `created_at`):
+The Python adapter accepts both these dataclasses (`UserWhereInput`, `StringFilter`,
+`UserOrderByInput`, `UserFindManyArgs`, etc.) and plain dicts with either schema
+field names (`createdAt`) or snake_case aliases (`created_at`):
+
+    db.user.find_many(where=UserWhereInput(name=StringFilter(contains="John")),
+                      order_by=UserOrderByInput(created_at="desc"),
+                      take=10)
 
     db.user.find_many(where={"name": {"contains": "John"}},
-                      order_by={"createdAt": "desc"},
+                      order_by={"created_at": "desc"},
                       take=10)
 """
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import List, Optional, Any
+from typing import Dict, List, Optional, Any, Union
 from datetime import datetime
 
 # ─── Base filter types ────────────────────────────────────────────────────────
@@ -60,6 +64,7 @@ class NumberFilter:
 class BoolFilter:
     """Type-safe filter for boolean fields."""
     equals: Optional[bool] = None
+    not_: Optional[bool] = None
 
 @dataclass
 class DateTimeFilter:
@@ -80,15 +85,15 @@ class EmbeddingConfigWhereInput:
     """Type-safe WHERE filter for EmbeddingConfig queries."""
     AND: Optional[List['EmbeddingConfigWhereInput']] = None
     OR: Optional[List['EmbeddingConfigWhereInput']] = None
-    NOT: Optional['EmbeddingConfigWhereInput'] = None
-    id: Optional[StringFilter] = None
-    provider: Optional[StringFilter] = None
-    api_key: Optional[StringFilter] = None
-    model: Optional[StringFilter] = None
-    endpoint: Optional[StringFilter] = None
-    is_active: Optional[BoolFilter] = None
-    created_at: Optional[DateTimeFilter] = None
-    updated_at: Optional[DateTimeFilter] = None
+    NOT: Optional[Union['EmbeddingConfigWhereInput', List['EmbeddingConfigWhereInput']]] = None
+    id: Optional[Union[str, StringFilter]] = None
+    provider: Optional[Union[str, StringFilter]] = None
+    api_key: Optional[Union[str, StringFilter]] = None
+    model: Optional[Union[str, StringFilter]] = None
+    endpoint: Optional[Union[str, StringFilter]] = None
+    is_active: Optional[Union[bool, BoolFilter]] = None
+    created_at: Optional[Union[datetime, str, DateTimeFilter]] = None
+    updated_at: Optional[Union[datetime, str, DateTimeFilter]] = None
 
 @dataclass
 class EmbeddingConfigOrderByInput:
@@ -131,14 +136,16 @@ class EmbeddingConfigFindManyArgs:
     order_by: Optional[EmbeddingConfigOrderByInput] = None
     take: Optional[int] = None
     skip: int = 0
-    select: Optional[List[str]] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Dict[str, Any]] = None
 
 @dataclass
 class EmbeddingConfigFindFirstArgs:
     """ORM-style args for EmbeddingConfig.find_first()."""
     where: Optional[EmbeddingConfigWhereInput] = None
     order_by: Optional[EmbeddingConfigOrderByInput] = None
-    select: Optional[List[str]] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Dict[str, Any]] = None
 
 # ─── LlmConfig ORM Types ────────────────────────────────────────────────────────
 
@@ -147,15 +154,15 @@ class LlmConfigWhereInput:
     """Type-safe WHERE filter for LlmConfig queries."""
     AND: Optional[List['LlmConfigWhereInput']] = None
     OR: Optional[List['LlmConfigWhereInput']] = None
-    NOT: Optional['LlmConfigWhereInput'] = None
-    id: Optional[StringFilter] = None
-    provider: Optional[StringFilter] = None
-    api_key: Optional[StringFilter] = None
-    model: Optional[StringFilter] = None
-    endpoint: Optional[StringFilter] = None
-    is_active: Optional[BoolFilter] = None
-    created_at: Optional[DateTimeFilter] = None
-    updated_at: Optional[DateTimeFilter] = None
+    NOT: Optional[Union['LlmConfigWhereInput', List['LlmConfigWhereInput']]] = None
+    id: Optional[Union[str, StringFilter]] = None
+    provider: Optional[Union[str, StringFilter]] = None
+    api_key: Optional[Union[str, StringFilter]] = None
+    model: Optional[Union[str, StringFilter]] = None
+    endpoint: Optional[Union[str, StringFilter]] = None
+    is_active: Optional[Union[bool, BoolFilter]] = None
+    created_at: Optional[Union[datetime, str, DateTimeFilter]] = None
+    updated_at: Optional[Union[datetime, str, DateTimeFilter]] = None
 
 @dataclass
 class LlmConfigOrderByInput:
@@ -198,14 +205,16 @@ class LlmConfigFindManyArgs:
     order_by: Optional[LlmConfigOrderByInput] = None
     take: Optional[int] = None
     skip: int = 0
-    select: Optional[List[str]] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Dict[str, Any]] = None
 
 @dataclass
 class LlmConfigFindFirstArgs:
     """ORM-style args for LlmConfig.find_first()."""
     where: Optional[LlmConfigWhereInput] = None
     order_by: Optional[LlmConfigOrderByInput] = None
-    select: Optional[List[str]] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Dict[str, Any]] = None
 
 # ─── User ORM Types ────────────────────────────────────────────────────────
 
@@ -214,11 +223,11 @@ class UserWhereInput:
     """Type-safe WHERE filter for User queries."""
     AND: Optional[List['UserWhereInput']] = None
     OR: Optional[List['UserWhereInput']] = None
-    NOT: Optional['UserWhereInput'] = None
-    id: Optional[StringFilter] = None
-    email: Optional[StringFilter] = None
-    name: Optional[StringFilter] = None
-    created_at: Optional[DateTimeFilter] = None
+    NOT: Optional[Union['UserWhereInput', List['UserWhereInput']]] = None
+    id: Optional[Union[str, StringFilter]] = None
+    email: Optional[Union[str, StringFilter]] = None
+    name: Optional[Union[str, StringFilter]] = None
+    created_at: Optional[Union[datetime, str, DateTimeFilter]] = None
 
 @dataclass
 class UserOrderByInput:
@@ -249,14 +258,16 @@ class UserFindManyArgs:
     order_by: Optional[UserOrderByInput] = None
     take: Optional[int] = None
     skip: int = 0
-    select: Optional[List[str]] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Dict[str, Any]] = None
 
 @dataclass
 class UserFindFirstArgs:
     """ORM-style args for User.find_first()."""
     where: Optional[UserWhereInput] = None
     order_by: Optional[UserOrderByInput] = None
-    select: Optional[List[str]] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Dict[str, Any]] = None
 
 # ─── Order ORM Types ────────────────────────────────────────────────────────
 
@@ -265,11 +276,11 @@ class OrderWhereInput:
     """Type-safe WHERE filter for Order queries."""
     AND: Optional[List['OrderWhereInput']] = None
     OR: Optional[List['OrderWhereInput']] = None
-    NOT: Optional['OrderWhereInput'] = None
-    id: Optional[StringFilter] = None
-    user_id: Optional[StringFilter] = None
-    total: Optional[IntFilter] = None
-    created_at: Optional[DateTimeFilter] = None
+    NOT: Optional[Union['OrderWhereInput', List['OrderWhereInput']]] = None
+    id: Optional[Union[str, StringFilter]] = None
+    user_id: Optional[Union[str, StringFilter]] = None
+    total: Optional[Union[int, IntFilter]] = None
+    created_at: Optional[Union[datetime, str, DateTimeFilter]] = None
 
 @dataclass
 class OrderOrderByInput:
@@ -300,12 +311,14 @@ class OrderFindManyArgs:
     order_by: Optional[OrderOrderByInput] = None
     take: Optional[int] = None
     skip: int = 0
-    select: Optional[List[str]] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Dict[str, Any]] = None
 
 @dataclass
 class OrderFindFirstArgs:
     """ORM-style args for Order.find_first()."""
     where: Optional[OrderWhereInput] = None
     order_by: Optional[OrderOrderByInput] = None
-    select: Optional[List[str]] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Dict[str, Any]] = None
 

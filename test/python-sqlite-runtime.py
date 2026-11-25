@@ -10,6 +10,15 @@ adapter_source = root.parent / "an5Adapters" / "python"
 if adapter_source.is_dir():
     sys.path.insert(0, str(adapter_source))
 from an5_client import An5Client
+from an5_orm_types import (
+    StringFilter,
+    UserCreateInput,
+    UserFindFirstArgs,
+    UserFindManyArgs,
+    UserOrderByInput,
+    UserUpdateInput,
+    UserWhereInput,
+)
 
 class GeneratedClientRuntime(unittest.TestCase):
     def test_sqlite_crud_and_boolean_filters(self):
@@ -24,6 +33,58 @@ class GeneratedClientRuntime(unittest.TestCase):
             self.assertEqual(client.user.update_many(None, {"name": "Updated"})["count"], 3)
             self.assertEqual(client.user.delete_many()["count"], 3)
             self.assertEqual(client.user.count(), 0)
+
+    def test_typed_dataclasses_snake_case_keys_and_strict_validation(self):
+        with tempfile.TemporaryDirectory(prefix="an5-client-python-") as directory:
+            client = An5Client("sqlite:" + str(Path(directory) / "typed.sqlite"))
+            client.execute_raw(
+                'CREATE TABLE users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, name TEXT, createdAt TEXT NOT NULL DEFAULT \'2026-01-01T00:00:00Z\')'
+            )
+
+            created_a = client.user.create(UserCreateInput(email="alice@example.com", name="Alice"))
+            created_b = client.user.create({"email": "bob@example.com", "name": "Bob", "created_at": "2026-01-02T00:00:00Z"})
+            self.assertEqual(created_a["email"], "alice@example.com")
+            self.assertEqual(created_b["createdAt"], "2026-01-02T00:00:00Z")
+
+            updated = client.user.update(
+                where=UserWhereInput(email=StringFilter(equals="alice@example.com")),
+                data=UserUpdateInput(name="Alice Updated"),
+            )
+            self.assertEqual(updated["name"], "Alice Updated")
+
+            found = client.user.find_many(
+                UserFindManyArgs(
+                    where=UserWhereInput(
+                        name=StringFilter(starts_with="Alice"),
+                        email=StringFilter(ends_with="@example.com"),
+                    ),
+                    order_by=UserOrderByInput(created_at="desc"),
+                    take=5,
+                    select=["id", "email", "created_at"],
+                )
+            )
+            self.assertEqual(len(found), 1)
+            self.assertEqual(set(found[0].keys()), {"id", "email", "createdAt"})
+
+            first = client.user.find_first(
+                UserFindFirstArgs(
+                    where=UserWhereInput(email=StringFilter(not_="alice@example.com")),
+                    order_by=UserOrderByInput(created_at="asc"),
+                )
+            )
+            self.assertIsNotNone(first)
+            self.assertEqual(first["email"], "bob@example.com")
+
+            snake_rows = client.user.find_many(
+                where={"created_at": "2026-01-02T00:00:00Z"},
+                order_by={"created_at": "asc"},
+            )
+            self.assertEqual([r["email"] for r in snake_rows], ["bob@example.com"])
+
+            with self.assertRaises(ValueError):
+                client.user.find_many(where={"non_existent_col": "x"})
+            with self.assertRaises(ValueError):
+                client.user.find_many(where={"email": {"bogus_op": "x"}})
 
 if __name__ == "__main__":
     unittest.main()
