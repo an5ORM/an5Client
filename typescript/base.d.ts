@@ -3,6 +3,7 @@ export declare namespace An5 {
     const An5ClientKnownRequestError: typeof An5KnownError;
     type An5ClientKnownRequestError = An5KnownError;
     type SortOrder = 'asc' | 'desc';
+    type QueryMode = 'default' | 'insensitive';
     type StringFilter = {
         equals?: string;
         in?: string[];
@@ -15,6 +16,7 @@ export declare namespace An5 {
         startsWith?: string;
         endsWith?: string;
         not?: string | StringFilter;
+        mode?: QueryMode;
     };
     type StringNullableFilter = {
         equals?: string | null;
@@ -28,6 +30,16 @@ export declare namespace An5 {
         startsWith?: string;
         endsWith?: string;
         not?: string | StringNullableFilter | null;
+        mode?: QueryMode;
+    };
+    type ListRelationFilter<T> = {
+        some?: T;
+        none?: T;
+        every?: T;
+    };
+    type RelationFilter<T> = {
+        is?: T | null;
+        isNot?: T | null;
     };
     type NumberFilter = {
         equals?: number;

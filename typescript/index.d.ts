@@ -10,8 +10,11 @@ import * as UserTypes from './User';
 import * as OrderTypes from './Order';
 export declare namespace An5 {
     type SortOrder = BaseAn5.SortOrder;
+    type QueryMode = BaseAn5.QueryMode;
     type StringFilter = BaseAn5.StringFilter;
     type StringNullableFilter = BaseAn5.StringNullableFilter;
+    type ListRelationFilter<T> = BaseAn5.ListRelationFilter<T>;
+    type RelationFilter<T> = BaseAn5.RelationFilter<T>;
     type NumberFilter = BaseAn5.NumberFilter;
     type NumberNullableFilter = BaseAn5.NumberNullableFilter;
     type BooleanFilter = BaseAn5.BooleanFilter;
