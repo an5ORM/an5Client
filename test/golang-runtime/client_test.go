@@ -72,3 +72,72 @@ func TestGeneratedClientSQLite(t *testing.T) {
 		t.Fatalf("cleanup count=%d err=%v", count, err)
 	}
 }
+
+func TestGeneratedClientMetadataAndFilters(t *testing.T) {
+	if _, ok := an5.ModelFields["User"]["email"]; !ok {
+		t.Fatalf("expected ModelFields[User][email] to be registered")
+	}
+	if an5.RelationMap == nil {
+		t.Fatalf("expected RelationMap to be non-nil")
+	}
+
+	db, err := sql.Open("sqlite", ":memory:")
+	if err != nil {
+		t.Fatalf("open sqlite: %v", err)
+	}
+	defer db.Close()
+
+	_, err = db.Exec(`CREATE TABLE users (
+		id TEXT PRIMARY KEY,
+		email TEXT UNIQUE NOT NULL,
+		name TEXT,
+		created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+	)`)
+	if err != nil {
+		t.Fatalf("create table: %v", err)
+	}
+
+	ctx := context.Background()
+	client := an5.NewAn5DbContextWithConnStr(db, "sqlite://:memory:")
+
+	if _, err := client.User.CreateMany(ctx, []*an5.User{
+		{Id: "u1", Email: "alice@example.com", Name: an5.StringPtr("Alice")},
+		{Id: "u2", Email: "bob@example.com", Name: an5.StringPtr("Bob")},
+	}); err != nil {
+		t.Fatalf("CreateMany: %v", err)
+	}
+
+	notBob, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{
+		Where: &an5.UserWhereInput{
+			Email: &an5.StringFilter{NotIn: []string{"bob@example.com"}},
+		},
+	})
+	if err != nil {
+		t.Fatalf("FindMany NotIn: %v", err)
+	}
+	if len(notBob) != 1 || notBob[0].Email != "alice@example.com" {
+		t.Fatalf("NotIn filter got %+v, want alice only", notBob)
+	}
+
+	emptyIn, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{
+		Where: &an5.UserWhereInput{
+			Email: &an5.StringFilter{In: []string{}},
+		},
+	})
+	if err != nil || len(emptyIn) != 0 {
+		t.Fatalf("empty In filter got len=%d err=%v, want 0 rows", len(emptyIn), err)
+	}
+
+	emptyNotIn, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{
+		Where: &an5.UserWhereInput{
+			Email: &an5.StringFilter{NotIn: []string{}},
+		},
+	})
+	if err != nil || len(emptyNotIn) != 2 {
+		t.Fatalf("empty NotIn filter got len=%d err=%v, want 2 rows", len(emptyNotIn), err)
+	}
+
+	if _, err := client.User.FindMany(ctx, "invalid-non-struct"); err == nil {
+		t.Fatalf("FindMany with non-struct args should return an error")
+	}
+}
