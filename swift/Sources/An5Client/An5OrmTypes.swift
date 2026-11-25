@@ -15,13 +15,13 @@ public enum An5Orm {
 
         public static func `is`(_ value: String?) -> StringFilter {
             var filter = StringFilter()
-            filter.operators["equals"] = value
+            filter.operators["equals"] = value.map { $0 as Any } ?? NSNull()
             return filter
         }
 
         public static func isNot(_ value: String?) -> StringFilter {
             var filter = StringFilter()
-            filter.operators["not"] = value
+            filter.operators["not"] = value.map { $0 as Any } ?? NSNull()
             return filter
         }
 
@@ -65,31 +65,31 @@ public enum An5Orm {
 
         public static func `is`(_ value: Double?) -> NumberFilter {
             var filter = NumberFilter()
-            filter.operators["equals"] = value
+            filter.operators["equals"] = value.map { $0 as Any } ?? NSNull()
             return filter
         }
 
         public static func atLeast(_ value: Double?) -> NumberFilter {
             var filter = NumberFilter()
-            filter.operators["gte"] = value
+            if let value { filter.operators["gte"] = value }
             return filter
         }
 
         public static func atMost(_ value: Double?) -> NumberFilter {
             var filter = NumberFilter()
-            filter.operators["lte"] = value
+            if let value { filter.operators["lte"] = value }
             return filter
         }
 
         public static func greater(_ value: Double?) -> NumberFilter {
             var filter = NumberFilter()
-            filter.operators["gt"] = value
+            if let value { filter.operators["gt"] = value }
             return filter
         }
 
         public static func less(_ value: Double?) -> NumberFilter {
             var filter = NumberFilter()
-            filter.operators["lt"] = value
+            if let value { filter.operators["lt"] = value }
             return filter
         }
 
@@ -109,7 +109,7 @@ public enum An5Orm {
 
         public static func `is`(_ value: Bool?) -> BoolFilter {
             var filter = BoolFilter()
-            filter.operators["equals"] = value
+            filter.operators["equals"] = value.map { $0 as Any } ?? NSNull()
             return filter
         }
 
@@ -123,19 +123,19 @@ public enum An5Orm {
 
         public static func `is`(_ value: Date?) -> DateFilter {
             var filter = DateFilter()
-            filter.operators["equals"] = value
+            filter.operators["equals"] = value.map { $0 as Any } ?? NSNull()
             return filter
         }
 
         public static func atLeast(_ value: Date?) -> DateFilter {
             var filter = DateFilter()
-            filter.operators["gte"] = value
+            if let value { filter.operators["gte"] = value }
             return filter
         }
 
         public static func atMost(_ value: Date?) -> DateFilter {
             var filter = DateFilter()
-            filter.operators["lte"] = value
+            if let value { filter.operators["lte"] = value }
             return filter
         }
 
@@ -143,8 +143,98 @@ public enum An5Orm {
         public func build() -> Where { operators }
     }
 
+    /// Common interface for generated per-model `WHERE` builders.
+    public protocol WhereBuilder {
+        init()
+        func build() -> Where
+    }
+
+    /// A filter on a to-many relation (`some`, `none`, `every`).
+    public struct ListRelationFilter<Target: WhereBuilder> {
+        private var operators: Where = [:]
+
+        public init() {}
+
+        public static func some(_ filter: Target = Target()) -> ListRelationFilter {
+            var relation = ListRelationFilter()
+            relation.operators["some"] = filter.build()
+            return relation
+        }
+
+        public static func none(_ filter: Target = Target()) -> ListRelationFilter {
+            var relation = ListRelationFilter()
+            relation.operators["none"] = filter.build()
+            return relation
+        }
+
+        public static func every(_ filter: Target) -> ListRelationFilter {
+            var relation = ListRelationFilter()
+            relation.operators["every"] = filter.build()
+            return relation
+        }
+
+        public func some(_ filter: Target = Target()) -> ListRelationFilter {
+            var relation = self
+            relation.operators["some"] = filter.build()
+            return relation
+        }
+
+        public func none(_ filter: Target = Target()) -> ListRelationFilter {
+            var relation = self
+            relation.operators["none"] = filter.build()
+            return relation
+        }
+
+        public func every(_ filter: Target) -> ListRelationFilter {
+            var relation = self
+            relation.operators["every"] = filter.build()
+            return relation
+        }
+
+        /// The relation filter as the runtime reads it.
+        public func build() -> Where { operators }
+    }
+
+    /// A filter on a to-one relation (`is`, `isNot`).
+    public struct RelationFilter<Target: WhereBuilder> {
+        private var operators: Where = [:]
+
+        public init() {}
+
+        public static func `is`(_ filter: Target?) -> RelationFilter {
+            var relation = RelationFilter()
+            let payload: Any = filter.map { $0.build() as Any } ?? NSNull()
+            relation.operators["is"] = payload
+            return relation
+        }
+
+        public static func isNot(_ filter: Target?) -> RelationFilter {
+            var relation = RelationFilter()
+            let payload: Any = filter.map { $0.build() as Any } ?? NSNull()
+            relation.operators["isNot"] = payload
+            return relation
+        }
+
+        public func `is`(_ filter: Target?) -> RelationFilter {
+            var relation = self
+            let payload: Any = filter.map { $0.build() as Any } ?? NSNull()
+            relation.operators["is"] = payload
+            return relation
+        }
+
+        public func isNot(_ filter: Target?) -> RelationFilter {
+            var relation = self
+            let payload: Any = filter.map { $0.build() as Any } ?? NSNull()
+            relation.operators["isNot"] = payload
+            return relation
+        }
+
+        /// The relation filter as the runtime reads it.
+        public func build() -> Where { operators }
+    }
+
     /// A `WHERE` for EmbeddingConfig. Unset filters are left out.
-    public struct EmbeddingConfigWhere {
+    public struct EmbeddingConfigWhere: WhereBuilder {
         private var operators: Where = [:]
         public var id: StringFilter?
         public var provider: StringFilter?
@@ -220,7 +310,7 @@ public enum An5Orm {
     }
 
     /// A `WHERE` for LlmConfig. Unset filters are left out.
-    public struct LlmConfigWhere {
+    public struct LlmConfigWhere: WhereBuilder {
         private var operators: Where = [:]
         public var id: StringFilter?
         public var provider: StringFilter?
@@ -296,7 +386,7 @@ public enum An5Orm {
     }
 
     /// A `WHERE` for User. Unset filters are left out.
-    public struct UserWhere {
+    public struct UserWhere: WhereBuilder {
         private var operators: Where = [:]
         public var id: StringFilter?
         public var email: StringFilter?
@@ -364,7 +454,7 @@ public enum An5Orm {
     }
 
     /// A `WHERE` for Order. Unset filters are left out.
-    public struct OrderWhere {
+    public struct OrderWhere: WhereBuilder {
         private var operators: Where = [:]
         public var id: StringFilter?
         public var userId: StringFilter?
