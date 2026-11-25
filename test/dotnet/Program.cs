@@ -129,6 +129,42 @@ namespace SmokeTest
             });
             Check("update", users.FindFirst("Id = @id", new Dictionary<string, object> { { "id", "u2" } })?.Name, "Bobby");
 
+            Check("metadata ModelFields[User][email]", An5ClientMetadata.ModelHasField("User", "email"), true);
+            Check("metadata RelationMap non-null", An5ClientMetadata.RelationMap != null, true);
+
+            var ciAlice = users.FindMany(new UserFindManyArgs
+            {
+                Where = new UserWhereInput { Email = new StringFilter { Contains = "ALICE", Mode = "insensitive" } },
+            });
+            Check("typed Contains Mode=insensitive", ciAlice.Count == 1 ? ciAlice[0].Email : "", "alice@example.com");
+
+            var notBob = users.FindMany(new UserFindManyArgs
+            {
+                Where = new UserWhereInput { Email = new StringFilter { NotIn = new List<string> { "bob@example.com" } } },
+            });
+            Check("typed NotIn filter", notBob.Count == 1 ? notBob[0].Email : "", "alice@example.com");
+
+            var emptyIn = users.FindMany(new UserFindManyArgs
+            {
+                Where = new UserWhereInput { Email = new StringFilter { In = new List<string>() } },
+            });
+            Check("typed empty In filter", emptyIn.Count, 0);
+
+            var emptyNotIn = users.FindMany(new UserFindManyArgs
+            {
+                Where = new UserWhereInput { Email = new StringFilter { NotIn = new List<string>() } },
+            });
+            Check("typed empty NotIn filter", emptyNotIn.Count, 2);
+
+            CheckThrows<ArgumentException>("reject invalid StringFilter.Mode", () =>
+                users.FindMany(new UserFindManyArgs
+                {
+                    Where = new UserWhereInput { Email = new StringFilter { Contains = "a", Mode = "fuzzy" } },
+                }));
+            CheckThrows<ArgumentException>("reject non-input query args", () => users.FindMany(12345));
+            CheckThrows<ArgumentException>("reject unknown dict filter op", () =>
+                users.FindMany(new Dictionary<string, object> { { "email", new Dictionary<string, object> { { "bogus", "x" } } } }));
+
             Check("delete", users.Delete("u1"), true);
             Check("count after delete", users.Count(), 1);
 
