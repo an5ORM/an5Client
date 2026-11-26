@@ -11,6 +11,10 @@ if adapter_source.is_dir():
     sys.path.insert(0, str(adapter_source))
 from an5_client import An5Client
 from an5_orm_types import (
+    IntFilter,
+    NumberFilter,
+    OrderAggregateHavingInput,
+    OrderGroupByArgs,
     StringFilter,
     UserCreateInput,
     UserFindFirstArgs,
@@ -81,10 +85,44 @@ class GeneratedClientRuntime(unittest.TestCase):
             )
             self.assertEqual([r["email"] for r in snake_rows], ["bob@example.com"])
 
+            ci_rows = client.user.find_many(
+                where=UserWhereInput(name=StringFilter(contains="alice", mode="insensitive")),
+            )
+            self.assertEqual([r["email"] for r in ci_rows], ["alice@example.com"])
+
+            client.execute_raw(
+                "CREATE TABLE orders (id TEXT PRIMARY KEY, userId TEXT NOT NULL, total INTEGER NOT NULL, createdAt TEXT)"
+            )
+            client.execute_raw(
+                "INSERT INTO orders (id, userId, total, createdAt) VALUES (?, ?, ?, ?), (?, ?, ?, ?), (?, ?, ?, ?)",
+                "o1", created_a["id"], 60, "2026-01-01T00:00:00Z",
+                "o2", created_a["id"], 90, None,
+                "o3", created_b["id"], 40, "2026-01-02T00:00:00Z",
+            )
+            grouped = client.order.group_by(
+                OrderGroupByArgs(
+                    by=["user_id"],
+                    having=OrderAggregateHavingInput(
+                        _count={"_all": IntFilter(gte=2)},
+                        _sum={"total": NumberFilter(gt=100)},
+                    ),
+                    _count={"_all": True, "created_at": True},
+                    _sum={"total": True},
+                )
+            )
+            self.assertEqual(len(grouped), 1)
+            self.assertEqual(grouped[0]["userId"], created_a["id"])
+            self.assertEqual(grouped[0]["_count"], {"_all": 2, "createdAt": 1})
+            self.assertEqual(grouped[0]["_sum"]["total"], 150.0)
+
             with self.assertRaises(ValueError):
                 client.user.find_many(where={"non_existent_col": "x"})
             with self.assertRaises(ValueError):
                 client.user.find_many(where={"email": {"bogus_op": "x"}})
+            with self.assertRaises(ValueError):
+                client.user.find_many(where=UserWhereInput(email=StringFilter(contains="a", mode="bogus")))
+            with self.assertRaises(ValueError):
+                client.order.group_by(by="user_id", having={"total": {"gt": 10}})
 
 if __name__ == "__main__":
     unittest.main()
