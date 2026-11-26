@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import an5.adapters.An5GroupBy;
+
 /**
  * Typed filters for the generated models.
  *
@@ -66,6 +68,14 @@ public final class An5OrmTypes {
     /** An empty list matches everything. */
     public static Map<String, Object> notIn(Object... values) {
       return operator("notIn", Arrays.asList(values));
+    }
+
+    /** Marks a string filter operator map case-insensitive ({@code mode: "insensitive"}). */
+    public static Map<String, Object> insensitive(Map<String, Object> filter) {
+      Map<String, Object> copy =
+          filter == null ? new LinkedHashMap<String, Object>() : new LinkedHashMap<String, Object>(filter);
+      copy.put("mode", "insensitive");
+      return copy;
     }
 
     /** The column is `NULL`. */
@@ -161,6 +171,7 @@ public final class An5OrmTypes {
     public String gte;
     public String lt;
     public String lte;
+    public String mode;
 
     public Map<String, Object> toMap() {
       Map<String, Object> filter = new LinkedHashMap<String, Object>();
@@ -175,6 +186,7 @@ public final class An5OrmTypes {
       put(filter, "gte", gte);
       put(filter, "lt", lt);
       put(filter, "lte", lte);
+      put(filter, "mode", mode);
       return filter;
     }
 
@@ -190,10 +202,20 @@ public final class An5OrmTypes {
       return filter;
     }
 
-    public static StringFilter has(String substring) {
+    public static StringFilter has(String value) {
       StringFilter filter = new StringFilter();
-      filter.contains = substring;
+      filter.contains = value;
       return filter;
+    }
+
+    public StringFilter mode(String value) {
+      this.mode = value;
+      return this;
+    }
+
+    public StringFilter insensitive() {
+      this.mode = "insensitive";
+      return this;
     }
   }
 
@@ -315,6 +337,16 @@ public final class An5OrmTypes {
   /** Common interface implemented by generated model `WHERE` builders. */
   public interface WhereBuilder {
     Map<String, Object> toMap();
+  }
+
+  /** Common interface implemented by generated model `HAVING` builders. */
+  public interface HavingBuilder {
+    Map<String, Object> toMap();
+  }
+
+  /** Common interface implemented by generated model `GroupBy` builders. */
+  public interface GroupByBuilder {
+    An5GroupBy toGroupBy();
   }
 
   /** Type-safe filter for to-many relations (`some`, `none`, `every`). */
@@ -492,6 +524,217 @@ public final class An5OrmTypes {
     }
   }
 
+  /** Count aggregate filter for EmbeddingConfig.groupBy() HAVING clauses. */
+  public static final class EmbeddingConfigCountAggregateFilter {
+    public NumberFilter _all;
+    public NumberFilter Id;
+    public NumberFilter Provider;
+    public NumberFilter ApiKey;
+    public NumberFilter Model;
+    public NumberFilter Endpoint;
+    public NumberFilter IsActive;
+    public NumberFilter CreatedAt;
+    public NumberFilter UpdatedAt;
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (_all != null) filter.put("_all", _all.toMap());
+      if (Id != null) filter.put("id", Id.toMap());
+      if (Provider != null) filter.put("provider", Provider.toMap());
+      if (ApiKey != null) filter.put("apiKey", ApiKey.toMap());
+      if (Model != null) filter.put("model", Model.toMap());
+      if (Endpoint != null) filter.put("endpoint", Endpoint.toMap());
+      if (IsActive != null) filter.put("isActive", IsActive.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      if (UpdatedAt != null) filter.put("updatedAt", UpdatedAt.toMap());
+      return filter;
+    }
+  }
+
+  /** Numeric aggregate filter (sum/avg) for EmbeddingConfig.groupBy() HAVING clauses. */
+  public static final class EmbeddingConfigNumericAggregateFilter {
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      return filter;
+    }
+  }
+
+  /** Scalar aggregate filter (min/max) for EmbeddingConfig.groupBy() HAVING clauses. */
+  public static final class EmbeddingConfigScalarAggregateFilter {
+    public StringFilter Id;
+    public StringFilter Provider;
+    public StringFilter ApiKey;
+    public StringFilter Model;
+    public StringFilter Endpoint;
+    public BoolFilter IsActive;
+    public DateFilter CreatedAt;
+    public DateFilter UpdatedAt;
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (Id != null) filter.put("id", Id.toMap());
+      if (Provider != null) filter.put("provider", Provider.toMap());
+      if (ApiKey != null) filter.put("apiKey", ApiKey.toMap());
+      if (Model != null) filter.put("model", Model.toMap());
+      if (Endpoint != null) filter.put("endpoint", Endpoint.toMap());
+      if (IsActive != null) filter.put("isActive", IsActive.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      if (UpdatedAt != null) filter.put("updatedAt", UpdatedAt.toMap());
+      return filter;
+    }
+  }
+
+  /** Type-safe `HAVING` builder for EmbeddingConfig.groupBy() queries. */
+  public static final class EmbeddingConfigAggregateHaving implements HavingBuilder {
+    public List<EmbeddingConfigAggregateHaving> and;
+    public List<EmbeddingConfigAggregateHaving> or;
+    public EmbeddingConfigAggregateHaving not;
+    public EmbeddingConfigCountAggregateFilter _count;
+    public EmbeddingConfigNumericAggregateFilter _sum;
+    public EmbeddingConfigNumericAggregateFilter _avg;
+    public EmbeddingConfigScalarAggregateFilter _min;
+    public EmbeddingConfigScalarAggregateFilter _max;
+    public StringFilter Id;
+    public StringFilter Provider;
+    public StringFilter ApiKey;
+    public StringFilter Model;
+    public StringFilter Endpoint;
+    public BoolFilter IsActive;
+    public DateFilter CreatedAt;
+    public DateFilter UpdatedAt;
+
+    public EmbeddingConfigAggregateHaving and(EmbeddingConfigAggregateHaving... clauses) {
+      this.and = Arrays.asList(clauses);
+      return this;
+    }
+
+    public EmbeddingConfigAggregateHaving or(EmbeddingConfigAggregateHaving... clauses) {
+      this.or = Arrays.asList(clauses);
+      return this;
+    }
+
+    public EmbeddingConfigAggregateHaving not(EmbeddingConfigAggregateHaving clause) {
+      this.not = clause;
+      return this;
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (and != null) filter.put("AND", toMapValues(and));
+      if (or != null) filter.put("OR", toMapValues(or));
+      if (not != null) filter.put("NOT", toMapValues(Arrays.asList(not)));
+      if (_count != null) filter.put("_count", _count.toMap());
+      if (_sum != null) filter.put("_sum", _sum.toMap());
+      if (_avg != null) filter.put("_avg", _avg.toMap());
+      if (_min != null) filter.put("_min", _min.toMap());
+      if (_max != null) filter.put("_max", _max.toMap());
+      if (Id != null) filter.put("id", Id.toMap());
+      if (Provider != null) filter.put("provider", Provider.toMap());
+      if (ApiKey != null) filter.put("apiKey", ApiKey.toMap());
+      if (Model != null) filter.put("model", Model.toMap());
+      if (Endpoint != null) filter.put("endpoint", Endpoint.toMap());
+      if (IsActive != null) filter.put("isActive", IsActive.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      if (UpdatedAt != null) filter.put("updatedAt", UpdatedAt.toMap());
+      return filter;
+    }
+
+    private static List<Object> toMapValues(List<EmbeddingConfigAggregateHaving> clauses) {
+      List<Object> values = new ArrayList<Object>(clauses.size());
+      for (EmbeddingConfigAggregateHaving clause : clauses) {
+        values.add(clause == null ? new LinkedHashMap<String, Object>() : clause.toMap());
+      }
+      return values;
+    }
+  }
+
+  /** Type-safe `groupBy` builder for EmbeddingConfig. */
+  public static final class EmbeddingConfigGroupBy implements GroupByBuilder {
+    private final An5GroupBy delegate = new An5GroupBy();
+
+    public EmbeddingConfigGroupBy by(String... columns) {
+      delegate.by(columns);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy where(EmbeddingConfigWhere where) {
+      if (where != null) delegate.where(where.toMap());
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy where(Map<String, Object> where) {
+      delegate.where(where);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy having(EmbeddingConfigAggregateHaving having) {
+      if (having != null) delegate.having(having.toMap());
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy having(Map<String, Object> having) {
+      delegate.having(having);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy orderBy(EmbeddingConfigOrderBy orderBy) {
+      if (orderBy != null) delegate.orderBy(orderBy.toList());
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy orderBy(String column, String direction) {
+      delegate.orderBy(column, direction);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy skip(int skip) {
+      delegate.skip(skip);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy take(Integer take) {
+      delegate.take(take);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy count() {
+      delegate.count();
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy count(String... columns) {
+      delegate.count(columns);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy sum(String... columns) {
+      delegate.sum(columns);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy avg(String... columns) {
+      delegate.avg(columns);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy min(String... columns) {
+      delegate.min(columns);
+      return this;
+    }
+
+    public EmbeddingConfigGroupBy max(String... columns) {
+      delegate.max(columns);
+      return this;
+    }
+
+    @Override
+    public An5GroupBy toGroupBy() {
+      return delegate;
+    }
+  }
+
   // ── LlmConfig ─────────────────────────────────────────────────────────────────────
 
   /** Type-safe `WHERE` for LlmConfig. Unset filters are left out. */
@@ -588,6 +831,217 @@ public final class An5OrmTypes {
     }
   }
 
+  /** Count aggregate filter for LlmConfig.groupBy() HAVING clauses. */
+  public static final class LlmConfigCountAggregateFilter {
+    public NumberFilter _all;
+    public NumberFilter Id;
+    public NumberFilter Provider;
+    public NumberFilter ApiKey;
+    public NumberFilter Model;
+    public NumberFilter Endpoint;
+    public NumberFilter IsActive;
+    public NumberFilter CreatedAt;
+    public NumberFilter UpdatedAt;
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (_all != null) filter.put("_all", _all.toMap());
+      if (Id != null) filter.put("id", Id.toMap());
+      if (Provider != null) filter.put("provider", Provider.toMap());
+      if (ApiKey != null) filter.put("apiKey", ApiKey.toMap());
+      if (Model != null) filter.put("model", Model.toMap());
+      if (Endpoint != null) filter.put("endpoint", Endpoint.toMap());
+      if (IsActive != null) filter.put("isActive", IsActive.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      if (UpdatedAt != null) filter.put("updatedAt", UpdatedAt.toMap());
+      return filter;
+    }
+  }
+
+  /** Numeric aggregate filter (sum/avg) for LlmConfig.groupBy() HAVING clauses. */
+  public static final class LlmConfigNumericAggregateFilter {
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      return filter;
+    }
+  }
+
+  /** Scalar aggregate filter (min/max) for LlmConfig.groupBy() HAVING clauses. */
+  public static final class LlmConfigScalarAggregateFilter {
+    public StringFilter Id;
+    public StringFilter Provider;
+    public StringFilter ApiKey;
+    public StringFilter Model;
+    public StringFilter Endpoint;
+    public BoolFilter IsActive;
+    public DateFilter CreatedAt;
+    public DateFilter UpdatedAt;
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (Id != null) filter.put("id", Id.toMap());
+      if (Provider != null) filter.put("provider", Provider.toMap());
+      if (ApiKey != null) filter.put("apiKey", ApiKey.toMap());
+      if (Model != null) filter.put("model", Model.toMap());
+      if (Endpoint != null) filter.put("endpoint", Endpoint.toMap());
+      if (IsActive != null) filter.put("isActive", IsActive.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      if (UpdatedAt != null) filter.put("updatedAt", UpdatedAt.toMap());
+      return filter;
+    }
+  }
+
+  /** Type-safe `HAVING` builder for LlmConfig.groupBy() queries. */
+  public static final class LlmConfigAggregateHaving implements HavingBuilder {
+    public List<LlmConfigAggregateHaving> and;
+    public List<LlmConfigAggregateHaving> or;
+    public LlmConfigAggregateHaving not;
+    public LlmConfigCountAggregateFilter _count;
+    public LlmConfigNumericAggregateFilter _sum;
+    public LlmConfigNumericAggregateFilter _avg;
+    public LlmConfigScalarAggregateFilter _min;
+    public LlmConfigScalarAggregateFilter _max;
+    public StringFilter Id;
+    public StringFilter Provider;
+    public StringFilter ApiKey;
+    public StringFilter Model;
+    public StringFilter Endpoint;
+    public BoolFilter IsActive;
+    public DateFilter CreatedAt;
+    public DateFilter UpdatedAt;
+
+    public LlmConfigAggregateHaving and(LlmConfigAggregateHaving... clauses) {
+      this.and = Arrays.asList(clauses);
+      return this;
+    }
+
+    public LlmConfigAggregateHaving or(LlmConfigAggregateHaving... clauses) {
+      this.or = Arrays.asList(clauses);
+      return this;
+    }
+
+    public LlmConfigAggregateHaving not(LlmConfigAggregateHaving clause) {
+      this.not = clause;
+      return this;
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (and != null) filter.put("AND", toMapValues(and));
+      if (or != null) filter.put("OR", toMapValues(or));
+      if (not != null) filter.put("NOT", toMapValues(Arrays.asList(not)));
+      if (_count != null) filter.put("_count", _count.toMap());
+      if (_sum != null) filter.put("_sum", _sum.toMap());
+      if (_avg != null) filter.put("_avg", _avg.toMap());
+      if (_min != null) filter.put("_min", _min.toMap());
+      if (_max != null) filter.put("_max", _max.toMap());
+      if (Id != null) filter.put("id", Id.toMap());
+      if (Provider != null) filter.put("provider", Provider.toMap());
+      if (ApiKey != null) filter.put("apiKey", ApiKey.toMap());
+      if (Model != null) filter.put("model", Model.toMap());
+      if (Endpoint != null) filter.put("endpoint", Endpoint.toMap());
+      if (IsActive != null) filter.put("isActive", IsActive.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      if (UpdatedAt != null) filter.put("updatedAt", UpdatedAt.toMap());
+      return filter;
+    }
+
+    private static List<Object> toMapValues(List<LlmConfigAggregateHaving> clauses) {
+      List<Object> values = new ArrayList<Object>(clauses.size());
+      for (LlmConfigAggregateHaving clause : clauses) {
+        values.add(clause == null ? new LinkedHashMap<String, Object>() : clause.toMap());
+      }
+      return values;
+    }
+  }
+
+  /** Type-safe `groupBy` builder for LlmConfig. */
+  public static final class LlmConfigGroupBy implements GroupByBuilder {
+    private final An5GroupBy delegate = new An5GroupBy();
+
+    public LlmConfigGroupBy by(String... columns) {
+      delegate.by(columns);
+      return this;
+    }
+
+    public LlmConfigGroupBy where(LlmConfigWhere where) {
+      if (where != null) delegate.where(where.toMap());
+      return this;
+    }
+
+    public LlmConfigGroupBy where(Map<String, Object> where) {
+      delegate.where(where);
+      return this;
+    }
+
+    public LlmConfigGroupBy having(LlmConfigAggregateHaving having) {
+      if (having != null) delegate.having(having.toMap());
+      return this;
+    }
+
+    public LlmConfigGroupBy having(Map<String, Object> having) {
+      delegate.having(having);
+      return this;
+    }
+
+    public LlmConfigGroupBy orderBy(LlmConfigOrderBy orderBy) {
+      if (orderBy != null) delegate.orderBy(orderBy.toList());
+      return this;
+    }
+
+    public LlmConfigGroupBy orderBy(String column, String direction) {
+      delegate.orderBy(column, direction);
+      return this;
+    }
+
+    public LlmConfigGroupBy skip(int skip) {
+      delegate.skip(skip);
+      return this;
+    }
+
+    public LlmConfigGroupBy take(Integer take) {
+      delegate.take(take);
+      return this;
+    }
+
+    public LlmConfigGroupBy count() {
+      delegate.count();
+      return this;
+    }
+
+    public LlmConfigGroupBy count(String... columns) {
+      delegate.count(columns);
+      return this;
+    }
+
+    public LlmConfigGroupBy sum(String... columns) {
+      delegate.sum(columns);
+      return this;
+    }
+
+    public LlmConfigGroupBy avg(String... columns) {
+      delegate.avg(columns);
+      return this;
+    }
+
+    public LlmConfigGroupBy min(String... columns) {
+      delegate.min(columns);
+      return this;
+    }
+
+    public LlmConfigGroupBy max(String... columns) {
+      delegate.max(columns);
+      return this;
+    }
+
+    @Override
+    public An5GroupBy toGroupBy() {
+      return delegate;
+    }
+  }
+
   // ── User ─────────────────────────────────────────────────────────────────────
 
   /** Type-safe `WHERE` for User. Unset filters are left out. */
@@ -676,6 +1130,193 @@ public final class An5OrmTypes {
     }
   }
 
+  /** Count aggregate filter for User.groupBy() HAVING clauses. */
+  public static final class UserCountAggregateFilter {
+    public NumberFilter _all;
+    public NumberFilter Id;
+    public NumberFilter Email;
+    public NumberFilter Name;
+    public NumberFilter CreatedAt;
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (_all != null) filter.put("_all", _all.toMap());
+      if (Id != null) filter.put("id", Id.toMap());
+      if (Email != null) filter.put("email", Email.toMap());
+      if (Name != null) filter.put("name", Name.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      return filter;
+    }
+  }
+
+  /** Numeric aggregate filter (sum/avg) for User.groupBy() HAVING clauses. */
+  public static final class UserNumericAggregateFilter {
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      return filter;
+    }
+  }
+
+  /** Scalar aggregate filter (min/max) for User.groupBy() HAVING clauses. */
+  public static final class UserScalarAggregateFilter {
+    public StringFilter Id;
+    public StringFilter Email;
+    public StringFilter Name;
+    public DateFilter CreatedAt;
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (Id != null) filter.put("id", Id.toMap());
+      if (Email != null) filter.put("email", Email.toMap());
+      if (Name != null) filter.put("name", Name.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      return filter;
+    }
+  }
+
+  /** Type-safe `HAVING` builder for User.groupBy() queries. */
+  public static final class UserAggregateHaving implements HavingBuilder {
+    public List<UserAggregateHaving> and;
+    public List<UserAggregateHaving> or;
+    public UserAggregateHaving not;
+    public UserCountAggregateFilter _count;
+    public UserNumericAggregateFilter _sum;
+    public UserNumericAggregateFilter _avg;
+    public UserScalarAggregateFilter _min;
+    public UserScalarAggregateFilter _max;
+    public StringFilter Id;
+    public StringFilter Email;
+    public StringFilter Name;
+    public DateFilter CreatedAt;
+
+    public UserAggregateHaving and(UserAggregateHaving... clauses) {
+      this.and = Arrays.asList(clauses);
+      return this;
+    }
+
+    public UserAggregateHaving or(UserAggregateHaving... clauses) {
+      this.or = Arrays.asList(clauses);
+      return this;
+    }
+
+    public UserAggregateHaving not(UserAggregateHaving clause) {
+      this.not = clause;
+      return this;
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (and != null) filter.put("AND", toMapValues(and));
+      if (or != null) filter.put("OR", toMapValues(or));
+      if (not != null) filter.put("NOT", toMapValues(Arrays.asList(not)));
+      if (_count != null) filter.put("_count", _count.toMap());
+      if (_sum != null) filter.put("_sum", _sum.toMap());
+      if (_avg != null) filter.put("_avg", _avg.toMap());
+      if (_min != null) filter.put("_min", _min.toMap());
+      if (_max != null) filter.put("_max", _max.toMap());
+      if (Id != null) filter.put("id", Id.toMap());
+      if (Email != null) filter.put("email", Email.toMap());
+      if (Name != null) filter.put("name", Name.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      return filter;
+    }
+
+    private static List<Object> toMapValues(List<UserAggregateHaving> clauses) {
+      List<Object> values = new ArrayList<Object>(clauses.size());
+      for (UserAggregateHaving clause : clauses) {
+        values.add(clause == null ? new LinkedHashMap<String, Object>() : clause.toMap());
+      }
+      return values;
+    }
+  }
+
+  /** Type-safe `groupBy` builder for User. */
+  public static final class UserGroupBy implements GroupByBuilder {
+    private final An5GroupBy delegate = new An5GroupBy();
+
+    public UserGroupBy by(String... columns) {
+      delegate.by(columns);
+      return this;
+    }
+
+    public UserGroupBy where(UserWhere where) {
+      if (where != null) delegate.where(where.toMap());
+      return this;
+    }
+
+    public UserGroupBy where(Map<String, Object> where) {
+      delegate.where(where);
+      return this;
+    }
+
+    public UserGroupBy having(UserAggregateHaving having) {
+      if (having != null) delegate.having(having.toMap());
+      return this;
+    }
+
+    public UserGroupBy having(Map<String, Object> having) {
+      delegate.having(having);
+      return this;
+    }
+
+    public UserGroupBy orderBy(UserOrderBy orderBy) {
+      if (orderBy != null) delegate.orderBy(orderBy.toList());
+      return this;
+    }
+
+    public UserGroupBy orderBy(String column, String direction) {
+      delegate.orderBy(column, direction);
+      return this;
+    }
+
+    public UserGroupBy skip(int skip) {
+      delegate.skip(skip);
+      return this;
+    }
+
+    public UserGroupBy take(Integer take) {
+      delegate.take(take);
+      return this;
+    }
+
+    public UserGroupBy count() {
+      delegate.count();
+      return this;
+    }
+
+    public UserGroupBy count(String... columns) {
+      delegate.count(columns);
+      return this;
+    }
+
+    public UserGroupBy sum(String... columns) {
+      delegate.sum(columns);
+      return this;
+    }
+
+    public UserGroupBy avg(String... columns) {
+      delegate.avg(columns);
+      return this;
+    }
+
+    public UserGroupBy min(String... columns) {
+      delegate.min(columns);
+      return this;
+    }
+
+    public UserGroupBy max(String... columns) {
+      delegate.max(columns);
+      return this;
+    }
+
+    @Override
+    public An5GroupBy toGroupBy() {
+      return delegate;
+    }
+  }
+
   // ── Order ─────────────────────────────────────────────────────────────────────
 
   /** Type-safe `WHERE` for Order. Unset filters are left out. */
@@ -761,6 +1402,195 @@ public final class An5OrmTypes {
 
     public List<Map<String, String>> toList() {
       return entries;
+    }
+  }
+
+  /** Count aggregate filter for Order.groupBy() HAVING clauses. */
+  public static final class OrderCountAggregateFilter {
+    public NumberFilter _all;
+    public NumberFilter Id;
+    public NumberFilter UserId;
+    public NumberFilter Total;
+    public NumberFilter CreatedAt;
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (_all != null) filter.put("_all", _all.toMap());
+      if (Id != null) filter.put("id", Id.toMap());
+      if (UserId != null) filter.put("userId", UserId.toMap());
+      if (Total != null) filter.put("total", Total.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      return filter;
+    }
+  }
+
+  /** Numeric aggregate filter (sum/avg) for Order.groupBy() HAVING clauses. */
+  public static final class OrderNumericAggregateFilter {
+    public NumberFilter Total;
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (Total != null) filter.put("total", Total.toMap());
+      return filter;
+    }
+  }
+
+  /** Scalar aggregate filter (min/max) for Order.groupBy() HAVING clauses. */
+  public static final class OrderScalarAggregateFilter {
+    public StringFilter Id;
+    public StringFilter UserId;
+    public NumberFilter Total;
+    public DateFilter CreatedAt;
+
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (Id != null) filter.put("id", Id.toMap());
+      if (UserId != null) filter.put("userId", UserId.toMap());
+      if (Total != null) filter.put("total", Total.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      return filter;
+    }
+  }
+
+  /** Type-safe `HAVING` builder for Order.groupBy() queries. */
+  public static final class OrderAggregateHaving implements HavingBuilder {
+    public List<OrderAggregateHaving> and;
+    public List<OrderAggregateHaving> or;
+    public OrderAggregateHaving not;
+    public OrderCountAggregateFilter _count;
+    public OrderNumericAggregateFilter _sum;
+    public OrderNumericAggregateFilter _avg;
+    public OrderScalarAggregateFilter _min;
+    public OrderScalarAggregateFilter _max;
+    public StringFilter Id;
+    public StringFilter UserId;
+    public NumberFilter Total;
+    public DateFilter CreatedAt;
+
+    public OrderAggregateHaving and(OrderAggregateHaving... clauses) {
+      this.and = Arrays.asList(clauses);
+      return this;
+    }
+
+    public OrderAggregateHaving or(OrderAggregateHaving... clauses) {
+      this.or = Arrays.asList(clauses);
+      return this;
+    }
+
+    public OrderAggregateHaving not(OrderAggregateHaving clause) {
+      this.not = clause;
+      return this;
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+      Map<String, Object> filter = new LinkedHashMap<String, Object>();
+      if (and != null) filter.put("AND", toMapValues(and));
+      if (or != null) filter.put("OR", toMapValues(or));
+      if (not != null) filter.put("NOT", toMapValues(Arrays.asList(not)));
+      if (_count != null) filter.put("_count", _count.toMap());
+      if (_sum != null) filter.put("_sum", _sum.toMap());
+      if (_avg != null) filter.put("_avg", _avg.toMap());
+      if (_min != null) filter.put("_min", _min.toMap());
+      if (_max != null) filter.put("_max", _max.toMap());
+      if (Id != null) filter.put("id", Id.toMap());
+      if (UserId != null) filter.put("userId", UserId.toMap());
+      if (Total != null) filter.put("total", Total.toMap());
+      if (CreatedAt != null) filter.put("createdAt", CreatedAt.toMap());
+      return filter;
+    }
+
+    private static List<Object> toMapValues(List<OrderAggregateHaving> clauses) {
+      List<Object> values = new ArrayList<Object>(clauses.size());
+      for (OrderAggregateHaving clause : clauses) {
+        values.add(clause == null ? new LinkedHashMap<String, Object>() : clause.toMap());
+      }
+      return values;
+    }
+  }
+
+  /** Type-safe `groupBy` builder for Order. */
+  public static final class OrderGroupBy implements GroupByBuilder {
+    private final An5GroupBy delegate = new An5GroupBy();
+
+    public OrderGroupBy by(String... columns) {
+      delegate.by(columns);
+      return this;
+    }
+
+    public OrderGroupBy where(OrderWhere where) {
+      if (where != null) delegate.where(where.toMap());
+      return this;
+    }
+
+    public OrderGroupBy where(Map<String, Object> where) {
+      delegate.where(where);
+      return this;
+    }
+
+    public OrderGroupBy having(OrderAggregateHaving having) {
+      if (having != null) delegate.having(having.toMap());
+      return this;
+    }
+
+    public OrderGroupBy having(Map<String, Object> having) {
+      delegate.having(having);
+      return this;
+    }
+
+    public OrderGroupBy orderBy(OrderOrderBy orderBy) {
+      if (orderBy != null) delegate.orderBy(orderBy.toList());
+      return this;
+    }
+
+    public OrderGroupBy orderBy(String column, String direction) {
+      delegate.orderBy(column, direction);
+      return this;
+    }
+
+    public OrderGroupBy skip(int skip) {
+      delegate.skip(skip);
+      return this;
+    }
+
+    public OrderGroupBy take(Integer take) {
+      delegate.take(take);
+      return this;
+    }
+
+    public OrderGroupBy count() {
+      delegate.count();
+      return this;
+    }
+
+    public OrderGroupBy count(String... columns) {
+      delegate.count(columns);
+      return this;
+    }
+
+    public OrderGroupBy sum(String... columns) {
+      delegate.sum(columns);
+      return this;
+    }
+
+    public OrderGroupBy avg(String... columns) {
+      delegate.avg(columns);
+      return this;
+    }
+
+    public OrderGroupBy min(String... columns) {
+      delegate.min(columns);
+      return this;
+    }
+
+    public OrderGroupBy max(String... columns) {
+      delegate.max(columns);
+      return this;
+    }
+
+    @Override
+    public An5GroupBy toGroupBy() {
+      return delegate;
     }
   }
 }
