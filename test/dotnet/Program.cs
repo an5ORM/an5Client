@@ -138,6 +138,18 @@ namespace SmokeTest
             });
             Check("typed Contains Mode=insensitive", ciAlice.Count == 1 ? ciAlice[0].Email : "", "alice@example.com");
 
+            var inCiAlice = users.FindMany(new UserFindManyArgs
+            {
+                Where = new UserWhereInput { Email = new StringFilter { In = new List<string> { "ALICE@EXAMPLE.COM" }, Mode = "insensitive" } },
+            });
+            Check("typed In Mode=insensitive", inCiAlice.Count == 1 ? inCiAlice[0].Email : "", "alice@example.com");
+
+            var notInCiAlice = users.FindMany(new UserFindManyArgs
+            {
+                Where = new UserWhereInput { Email = new StringFilter { NotIn = new List<string> { "BOB@EXAMPLE.COM" }, Mode = "insensitive" } },
+            });
+            Check("typed NotIn Mode=insensitive", notInCiAlice.Count == 1 ? notInCiAlice[0].Email : "", "alice@example.com");
+
             var notBob = users.FindMany(new UserFindManyArgs
             {
                 Where = new UserWhereInput { Email = new StringFilter { NotIn = new List<string> { "bob@example.com" } } },
@@ -164,6 +176,12 @@ namespace SmokeTest
             CheckThrows<ArgumentException>("reject non-input query args", () => users.FindMany(12345));
             CheckThrows<ArgumentException>("reject unknown dict filter op", () =>
                 users.FindMany(new Dictionary<string, object> { { "email", new Dictionary<string, object> { { "bogus", "x" } } } }));
+            CheckThrows<ArgumentException>("reject non-list OR in dict where", () =>
+                users.FindMany(new Dictionary<string, object> { { "OR", new Dictionary<string, object> { { "email", "alice@example.com" } } } }));
+            CheckThrows<ArgumentException>("reject collection on scalar dict where", () =>
+                users.FindMany(new Dictionary<string, object> { { "email", new List<string> { "alice@example.com" } } }));
+
+            GroupByHavingAndCounts(ctx, dbPath);
 
             Check("delete", users.Delete("u1"), true);
             Check("count after delete", users.Count(), 1);
@@ -172,6 +190,108 @@ namespace SmokeTest
             // a string unless the provider converts it. Assert what it actually
             // does rather than what would be ideal.
             Console.WriteLine($"  ok   DateTime round-trip = {users.FindMany()[0].CreatedAt} ({users.FindMany()[0].CreatedAt.GetType().Name})");
+        }
+
+        private static void GroupByHavingAndCounts(An5DbContext ctx, string dbPath)
+        {
+            Console.WriteLine("\n[groupBy having, per-field count & pagination]");
+            using (var conn = An5Provider.Open(ctx.ConnectionString, ctx.Dialect))
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS orders (
+                        Id TEXT PRIMARY KEY,
+                        UserId TEXT NOT NULL,
+                        Total INTEGER NOT NULL,
+                        CreatedAt TEXT NOT NULL
+                    );
+                    INSERT INTO orders VALUES
+                        ('o1', 'u1', 150, '2026-01-01'),
+                        ('o2', 'u1', 50,  '2026-01-02'),
+                        ('o3', 'u2', 120, '2026-01-03'),
+                        ('o4', 'u3', 40,  '2026-01-04');";
+                cmd.ExecuteNonQuery();
+            }
+
+            // Insert a user with NULL Name so per-field _count differs from _all
+            ctx.Users.Create(new An5Orm.Entities.User
+            {
+                Id = "u3", Email = "u3@example.com", Name = null,
+                CreatedAt = new DateTime(2026, 3, 2, 0, 0, 0, DateTimeKind.Utc),
+            });
+
+            var userCounts = ctx.Users.GroupBy(new UserGroupByArgs
+            {
+                By = new List<string> { "Email" },
+                Where = new UserWhereInput { Email = new StringFilter { In = new List<string> { "BOB@EXAMPLE.COM", "U3@EXAMPLE.COM" }, Mode = "insensitive" } },
+                Count = new Dictionary<string, bool> { { "_all", true }, { "Name", true } },
+                OrderBy = new UserOrderByInput { Email = "asc" },
+            });
+            Check("user groupBy count rows", userCounts.Count, 2);
+            var bobCount = (Dictionary<string, object>)userCounts[0]["_count"];
+            var u3Count = (Dictionary<string, object>)userCounts[1]["_count"];
+            Check("bob _count._all", bobCount["_all"], 1);
+            Check("bob _count.Name", bobCount["Name"], 1);
+            Check("u3 _count._all (null Name)", u3Count["_all"], 1);
+            Check("u3 _count.Name (null excluded)", u3Count["Name"], 0);
+
+            var grouped = ctx.Orders.GroupBy(new OrderGroupByArgs
+            {
+                By = new List<string> { "UserId" },
+                Count = true,
+                Sum = new List<string> { "Total" },
+                Avg = new List<string> { "Total" },
+                Min = new List<string> { "Total" },
+                Max = new List<string> { "Total" },
+                Having = new OrderAggregateHavingInput
+                {
+                    OR = new List<OrderAggregateHavingInput>
+                    {
+                        new OrderAggregateHavingInput { _count = new OrderCountAggregateFilter { _all = new IntFilter { Gte = 2 } } },
+                        new OrderAggregateHavingInput { _sum = new OrderNumericAggregateFilter { Total = new NumberFilter { Gte = 120 } } },
+                    },
+                    NOT = new OrderAggregateHavingInput { UserId = new StringFilter { Equals = "u3" } },
+                },
+                OrderBy = new OrderOrderByInput { UserId = "asc" },
+            });
+            Check("typed Order GroupBy Having UserIds", string.Join(",", grouped.Select(r => r["UserId"])), "u1,u2");
+            var u1 = grouped[0];
+            Check("u1 _count", u1["_count"], 2);
+            Check("u1 _sum.Total", ((Dictionary<string, object>)u1["_sum"])["Total"], 200);
+            Check("u1 _avg.Total", Convert.ToDouble(((Dictionary<string, object>)u1["_avg"])["Total"]), 100);
+            Check("u1 _min.Total", ((Dictionary<string, object>)u1["_min"])["Total"], 50);
+            Check("u1 _max.Total", ((Dictionary<string, object>)u1["_max"])["Total"], 150);
+
+            // Grouped scalar filter + Skip-only pagination (SQLite LIMIT -1 OFFSET 1)
+            var skipped = ctx.Orders.GroupBy(new OrderGroupByArgs
+            {
+                By = new List<string> { "UserId" },
+                Having = new OrderAggregateHavingInput
+                {
+                    UserId = new StringFilter { NotIn = new List<string> { "MISSING" }, Mode = "insensitive" },
+                },
+                OrderBy = new OrderOrderByInput { UserId = "asc" },
+                Skip = 1,
+            });
+            Check("typed GroupBy skip-only UserIds", string.Join(",", skipped.Select(r => r["UserId"])), "u2,u3");
+
+            // Dict GroupBy validations + Having rejections
+            CheckThrows<ArgumentException>("reject ungrouped scalar in OrderAggregateHavingInput", () =>
+                ctx.Orders.GroupBy(new OrderGroupByArgs
+                {
+                    By = new List<string> { "UserId" },
+                    Having = new OrderAggregateHavingInput { Total = new IntFilter { Gte = 100 } },
+                }));
+            CheckThrows<ArgumentException>("reject _all in dict _sum", () =>
+                ctx.Orders.GroupBy(new Dictionary<string, object>
+                {
+                    { "by", new List<string> { "UserId" } },
+                    { "_sum", new List<string> { "_all" } },
+                }));
+            CheckThrows<ArgumentException>("reject non-object GroupBy(12345)", () => ctx.Orders.GroupBy(12345));
+
+            // Remove extra u3 so downstream Transactions count remains exact
+            ctx.Users.Delete("u3");
         }
 
         private static void Transactions(string dbPath)
