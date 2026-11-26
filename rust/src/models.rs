@@ -170,6 +170,118 @@ pub struct EmbeddingConfigUpdateArgs {
     pub data: EmbeddingConfigUpdateInput,
 }
 
+/// Filters COUNT aggregates in EmbeddingConfig.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct EmbeddingConfigCountAggregateFilter {
+    #[serde(default, rename = "_all", skip_serializing_if = "Option::is_none")]
+    pub all: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub api_key: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub endpoint: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub is_active: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<IntFilter>,
+}
+
+/// Filters SUM/AVG aggregates in EmbeddingConfig.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct EmbeddingConfigNumericAggregateFilter {
+}
+
+/// Filters MIN/MAX aggregates in EmbeddingConfig.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct EmbeddingConfigScalarAggregateFilter {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub api_key: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub endpoint: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub is_active: Option<BoolFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTimeFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<DateTimeFilter>,
+}
+
+/// Type-safe HAVING filter for EmbeddingConfig.group_by() queries.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct EmbeddingConfigAggregateHavingInput {
+    #[serde(default, rename = "AND", skip_serializing_if = "Option::is_none")]
+    pub and: Option<Vec<EmbeddingConfigAggregateHavingInput>>,
+    #[serde(default, rename = "OR", skip_serializing_if = "Option::is_none")]
+    pub or: Option<Vec<EmbeddingConfigAggregateHavingInput>>,
+    #[serde(default, rename = "NOT", skip_serializing_if = "Option::is_none")]
+    pub not: Option<Box<EmbeddingConfigAggregateHavingInput>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub api_key: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub endpoint: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub is_active: Option<BoolFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTimeFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<DateTimeFilter>,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<EmbeddingConfigCountAggregateFilter>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<EmbeddingConfigNumericAggregateFilter>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<EmbeddingConfigNumericAggregateFilter>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<EmbeddingConfigScalarAggregateFilter>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<EmbeddingConfigScalarAggregateFilter>,
+}
+
+/// ORM-style args for EmbeddingConfig.group_by().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct EmbeddingConfigGroupByArgs {
+    pub by: Vec<String>,
+    #[serde(default, rename = "where", skip_serializing_if = "Option::is_none")]
+    pub where_: Option<EmbeddingConfigWhereInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub having: Option<EmbeddingConfigAggregateHavingInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub order_by: Option<EmbeddingConfigOrderByInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take: Option<i64>,
+    #[serde(default)]
+    pub skip: i64,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<serde_json::Value>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<Vec<String>>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<Vec<String>>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<Vec<String>>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<Vec<String>>,
+}
+
 /// LLM provider configuration. Stores API keys and model settings for AI features.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LlmConfig {
@@ -335,6 +447,118 @@ pub struct LlmConfigUpdateArgs {
     pub data: LlmConfigUpdateInput,
 }
 
+/// Filters COUNT aggregates in LlmConfig.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct LlmConfigCountAggregateFilter {
+    #[serde(default, rename = "_all", skip_serializing_if = "Option::is_none")]
+    pub all: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub api_key: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub endpoint: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub is_active: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<IntFilter>,
+}
+
+/// Filters SUM/AVG aggregates in LlmConfig.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct LlmConfigNumericAggregateFilter {
+}
+
+/// Filters MIN/MAX aggregates in LlmConfig.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct LlmConfigScalarAggregateFilter {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub api_key: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub endpoint: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub is_active: Option<BoolFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTimeFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<DateTimeFilter>,
+}
+
+/// Type-safe HAVING filter for LlmConfig.group_by() queries.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct LlmConfigAggregateHavingInput {
+    #[serde(default, rename = "AND", skip_serializing_if = "Option::is_none")]
+    pub and: Option<Vec<LlmConfigAggregateHavingInput>>,
+    #[serde(default, rename = "OR", skip_serializing_if = "Option::is_none")]
+    pub or: Option<Vec<LlmConfigAggregateHavingInput>>,
+    #[serde(default, rename = "NOT", skip_serializing_if = "Option::is_none")]
+    pub not: Option<Box<LlmConfigAggregateHavingInput>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub api_key: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub endpoint: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub is_active: Option<BoolFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTimeFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<DateTimeFilter>,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<LlmConfigCountAggregateFilter>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<LlmConfigNumericAggregateFilter>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<LlmConfigNumericAggregateFilter>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<LlmConfigScalarAggregateFilter>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<LlmConfigScalarAggregateFilter>,
+}
+
+/// ORM-style args for LlmConfig.group_by().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct LlmConfigGroupByArgs {
+    pub by: Vec<String>,
+    #[serde(default, rename = "where", skip_serializing_if = "Option::is_none")]
+    pub where_: Option<LlmConfigWhereInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub having: Option<LlmConfigAggregateHavingInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub order_by: Option<LlmConfigOrderByInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take: Option<i64>,
+    #[serde(default)]
+    pub skip: i64,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<serde_json::Value>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<Vec<String>>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<Vec<String>>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<Vec<String>>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<Vec<String>>,
+}
+
 /// Represents a registered user in the database.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
@@ -458,6 +682,94 @@ pub struct UserUpdateArgs {
     pub data: UserUpdateInput,
 }
 
+/// Filters COUNT aggregates in User.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct UserCountAggregateFilter {
+    #[serde(default, rename = "_all", skip_serializing_if = "Option::is_none")]
+    pub all: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub email: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<IntFilter>,
+}
+
+/// Filters SUM/AVG aggregates in User.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct UserNumericAggregateFilter {
+}
+
+/// Filters MIN/MAX aggregates in User.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct UserScalarAggregateFilter {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub email: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTimeFilter>,
+}
+
+/// Type-safe HAVING filter for User.group_by() queries.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct UserAggregateHavingInput {
+    #[serde(default, rename = "AND", skip_serializing_if = "Option::is_none")]
+    pub and: Option<Vec<UserAggregateHavingInput>>,
+    #[serde(default, rename = "OR", skip_serializing_if = "Option::is_none")]
+    pub or: Option<Vec<UserAggregateHavingInput>>,
+    #[serde(default, rename = "NOT", skip_serializing_if = "Option::is_none")]
+    pub not: Option<Box<UserAggregateHavingInput>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub email: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTimeFilter>,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<UserCountAggregateFilter>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<UserNumericAggregateFilter>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<UserNumericAggregateFilter>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<UserScalarAggregateFilter>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<UserScalarAggregateFilter>,
+}
+
+/// ORM-style args for User.group_by().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct UserGroupByArgs {
+    pub by: Vec<String>,
+    #[serde(default, rename = "where", skip_serializing_if = "Option::is_none")]
+    pub where_: Option<UserWhereInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub having: Option<UserAggregateHavingInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub order_by: Option<UserOrderByInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take: Option<i64>,
+    #[serde(default)]
+    pub skip: i64,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<serde_json::Value>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<Vec<String>>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<Vec<String>>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<Vec<String>>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<Vec<String>>,
+}
+
 /// Represents a customer order in the system.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Order {
@@ -579,5 +891,95 @@ pub struct OrderUpdateArgs {
     pub where_: Option<OrderWhereInput>,
     #[serde(default)]
     pub data: OrderUpdateInput,
+}
+
+/// Filters COUNT aggregates in Order.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct OrderCountAggregateFilter {
+    #[serde(default, rename = "_all", skip_serializing_if = "Option::is_none")]
+    pub all: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub user_id: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub total: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<IntFilter>,
+}
+
+/// Filters SUM/AVG aggregates in Order.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct OrderNumericAggregateFilter {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub total: Option<NumberFilter>,
+}
+
+/// Filters MIN/MAX aggregates in Order.group_by() HAVING clauses.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct OrderScalarAggregateFilter {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub user_id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub total: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTimeFilter>,
+}
+
+/// Type-safe HAVING filter for Order.group_by() queries.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct OrderAggregateHavingInput {
+    #[serde(default, rename = "AND", skip_serializing_if = "Option::is_none")]
+    pub and: Option<Vec<OrderAggregateHavingInput>>,
+    #[serde(default, rename = "OR", skip_serializing_if = "Option::is_none")]
+    pub or: Option<Vec<OrderAggregateHavingInput>>,
+    #[serde(default, rename = "NOT", skip_serializing_if = "Option::is_none")]
+    pub not: Option<Box<OrderAggregateHavingInput>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub user_id: Option<StringFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub total: Option<IntFilter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTimeFilter>,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<OrderCountAggregateFilter>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<OrderNumericAggregateFilter>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<OrderNumericAggregateFilter>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<OrderScalarAggregateFilter>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<OrderScalarAggregateFilter>,
+}
+
+/// ORM-style args for Order.group_by().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct OrderGroupByArgs {
+    pub by: Vec<String>,
+    #[serde(default, rename = "where", skip_serializing_if = "Option::is_none")]
+    pub where_: Option<OrderWhereInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub having: Option<OrderAggregateHavingInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub order_by: Option<OrderOrderByInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take: Option<i64>,
+    #[serde(default)]
+    pub skip: i64,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<serde_json::Value>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<Vec<String>>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<Vec<String>>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<Vec<String>>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<Vec<String>>,
 }
 
