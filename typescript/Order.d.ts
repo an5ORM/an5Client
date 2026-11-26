@@ -110,6 +110,13 @@ export type OrderAggregateArgs = {
     };
 };
 export type OrderAggregateHavingInput = {
+    AND?: OrderAggregateHavingInput | OrderAggregateHavingInput[];
+    OR?: OrderAggregateHavingInput[];
+    NOT?: OrderAggregateHavingInput | OrderAggregateHavingInput[];
+    id?: string | An5.StringFilter;
+    userId?: string | An5.StringFilter;
+    total?: number | An5.NumberFilter;
+    createdAt?: Date | string | An5.DateTimeFilter;
     _count?: {
         _all?: An5.NumberFilter | number;
         id?: An5.NumberFilter | number;

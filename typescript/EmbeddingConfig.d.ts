@@ -142,6 +142,17 @@ export type EmbeddingConfigAggregateArgs = {
     };
 };
 export type EmbeddingConfigAggregateHavingInput = {
+    AND?: EmbeddingConfigAggregateHavingInput | EmbeddingConfigAggregateHavingInput[];
+    OR?: EmbeddingConfigAggregateHavingInput[];
+    NOT?: EmbeddingConfigAggregateHavingInput | EmbeddingConfigAggregateHavingInput[];
+    id?: string | An5.StringFilter;
+    provider?: string | An5.StringFilter;
+    apiKey?: string | An5.StringFilter;
+    model?: string | An5.StringNullableFilter | null;
+    endpoint?: string | An5.StringNullableFilter | null;
+    isActive?: boolean | An5.BooleanFilter;
+    createdAt?: Date | string | An5.DateTimeFilter;
+    updatedAt?: Date | string | An5.DateTimeFilter;
     _count?: {
         _all?: An5.NumberFilter | number;
         id?: An5.NumberFilter | number;

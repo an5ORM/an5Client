@@ -106,6 +106,13 @@ export type UserAggregateArgs = {
     };
 };
 export type UserAggregateHavingInput = {
+    AND?: UserAggregateHavingInput | UserAggregateHavingInput[];
+    OR?: UserAggregateHavingInput[];
+    NOT?: UserAggregateHavingInput | UserAggregateHavingInput[];
+    id?: string | An5.StringFilter;
+    email?: string | An5.StringFilter;
+    name?: string | An5.StringNullableFilter | null;
+    createdAt?: Date | string | An5.DateTimeFilter;
     _count?: {
         _all?: An5.NumberFilter | number;
         id?: An5.NumberFilter | number;
