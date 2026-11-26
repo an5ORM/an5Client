@@ -129,6 +129,8 @@ pub struct EmbeddingConfigFindManyArgs {
     pub skip: i64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub select: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub include: Option<serde_json::Value>,
 }
 
 /// ORM-style args for EmbeddingConfig.find_first().
@@ -138,13 +140,34 @@ pub struct EmbeddingConfigFindFirstArgs {
     pub where_: Option<EmbeddingConfigWhereInput>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub order_by: Option<EmbeddingConfigOrderByInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub select: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub include: Option<serde_json::Value>,
 }
 
-/// ORM-style args for EmbeddingConfig.find_unique() / count() / delete().
+/// ORM-style args for EmbeddingConfig.find_unique() / count() / delete() / delete_many().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct EmbeddingConfigFindUniqueArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<EmbeddingConfigWhereInput>,
+}
+
+/// ORM-style args for EmbeddingConfig.aggregate().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct EmbeddingConfigAggregateArgs {
+    #[serde(default, rename = "where", skip_serializing_if = "Option::is_none")]
+    pub where_: Option<EmbeddingConfigWhereInput>,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<serde_json::Value>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<Vec<String>>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<Vec<String>>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<Vec<String>>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<Vec<String>>,
 }
 
 /// ORM-style args for EmbeddingConfig.vector_search().
@@ -161,13 +184,23 @@ pub struct EmbeddingConfigVectorSearchArgs {
     pub distance_metric: String,
 }
 
-/// ORM-style args for EmbeddingConfig.update().
+/// ORM-style args for EmbeddingConfig.update() / update_many().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct EmbeddingConfigUpdateArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<EmbeddingConfigWhereInput>,
     #[serde(default)]
     pub data: EmbeddingConfigUpdateInput,
+}
+
+/// ORM-style args for EmbeddingConfig.upsert().
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EmbeddingConfigUpsertArgs {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<EmbeddingConfigWhereInput>,
+    pub create: EmbeddingConfigCreateInput,
+    #[serde(default)]
+    pub update: EmbeddingConfigUpdateInput,
 }
 
 /// Filters COUNT aggregates in EmbeddingConfig.group_by() HAVING clauses.
@@ -406,6 +439,8 @@ pub struct LlmConfigFindManyArgs {
     pub skip: i64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub select: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub include: Option<serde_json::Value>,
 }
 
 /// ORM-style args for LlmConfig.find_first().
@@ -415,13 +450,34 @@ pub struct LlmConfigFindFirstArgs {
     pub where_: Option<LlmConfigWhereInput>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub order_by: Option<LlmConfigOrderByInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub select: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub include: Option<serde_json::Value>,
 }
 
-/// ORM-style args for LlmConfig.find_unique() / count() / delete().
+/// ORM-style args for LlmConfig.find_unique() / count() / delete() / delete_many().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct LlmConfigFindUniqueArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<LlmConfigWhereInput>,
+}
+
+/// ORM-style args for LlmConfig.aggregate().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct LlmConfigAggregateArgs {
+    #[serde(default, rename = "where", skip_serializing_if = "Option::is_none")]
+    pub where_: Option<LlmConfigWhereInput>,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<serde_json::Value>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<Vec<String>>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<Vec<String>>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<Vec<String>>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<Vec<String>>,
 }
 
 /// ORM-style args for LlmConfig.vector_search().
@@ -438,13 +494,23 @@ pub struct LlmConfigVectorSearchArgs {
     pub distance_metric: String,
 }
 
-/// ORM-style args for LlmConfig.update().
+/// ORM-style args for LlmConfig.update() / update_many().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct LlmConfigUpdateArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<LlmConfigWhereInput>,
     #[serde(default)]
     pub data: LlmConfigUpdateInput,
+}
+
+/// ORM-style args for LlmConfig.upsert().
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LlmConfigUpsertArgs {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<LlmConfigWhereInput>,
+    pub create: LlmConfigCreateInput,
+    #[serde(default)]
+    pub update: LlmConfigUpdateInput,
 }
 
 /// Filters COUNT aggregates in LlmConfig.group_by() HAVING clauses.
@@ -641,6 +707,8 @@ pub struct UserFindManyArgs {
     pub skip: i64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub select: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub include: Option<serde_json::Value>,
 }
 
 /// ORM-style args for User.find_first().
@@ -650,13 +718,34 @@ pub struct UserFindFirstArgs {
     pub where_: Option<UserWhereInput>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub order_by: Option<UserOrderByInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub select: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub include: Option<serde_json::Value>,
 }
 
-/// ORM-style args for User.find_unique() / count() / delete().
+/// ORM-style args for User.find_unique() / count() / delete() / delete_many().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct UserFindUniqueArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<UserWhereInput>,
+}
+
+/// ORM-style args for User.aggregate().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct UserAggregateArgs {
+    #[serde(default, rename = "where", skip_serializing_if = "Option::is_none")]
+    pub where_: Option<UserWhereInput>,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<serde_json::Value>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<Vec<String>>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<Vec<String>>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<Vec<String>>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<Vec<String>>,
 }
 
 /// ORM-style args for User.vector_search().
@@ -673,13 +762,23 @@ pub struct UserVectorSearchArgs {
     pub distance_metric: String,
 }
 
-/// ORM-style args for User.update().
+/// ORM-style args for User.update() / update_many().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct UserUpdateArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<UserWhereInput>,
     #[serde(default)]
     pub data: UserUpdateInput,
+}
+
+/// ORM-style args for User.upsert().
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UserUpsertArgs {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<UserWhereInput>,
+    pub create: UserCreateInput,
+    #[serde(default)]
+    pub update: UserUpdateInput,
 }
 
 /// Filters COUNT aggregates in User.group_by() HAVING clauses.
@@ -852,6 +951,8 @@ pub struct OrderFindManyArgs {
     pub skip: i64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub select: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub include: Option<serde_json::Value>,
 }
 
 /// ORM-style args for Order.find_first().
@@ -861,13 +962,34 @@ pub struct OrderFindFirstArgs {
     pub where_: Option<OrderWhereInput>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub order_by: Option<OrderOrderByInput>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub select: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub include: Option<serde_json::Value>,
 }
 
-/// ORM-style args for Order.find_unique() / count() / delete().
+/// ORM-style args for Order.find_unique() / count() / delete() / delete_many().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OrderFindUniqueArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<OrderWhereInput>,
+}
+
+/// ORM-style args for Order.aggregate().
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct OrderAggregateArgs {
+    #[serde(default, rename = "where", skip_serializing_if = "Option::is_none")]
+    pub where_: Option<OrderWhereInput>,
+    #[serde(default, rename = "_count", skip_serializing_if = "Option::is_none")]
+    pub count: Option<serde_json::Value>,
+    #[serde(default, rename = "_sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<Vec<String>>,
+    #[serde(default, rename = "_avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<Vec<String>>,
+    #[serde(default, rename = "_min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<Vec<String>>,
+    #[serde(default, rename = "_max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<Vec<String>>,
 }
 
 /// ORM-style args for Order.vector_search().
@@ -884,13 +1006,23 @@ pub struct OrderVectorSearchArgs {
     pub distance_metric: String,
 }
 
-/// ORM-style args for Order.update().
+/// ORM-style args for Order.update() / update_many().
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OrderUpdateArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_: Option<OrderWhereInput>,
     #[serde(default)]
     pub data: OrderUpdateInput,
+}
+
+/// ORM-style args for Order.upsert().
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OrderUpsertArgs {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_: Option<OrderWhereInput>,
+    pub create: OrderCreateInput,
+    #[serde(default)]
+    pub update: OrderUpdateInput,
 }
 
 /// Filters COUNT aggregates in Order.group_by() HAVING clauses.

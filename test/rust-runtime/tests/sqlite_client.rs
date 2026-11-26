@@ -1,8 +1,9 @@
 use an5_client::client::An5Client;
-use an5_client::filters::{IntFilter, NumberFilter, SortOrder, StringFilter};
+use an5_client::filters::{BoolFilter, DateTimeFilter, IntFilter, NumberFilter, SortOrder, StringFilter};
 use an5_client::models::{
-    OrderAggregateHavingInput, OrderCountAggregateFilter, OrderGroupByArgs,
-    OrderNumericAggregateFilter, OrderOrderByInput, UserCreateInput, UserFindManyArgs,
+    OrderAggregateArgs, OrderAggregateHavingInput, OrderCountAggregateFilter, OrderGroupByArgs,
+    OrderNumericAggregateFilter, OrderOrderByInput, UserCreateInput, UserFindFirstArgs,
+    UserFindManyArgs, UserFindUniqueArgs, UserUpdateArgs, UserUpdateInput, UserUpsertArgs,
     UserWhereInput,
 };
 use an5_adapters::{CountArgs, DeleteManyArgs, FindManyArgs};
@@ -114,6 +115,74 @@ async fn generated_client_sqlite_crud() {
         }),
         ..Default::default()
     }).await.is_err());
+
+    let agg = client.order().aggregate(&OrderAggregateArgs {
+        sum: Some(vec!["total".into()]),
+        avg: Some(vec!["total".into()]),
+        min: Some(vec!["total".into()]),
+        max: Some(vec!["total".into()]),
+        ..Default::default()
+    }).await.unwrap();
+    assert_eq!(agg["_count"].as_i64(), Some(4));
+    assert_eq!(agg["_sum_total"].as_i64(), Some(390));
+    assert_eq!(agg["_min_total"].as_i64(), Some(40));
+    assert_eq!(agg["_max_total"].as_i64(), Some(200));
+
+    let inserted_many = client.user().create_many(&[
+        UserCreateInput { email: "batch1@example.com".into(), name: Some("Batch1".into()), created_at: None },
+        UserCreateInput { email: "batch2@example.com".into(), name: Some("Batch2".into()), created_at: None },
+    ]).await.unwrap();
+    assert_eq!(inserted_many, 2);
+
+    let updated_many = client.user().update_many(&UserUpdateArgs {
+        where_: Some(UserWhereInput {
+            email: Some(StringFilter { starts_with: Some("batch".into()), ..Default::default() }),
+            ..Default::default()
+        }),
+        data: UserUpdateInput { name: Some("Batch Updated".into()), ..Default::default() },
+    }).await.unwrap();
+    assert_eq!(updated_many, 2);
+
+    let upserted = client.user().upsert(&UserUpsertArgs {
+        where_: Some(UserWhereInput {
+            email: Some(StringFilter { equals: Some("batch1@example.com".into()), ..Default::default() }),
+            ..Default::default()
+        }),
+        create: UserCreateInput { email: "batch1@example.com".into(), name: Some("Ignored".into()), created_at: None },
+        update: UserUpdateInput { name: Some("Upserted Batch1".into()), ..Default::default() },
+    }).await.unwrap();
+    assert_eq!(upserted.name.as_deref(), Some("Upserted Batch1"));
+
+    let first_selected = client.user().find_first(&UserFindFirstArgs {
+        where_: Some(UserWhereInput {
+            email: Some(StringFilter { equals: Some("batch1@example.com".into()), ..Default::default() }),
+            ..Default::default()
+        }),
+        select: Some(vec!["id".into(), "email".into(), "name".into(), "created_at".into()]),
+        ..Default::default()
+    }).await.unwrap().unwrap();
+    assert_eq!(first_selected.name.as_deref(), Some("Upserted Batch1"));
+
+    // Verify BoolFilter.not and DateTimeFilter.in_list/not_in serialize as expected
+    let bool_json = serde_json::to_value(&BoolFilter { not: Some(false), ..Default::default() }).unwrap();
+    assert_eq!(bool_json, json!({ "not": false }));
+    let dt_filter: DateTimeFilter = serde_json::from_value(json!({
+        "in": ["2026-01-01T00:00:00Z"],
+        "notIn": ["2026-01-02T00:00:00Z"]
+    })).unwrap();
+    assert_eq!(dt_filter.in_list.len(), 1);
+    assert_eq!(dt_filter.not_in.len(), 1);
+    let dt_json = serde_json::to_value(&dt_filter).unwrap();
+    assert!(dt_json.get("in").and_then(|v| v.as_array()).is_some());
+    assert!(dt_json.get("notIn").and_then(|v| v.as_array()).is_some());
+
+    let deleted_batches = client.user().delete_many(&UserFindUniqueArgs {
+        where_: Some(UserWhereInput {
+            email: Some(StringFilter { starts_with: Some("batch".into()), ..Default::default() }),
+            ..Default::default()
+        }),
+    }).await.unwrap();
+    assert_eq!(deleted_batches, 2);
 
     assert!(client.table("User").find_many(&FindManyArgs {
         r#where: Some(json!({ "email": { "badOp": "x" } })),
