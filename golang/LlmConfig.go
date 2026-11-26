@@ -99,3 +99,67 @@ type LlmConfigCountArgs struct {
 	Where *LlmConfigWhereInput
 }
 
+// LlmConfigCountAggregateFilter filters COUNT aggregates in LlmConfig GroupBy HAVING clauses.
+type LlmConfigCountAggregateFilter struct {
+	All *IntFilter
+	Id *IntFilter
+	Provider *IntFilter
+	ApiKey *IntFilter
+	Model *IntFilter
+	Endpoint *IntFilter
+	IsActive *IntFilter
+	CreatedAt *IntFilter
+	UpdatedAt *IntFilter
+}
+
+// LlmConfigNumericAggregateFilter filters SUM/AVG aggregates in LlmConfig GroupBy HAVING clauses.
+type LlmConfigNumericAggregateFilter struct {
+}
+
+// LlmConfigScalarAggregateFilter filters MIN/MAX aggregates in LlmConfig GroupBy HAVING clauses.
+type LlmConfigScalarAggregateFilter struct {
+	Id *StringFilter
+	Provider *StringFilter
+	ApiKey *StringFilter
+	Model *StringFilter
+	Endpoint *StringFilter
+	IsActive *BoolFilter
+	CreatedAt *DateTimeFilter
+	UpdatedAt *DateTimeFilter
+}
+
+// LlmConfigAggregateHavingInput provides type-safe HAVING filters for LlmConfig GroupBy queries.
+type LlmConfigAggregateHavingInput struct {
+	AND   []LlmConfigAggregateHavingInput
+	OR    []LlmConfigAggregateHavingInput
+	NOT   *LlmConfigAggregateHavingInput
+	Id *StringFilter
+	Provider *StringFilter
+	ApiKey *StringFilter
+	Model *StringFilter
+	Endpoint *StringFilter
+	IsActive *BoolFilter
+	CreatedAt *DateTimeFilter
+	UpdatedAt *DateTimeFilter
+	Count *LlmConfigCountAggregateFilter
+	Sum   *LlmConfigNumericAggregateFilter
+	Avg   *LlmConfigNumericAggregateFilter
+	Min   *LlmConfigScalarAggregateFilter
+	Max   *LlmConfigScalarAggregateFilter
+}
+
+// LlmConfigGroupByArgs provides ORM-style args for GroupBy queries on LlmConfig.
+type LlmConfigGroupByArgs struct {
+	By      []string
+	Where   *LlmConfigWhereInput
+	Having  *LlmConfigAggregateHavingInput
+	OrderBy *LlmConfigOrderByInput
+	Take    *int
+	Skip    *int
+	Count   interface{}
+	Sum     []string
+	Avg     []string
+	Min     []string
+	Max     []string
+}
+

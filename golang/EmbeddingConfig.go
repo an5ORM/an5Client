@@ -99,3 +99,67 @@ type EmbeddingConfigCountArgs struct {
 	Where *EmbeddingConfigWhereInput
 }
 
+// EmbeddingConfigCountAggregateFilter filters COUNT aggregates in EmbeddingConfig GroupBy HAVING clauses.
+type EmbeddingConfigCountAggregateFilter struct {
+	All *IntFilter
+	Id *IntFilter
+	Provider *IntFilter
+	ApiKey *IntFilter
+	Model *IntFilter
+	Endpoint *IntFilter
+	IsActive *IntFilter
+	CreatedAt *IntFilter
+	UpdatedAt *IntFilter
+}
+
+// EmbeddingConfigNumericAggregateFilter filters SUM/AVG aggregates in EmbeddingConfig GroupBy HAVING clauses.
+type EmbeddingConfigNumericAggregateFilter struct {
+}
+
+// EmbeddingConfigScalarAggregateFilter filters MIN/MAX aggregates in EmbeddingConfig GroupBy HAVING clauses.
+type EmbeddingConfigScalarAggregateFilter struct {
+	Id *StringFilter
+	Provider *StringFilter
+	ApiKey *StringFilter
+	Model *StringFilter
+	Endpoint *StringFilter
+	IsActive *BoolFilter
+	CreatedAt *DateTimeFilter
+	UpdatedAt *DateTimeFilter
+}
+
+// EmbeddingConfigAggregateHavingInput provides type-safe HAVING filters for EmbeddingConfig GroupBy queries.
+type EmbeddingConfigAggregateHavingInput struct {
+	AND   []EmbeddingConfigAggregateHavingInput
+	OR    []EmbeddingConfigAggregateHavingInput
+	NOT   *EmbeddingConfigAggregateHavingInput
+	Id *StringFilter
+	Provider *StringFilter
+	ApiKey *StringFilter
+	Model *StringFilter
+	Endpoint *StringFilter
+	IsActive *BoolFilter
+	CreatedAt *DateTimeFilter
+	UpdatedAt *DateTimeFilter
+	Count *EmbeddingConfigCountAggregateFilter
+	Sum   *EmbeddingConfigNumericAggregateFilter
+	Avg   *EmbeddingConfigNumericAggregateFilter
+	Min   *EmbeddingConfigScalarAggregateFilter
+	Max   *EmbeddingConfigScalarAggregateFilter
+}
+
+// EmbeddingConfigGroupByArgs provides ORM-style args for GroupBy queries on EmbeddingConfig.
+type EmbeddingConfigGroupByArgs struct {
+	By      []string
+	Where   *EmbeddingConfigWhereInput
+	Having  *EmbeddingConfigAggregateHavingInput
+	OrderBy *EmbeddingConfigOrderByInput
+	Take    *int
+	Skip    *int
+	Count   interface{}
+	Sum     []string
+	Avg     []string
+	Min     []string
+	Max     []string
+}
+

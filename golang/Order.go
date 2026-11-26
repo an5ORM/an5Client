@@ -79,3 +79,56 @@ type OrderCountArgs struct {
 	Where *OrderWhereInput
 }
 
+// OrderCountAggregateFilter filters COUNT aggregates in Order GroupBy HAVING clauses.
+type OrderCountAggregateFilter struct {
+	All *IntFilter
+	Id *IntFilter
+	UserId *IntFilter
+	Total *IntFilter
+	CreatedAt *IntFilter
+}
+
+// OrderNumericAggregateFilter filters SUM/AVG aggregates in Order GroupBy HAVING clauses.
+type OrderNumericAggregateFilter struct {
+	Total *NumberFilter
+}
+
+// OrderScalarAggregateFilter filters MIN/MAX aggregates in Order GroupBy HAVING clauses.
+type OrderScalarAggregateFilter struct {
+	Id *StringFilter
+	UserId *StringFilter
+	Total *IntFilter
+	CreatedAt *DateTimeFilter
+}
+
+// OrderAggregateHavingInput provides type-safe HAVING filters for Order GroupBy queries.
+type OrderAggregateHavingInput struct {
+	AND   []OrderAggregateHavingInput
+	OR    []OrderAggregateHavingInput
+	NOT   *OrderAggregateHavingInput
+	Id *StringFilter
+	UserId *StringFilter
+	Total *IntFilter
+	CreatedAt *DateTimeFilter
+	Count *OrderCountAggregateFilter
+	Sum   *OrderNumericAggregateFilter
+	Avg   *OrderNumericAggregateFilter
+	Min   *OrderScalarAggregateFilter
+	Max   *OrderScalarAggregateFilter
+}
+
+// OrderGroupByArgs provides ORM-style args for GroupBy queries on Order.
+type OrderGroupByArgs struct {
+	By      []string
+	Where   *OrderWhereInput
+	Having  *OrderAggregateHavingInput
+	OrderBy *OrderOrderByInput
+	Take    *int
+	Skip    *int
+	Count   interface{}
+	Sum     []string
+	Avg     []string
+	Min     []string
+	Max     []string
+}
+
