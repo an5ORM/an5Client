@@ -223,3 +223,77 @@ func TestGeneratedClientMetadataAndFilters(t *testing.T) {
 		t.Fatalf("expected error for ungrouped scalar field Total in Having")
 	}
 }
+
+func TestGeneratedClientIncludeValidationAndFindUniqueSelect(t *testing.T) {
+	db, err := sql.Open("sqlite", ":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	db.SetMaxOpenConns(1)
+
+	_, err = db.Exec("CREATE TABLE users (id TEXT PRIMARY KEY, email TEXT UNIQUE NOT NULL, name TEXT, created_at DATETIME NOT NULL)")
+	if err != nil {
+		t.Fatal(err)
+	}
+	client := an5.NewAn5DbContextWithConnStr(db, "sqlite")
+	ctx := context.Background()
+
+	if _, err := client.User.Create(ctx, &an5.User{
+		Id:        "u1",
+		Email:     "alice@example.com",
+		Name:      an5.StringPtr("Alice"),
+		CreatedAt: time.Now().UTC(),
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	// FindUnique with Select and empty Include._count on model with no many relations.
+	picked, err := client.User.FindUnique(ctx, &an5.UserFindUniqueArgs{
+		Where:   &an5.UserWhereInput{Id: &an5.StringFilter{Equals: an5.StringPtr("u1")}},
+		Select:  []string{"email"},
+		Include: &an5.UserInclude{Count: true},
+	})
+	if err != nil {
+		t.Fatalf("FindUnique with Select+Include failed: %v", err)
+	}
+	if picked == nil || picked.Email != "alice@example.com" || picked.Id != "" {
+		t.Fatalf("expected email-only projection with stripped Id, got %+v", picked)
+	}
+
+	// Take: 0 returns empty slice without error.
+	zeroRows, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{
+		Take: an5.IntPtr(0),
+	})
+	if err != nil {
+		t.Fatalf("FindMany with Take=0 failed: %v", err)
+	}
+	if len(zeroRows) != 0 {
+		t.Fatalf("expected 0 rows with Take=0, got %d", len(zeroRows))
+	}
+
+	// Reject negative Take / Skip, unknown Select columns, unknown relations, and invalid Include payloads.
+	if _, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{Take: an5.IntPtr(-1)}); err == nil {
+		t.Fatalf("expected error for negative Take")
+	}
+	if _, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{Skip: an5.IntPtr(-2)}); err == nil {
+		t.Fatalf("expected error for negative Skip")
+	}
+	if _, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{Select: []string{"non_existent"}}); err == nil {
+		t.Fatalf("expected error for unknown Select column")
+	}
+	if _, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{
+		Where:   &an5.UserWhereInput{Id: &an5.StringFilter{Equals: an5.StringPtr("missing")}},
+		Include: map[string]interface{}{"orders": true},
+	}); err == nil {
+		t.Fatalf("expected error for unknown relation in Include even when parent matches 0 rows")
+	}
+	if _, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{
+		Include: &an5.UserInclude{Count: map[string]interface{}{"select": map[string]interface{}{"orders": true}}},
+	}); err == nil {
+		t.Fatalf("expected error for unknown relation in _count")
+	}
+	if _, err := client.User.FindMany(ctx, &an5.UserFindManyArgs{Include: "bogus"}); err == nil {
+		t.Fatalf("expected error for invalid Include payload type")
+	}
+}

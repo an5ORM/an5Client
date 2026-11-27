@@ -15,6 +15,9 @@ type EmbeddingConfig struct {
 	IsActive bool `json:"isActive" db:"is_active"`
 	CreatedAt time.Time `json:"createdAt" db:"created_at"`
 	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
+
+	// Relation counts (populated when requested via Include._count)
+	Count map[string]int `json:"_count,omitempty"`
 }
 
 // ─── EmbeddingConfig ORM Types ──────────────────────────────────────────────────────────
@@ -68,6 +71,13 @@ type EmbeddingConfigUpdateInput struct {
 	UpdatedAt *time.Time
 }
 
+// EmbeddingConfigInclude configures eager relation loading and _count for EmbeddingConfig queries.
+type EmbeddingConfigInclude struct {
+	Count interface{} `json:"_count,omitempty"`
+}
+
+func (EmbeddingConfigInclude) isAn5Include() {}
+
 // EmbeddingConfigFindManyArgs provides ORM-style args for FindMany queries on EmbeddingConfig.
 type EmbeddingConfigFindManyArgs struct {
 	Where   *EmbeddingConfigWhereInput
@@ -75,6 +85,7 @@ type EmbeddingConfigFindManyArgs struct {
 	Take    *int
 	Skip    *int
 	Select  []string
+	Include interface{}
 }
 
 // EmbeddingConfigFindFirstArgs provides ORM-style args for FindFirst queries on EmbeddingConfig.
@@ -82,11 +93,14 @@ type EmbeddingConfigFindFirstArgs struct {
 	Where   *EmbeddingConfigWhereInput
 	OrderBy *EmbeddingConfigOrderByInput
 	Select  []string
+	Include interface{}
 }
 
 // EmbeddingConfigFindUniqueArgs provides ORM-style args for FindUnique queries on EmbeddingConfig.
 type EmbeddingConfigFindUniqueArgs struct {
-	Where *EmbeddingConfigWhereInput
+	Where   *EmbeddingConfigWhereInput
+	Select  []string
+	Include interface{}
 }
 
 // EmbeddingConfigDeleteManyArgs provides ORM-style args for DeleteMany queries on EmbeddingConfig.

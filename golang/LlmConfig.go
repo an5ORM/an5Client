@@ -15,6 +15,9 @@ type LlmConfig struct {
 	IsActive bool `json:"isActive" db:"is_active"`
 	CreatedAt time.Time `json:"createdAt" db:"created_at"`
 	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
+
+	// Relation counts (populated when requested via Include._count)
+	Count map[string]int `json:"_count,omitempty"`
 }
 
 // ─── LlmConfig ORM Types ──────────────────────────────────────────────────────────
@@ -68,6 +71,13 @@ type LlmConfigUpdateInput struct {
 	UpdatedAt *time.Time
 }
 
+// LlmConfigInclude configures eager relation loading and _count for LlmConfig queries.
+type LlmConfigInclude struct {
+	Count interface{} `json:"_count,omitempty"`
+}
+
+func (LlmConfigInclude) isAn5Include() {}
+
 // LlmConfigFindManyArgs provides ORM-style args for FindMany queries on LlmConfig.
 type LlmConfigFindManyArgs struct {
 	Where   *LlmConfigWhereInput
@@ -75,6 +85,7 @@ type LlmConfigFindManyArgs struct {
 	Take    *int
 	Skip    *int
 	Select  []string
+	Include interface{}
 }
 
 // LlmConfigFindFirstArgs provides ORM-style args for FindFirst queries on LlmConfig.
@@ -82,11 +93,14 @@ type LlmConfigFindFirstArgs struct {
 	Where   *LlmConfigWhereInput
 	OrderBy *LlmConfigOrderByInput
 	Select  []string
+	Include interface{}
 }
 
 // LlmConfigFindUniqueArgs provides ORM-style args for FindUnique queries on LlmConfig.
 type LlmConfigFindUniqueArgs struct {
-	Where *LlmConfigWhereInput
+	Where   *LlmConfigWhereInput
+	Select  []string
+	Include interface{}
 }
 
 // LlmConfigDeleteManyArgs provides ORM-style args for DeleteMany queries on LlmConfig.
