@@ -16,7 +16,7 @@ field names (`createdAt`) or snake_case aliases (`created_at`):
 """
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, ClassVar
 from datetime import datetime
 
 # ─── Base filter types ────────────────────────────────────────────────────────
@@ -131,6 +131,12 @@ class EmbeddingConfigUpdateInput:
     updated_at: Optional[datetime] = None
 
 @dataclass
+class EmbeddingConfigInclude:
+    """Type-safe eager relation loading and relation counts for EmbeddingConfig queries."""
+    _an5_include: ClassVar[bool] = True
+    _count: Optional[Union[bool, Dict[str, Any]]] = None
+
+@dataclass
 class EmbeddingConfigFindManyArgs:
     """ORM-style args for EmbeddingConfig.find_many()."""
     where: Optional[EmbeddingConfigWhereInput] = None
@@ -138,7 +144,7 @@ class EmbeddingConfigFindManyArgs:
     take: Optional[int] = None
     skip: int = 0
     select: Optional[Union[List[str], Dict[str, Any]]] = None
-    include: Optional[Dict[str, Any]] = None
+    include: Optional[Union['EmbeddingConfigInclude', Dict[str, Any]]] = None
 
 @dataclass
 class EmbeddingConfigFindFirstArgs:
@@ -146,7 +152,14 @@ class EmbeddingConfigFindFirstArgs:
     where: Optional[EmbeddingConfigWhereInput] = None
     order_by: Optional[EmbeddingConfigOrderByInput] = None
     select: Optional[Union[List[str], Dict[str, Any]]] = None
-    include: Optional[Dict[str, Any]] = None
+    include: Optional[Union['EmbeddingConfigInclude', Dict[str, Any]]] = None
+
+@dataclass
+class EmbeddingConfigFindUniqueArgs:
+    """ORM-style args for EmbeddingConfig.find_unique()."""
+    where: Optional[EmbeddingConfigWhereInput] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Union['EmbeddingConfigInclude', Dict[str, Any]]] = None
 
 @dataclass
 class EmbeddingConfigAggregateHavingInput:
@@ -235,6 +248,12 @@ class LlmConfigUpdateInput:
     updated_at: Optional[datetime] = None
 
 @dataclass
+class LlmConfigInclude:
+    """Type-safe eager relation loading and relation counts for LlmConfig queries."""
+    _an5_include: ClassVar[bool] = True
+    _count: Optional[Union[bool, Dict[str, Any]]] = None
+
+@dataclass
 class LlmConfigFindManyArgs:
     """ORM-style args for LlmConfig.find_many()."""
     where: Optional[LlmConfigWhereInput] = None
@@ -242,7 +261,7 @@ class LlmConfigFindManyArgs:
     take: Optional[int] = None
     skip: int = 0
     select: Optional[Union[List[str], Dict[str, Any]]] = None
-    include: Optional[Dict[str, Any]] = None
+    include: Optional[Union['LlmConfigInclude', Dict[str, Any]]] = None
 
 @dataclass
 class LlmConfigFindFirstArgs:
@@ -250,7 +269,14 @@ class LlmConfigFindFirstArgs:
     where: Optional[LlmConfigWhereInput] = None
     order_by: Optional[LlmConfigOrderByInput] = None
     select: Optional[Union[List[str], Dict[str, Any]]] = None
-    include: Optional[Dict[str, Any]] = None
+    include: Optional[Union['LlmConfigInclude', Dict[str, Any]]] = None
+
+@dataclass
+class LlmConfigFindUniqueArgs:
+    """ORM-style args for LlmConfig.find_unique()."""
+    where: Optional[LlmConfigWhereInput] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Union['LlmConfigInclude', Dict[str, Any]]] = None
 
 @dataclass
 class LlmConfigAggregateHavingInput:
@@ -323,6 +349,12 @@ class UserUpdateInput:
     created_at: Optional[datetime] = None
 
 @dataclass
+class UserInclude:
+    """Type-safe eager relation loading and relation counts for User queries."""
+    _an5_include: ClassVar[bool] = True
+    _count: Optional[Union[bool, Dict[str, Any]]] = None
+
+@dataclass
 class UserFindManyArgs:
     """ORM-style args for User.find_many()."""
     where: Optional[UserWhereInput] = None
@@ -330,7 +362,7 @@ class UserFindManyArgs:
     take: Optional[int] = None
     skip: int = 0
     select: Optional[Union[List[str], Dict[str, Any]]] = None
-    include: Optional[Dict[str, Any]] = None
+    include: Optional[Union['UserInclude', Dict[str, Any]]] = None
 
 @dataclass
 class UserFindFirstArgs:
@@ -338,7 +370,14 @@ class UserFindFirstArgs:
     where: Optional[UserWhereInput] = None
     order_by: Optional[UserOrderByInput] = None
     select: Optional[Union[List[str], Dict[str, Any]]] = None
-    include: Optional[Dict[str, Any]] = None
+    include: Optional[Union['UserInclude', Dict[str, Any]]] = None
+
+@dataclass
+class UserFindUniqueArgs:
+    """ORM-style args for User.find_unique()."""
+    where: Optional[UserWhereInput] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Union['UserInclude', Dict[str, Any]]] = None
 
 @dataclass
 class UserAggregateHavingInput:
@@ -407,6 +446,12 @@ class OrderUpdateInput:
     created_at: Optional[datetime] = None
 
 @dataclass
+class OrderInclude:
+    """Type-safe eager relation loading and relation counts for Order queries."""
+    _an5_include: ClassVar[bool] = True
+    _count: Optional[Union[bool, Dict[str, Any]]] = None
+
+@dataclass
 class OrderFindManyArgs:
     """ORM-style args for Order.find_many()."""
     where: Optional[OrderWhereInput] = None
@@ -414,7 +459,7 @@ class OrderFindManyArgs:
     take: Optional[int] = None
     skip: int = 0
     select: Optional[Union[List[str], Dict[str, Any]]] = None
-    include: Optional[Dict[str, Any]] = None
+    include: Optional[Union['OrderInclude', Dict[str, Any]]] = None
 
 @dataclass
 class OrderFindFirstArgs:
@@ -422,7 +467,14 @@ class OrderFindFirstArgs:
     where: Optional[OrderWhereInput] = None
     order_by: Optional[OrderOrderByInput] = None
     select: Optional[Union[List[str], Dict[str, Any]]] = None
-    include: Optional[Dict[str, Any]] = None
+    include: Optional[Union['OrderInclude', Dict[str, Any]]] = None
+
+@dataclass
+class OrderFindUniqueArgs:
+    """ORM-style args for Order.find_unique()."""
+    where: Optional[OrderWhereInput] = None
+    select: Optional[Union[List[str], Dict[str, Any]]] = None
+    include: Optional[Union['OrderInclude', Dict[str, Any]]] = None
 
 @dataclass
 class OrderAggregateHavingInput:

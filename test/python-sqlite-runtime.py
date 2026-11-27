@@ -15,10 +15,13 @@ from an5_orm_types import (
     NumberFilter,
     OrderAggregateHavingInput,
     OrderGroupByArgs,
+    OrderInclude,
     StringFilter,
     UserCreateInput,
     UserFindFirstArgs,
     UserFindManyArgs,
+    UserFindUniqueArgs,
+    UserInclude,
     UserOrderByInput,
     UserUpdateInput,
     UserWhereInput,
@@ -114,6 +117,26 @@ class GeneratedClientRuntime(unittest.TestCase):
             self.assertEqual(grouped[0]["userId"], created_a["id"])
             self.assertEqual(grouped[0]["_count"], {"_all": 2, "createdAt": 1})
             self.assertEqual(grouped[0]["_sum"]["total"], 150.0)
+
+            # Typed UserInclude, OrderInclude & UserFindUniqueArgs on generated an5Client schema
+            self.assertTrue(UserInclude._an5_include)
+            self.assertTrue(OrderInclude._an5_include)
+            unique_bob = client.user.find_unique(
+                UserFindUniqueArgs(
+                    where=UserWhereInput(id=StringFilter(equals=created_b["id"])),
+                    select=["email"],
+                    include=UserInclude(_count=True),
+                )
+            )
+            self.assertIsNotNone(unique_bob)
+            self.assertEqual(unique_bob["email"], "bob@example.com")
+            self.assertNotIn("id", unique_bob)
+            self.assertEqual(unique_bob["_count"], {})
+
+            with self.assertRaises(ValueError):
+                client.user.find_many(
+                    include=UserInclude(_count={"select": {"orders": True}}),
+                )
 
             with self.assertRaises(ValueError):
                 client.user.find_many(where={"non_existent_col": "x"})
