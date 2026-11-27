@@ -14,5 +14,8 @@ namespace An5Orm.Entities
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        // ── Relation counts (populated via Include._count) ───────────────────
+        public Dictionary<string, int> _count { get; set; }
     }
 }

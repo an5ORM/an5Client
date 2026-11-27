@@ -10,5 +10,8 @@ namespace An5Orm.Entities
         public string Email { get; set; }
         public string Name { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        // ── Relation counts (populated via Include._count) ───────────────────
+        public Dictionary<string, int> _count { get; set; }
     }
 }

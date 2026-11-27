@@ -181,6 +181,33 @@ namespace SmokeTest
             CheckThrows<ArgumentException>("reject collection on scalar dict where", () =>
                 users.FindMany(new Dictionary<string, object> { { "email", new List<string> { "alice@example.com" } } }));
 
+            var withEmptyCount = users.FindMany(new UserFindManyArgs
+            {
+                Where = new UserWhereInput { Email = new StringFilter { Equals = "alice@example.com" } },
+                Include = new UserInclude { _count = true },
+            });
+            Check("typed Include._count initialized", withEmptyCount.Count == 1 && withEmptyCount[0]._count != null, true);
+
+            var envelopeRows = users.FindMany(new Dictionary<string, object>
+            {
+                { "where", new Dictionary<string, object> { { "email", "alice@example.com" } } },
+                { "include", new Dictionary<string, object> { { "_count", true } } },
+            });
+            Check("query envelope dict with where+include", envelopeRows.Count == 1 && envelopeRows[0]._count != null, true);
+
+            CheckThrows<ArgumentException>("reject unknown relation in dict Include", () =>
+                users.FindMany(new UserFindManyArgs
+                {
+                    Include = new Dictionary<string, object> { { "unknownRel", true } },
+                }));
+            CheckThrows<ArgumentException>("reject unknown relation in Include._count", () =>
+                users.FindMany(new UserFindManyArgs
+                {
+                    Include = new UserInclude { _count = new Dictionary<string, object> { { "select", new Dictionary<string, object> { { "unknownRel", true } } } } },
+                }));
+            CheckThrows<ArgumentException>("reject non-object Include payload", () =>
+                users.FindMany(new UserFindManyArgs { Include = 123 }));
+
             GroupByHavingAndCounts(ctx, dbPath);
 
             Check("delete", users.Delete("u1"), true);
