@@ -13,6 +13,9 @@ public struct User {
     /// `DATETIME2` — Timestamp when the user profile was created
     public let createdAt: Date?
 
+    /// Relation counts populated when the query asks for `_count`, or `nil`.
+    public var count: [String: Int]? = nil
+
     public init(
         id: String? = nil,
         email: String? = nil,
@@ -39,6 +42,7 @@ public struct User {
         self.email = row.string("email")
         self.name = row.string("name")
         self.createdAt = row.date("createdAt")
+        self.count = row.relationCounts
     }
 
     /// The columns to write, in declaration order, with `nil` left out.

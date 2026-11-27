@@ -9,6 +9,7 @@ import an5.adapters.Row
 import an5.adapters.stringOrNull
 import an5.adapters.intOrNull
 import an5.adapters.localDateTimeOrNull
+import an5.adapters.relationCounts
 
 /**
  * Represents a customer order in the system.
@@ -20,7 +21,8 @@ data class Order(
     val id: String? = null,
     val userId: String? = null,
     val total: Int? = null,
-    val createdAt: LocalDateTime? = null
+    val createdAt: LocalDateTime? = null,
+    val count: Map<String, Int>? = null
 ) {
 
     /**
@@ -48,6 +50,7 @@ data class Order(
             userId = row.stringOrNull("userId"),
             total = row.intOrNull("total"),
             createdAt = row.localDateTimeOrNull("createdAt"),
+            count = row.relationCounts(),
         )
     }
 }

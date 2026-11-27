@@ -21,6 +21,9 @@ public struct EmbeddingConfig {
     /// `DATETIME2` — Last update timestamp
     public let updatedAt: Date?
 
+    /// Relation counts populated when the query asks for `_count`, or `nil`.
+    public var count: [String: Int]? = nil
+
     public init(
         id: String? = nil,
         provider: String? = nil,
@@ -59,6 +62,7 @@ public struct EmbeddingConfig {
         self.isActive = row.bool("isActive")
         self.createdAt = row.date("createdAt")
         self.updatedAt = row.date("updatedAt")
+        self.count = row.relationCounts
     }
 
     /// The columns to write, in declaration order, with `nil` left out.

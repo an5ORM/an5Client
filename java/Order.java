@@ -17,6 +17,9 @@ public class Order {
   private Integer total;
   private LocalDateTime createdAt;
 
+  /** Relation counts populated when the query asks for {@code _count}, or {@code null}. */
+  private Map<String, Integer> count;
+
   public String getId() {
     return this.id;
   }
@@ -73,6 +76,15 @@ public class Order {
     return this;
   }
 
+  /** Relation counts populated when the query asks for {@code _count}, or {@code null}. */
+  public Map<String, Integer> getCount() {
+    return this.count;
+  }
+
+  public void setCount(Map<String, Integer> value) {
+    this.count = value;
+  }
+
   /**
    * Reads `Order` from a database row.
    *
@@ -90,6 +102,15 @@ public class Order {
     value.userId = An5Values.asString(row.get("userId"));
     value.total = An5Values.asInteger(row.get("total"));
     value.createdAt = An5Values.asLocalDateTime(row.get("createdAt"));
+    if (row.get("_count") instanceof Map) {
+      Map<String, Integer> counts = new LinkedHashMap<String, Integer>();
+      for (Map.Entry<?, ?> entry : ((Map<?, ?>) row.get("_count")).entrySet()) {
+        if (entry.getKey() instanceof String && entry.getValue() instanceof Number) {
+          counts.put((String) entry.getKey(), Integer.valueOf(((Number) entry.getValue()).intValue()));
+        }
+      }
+      value.count = counts;
+    }
     return value;
   }
 

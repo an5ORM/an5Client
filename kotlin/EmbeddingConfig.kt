@@ -9,6 +9,7 @@ import an5.adapters.Row
 import an5.adapters.stringOrNull
 import an5.adapters.boolOrNull
 import an5.adapters.localDateTimeOrNull
+import an5.adapters.relationCounts
 
 /**
  * Embedding provider configuration. Stores API keys and model settings for RAG features.
@@ -24,7 +25,8 @@ data class EmbeddingConfig(
     val endpoint: String? = null,
     val isActive: Boolean? = null,
     val createdAt: LocalDateTime? = null,
-    val updatedAt: LocalDateTime? = null
+    val updatedAt: LocalDateTime? = null,
+    val count: Map<String, Int>? = null
 ) {
 
     /**
@@ -60,6 +62,7 @@ data class EmbeddingConfig(
             isActive = row.boolOrNull("isActive"),
             createdAt = row.localDateTimeOrNull("createdAt"),
             updatedAt = row.localDateTimeOrNull("updatedAt"),
+            count = row.relationCounts(),
         )
     }
 }

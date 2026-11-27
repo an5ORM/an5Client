@@ -8,6 +8,7 @@ import an5.adapters.Data as Values
 import an5.adapters.Row
 import an5.adapters.stringOrNull
 import an5.adapters.localDateTimeOrNull
+import an5.adapters.relationCounts
 
 /**
  * Represents a registered user in the database.
@@ -19,7 +20,8 @@ data class User(
     val id: String? = null,
     val email: String? = null,
     val name: String? = null,
-    val createdAt: LocalDateTime? = null
+    val createdAt: LocalDateTime? = null,
+    val count: Map<String, Int>? = null
 ) {
 
     /**
@@ -47,6 +49,7 @@ data class User(
             email = row.stringOrNull("email"),
             name = row.stringOrNull("name"),
             createdAt = row.localDateTimeOrNull("createdAt"),
+            count = row.relationCounts(),
         )
     }
 }

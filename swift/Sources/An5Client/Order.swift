@@ -13,6 +13,9 @@ public struct Order {
     /// `DATETIME2` — The date and time when the order was created.
     public let createdAt: Date?
 
+    /// Relation counts populated when the query asks for `_count`, or `nil`.
+    public var count: [String: Int]? = nil
+
     public init(
         id: String? = nil,
         userId: String? = nil,
@@ -39,6 +42,7 @@ public struct Order {
         self.userId = row.string("userId")
         self.total = row.int("total")
         self.createdAt = row.date("createdAt")
+        self.count = row.relationCounts
     }
 
     /// The columns to write, in declaration order, with `nil` left out.
