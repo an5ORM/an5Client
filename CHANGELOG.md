@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0] - 2026-11-28
+
+### Added
+- Regenerated the TypeScript, Python, .NET, Go, Rust, Java, Kotlin and Swift clients from `@an5/orm` 1.4.0 with typed relation filters (`some`/`none`/`every`, `is`/`isNot`), case-insensitive `mode`, `GroupByArgs.having`, per-field `_count`, eager `include` types, and read-only `ViewClient` parity.
+- `findUnique` query overloads and relation-count accessors in the Java, Kotlin and Swift clients.
+- Expanded SQLite runtime tests for relation filters, HAVING, include pagination and `_count` in every generated client.
+
+### Changed
+- Java and Kotlin filter builders expose `.insensitive()` and Swift exposes `StringFilter.insensitive()`; the Go and Rust `StringFilter` types carry `Mode`/`mode`.
+- `_count` results keep their selected fields and are hydrated on nested includes.
+
 ## [0.1.8] - 2026-11-07
 
 ### Added
